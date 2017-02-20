@@ -5,6 +5,8 @@
  * @license    GNU General Public License version 2 or later.
  */
 
+import SparrowCore from './core';
+
 ;(function ($) {
   /**
    * Plugin Name.
@@ -13,37 +15,18 @@
    */
   const plugin = "sparrow";
 
-  /**
-   * Default options.
-   *
-   * @type {Object}
-   */
-  const defaultOptions = {};
+  const core = new SparrowCore($);
 
   class Sparrow {
-    constructor(options = {}) {
-      this.$ = $;
-      this.$el = marshalElement.call(this, options.el);
-      this.data = options.data;
-      this.options = $.extend(true, {}, defaultOptions, options);
-      this.boardcasts = {};
-
-      this.init();
-      this.options.created.call(this);
-    }
-
-    init() {
-      // Build data and methods
-      $.each(this.options.data, (key, value) => {
-        defineReactive(this, key, value);
-      });
+    constructor (options = {}) {
+      core.init(this, options);
     }
 
     bind(selector, key, callback) {
-      const $element = marshalElement.call(this, selector);
+      const $element = core.marshalElement(selector);
 
-      if (!this.boardcasts[key]) {
-        this.boardcasts[key] = [];
+      if (!core.watchers[key]) {
+        core.watchers[key] = [];
       }
 
       // Default callback
@@ -71,7 +54,7 @@
         };
       }
 
-      this.boardcasts[key].push({
+      core.watchers[key].push({
         element: $element,
         callback: callback
       });
@@ -80,7 +63,7 @@
     }
 
     on(selector, eventName, callback, delegate = false) {
-      const $element = marshalElement.call(this, selector);
+      const $element = core.marshalElement(selector);
 
       if (delegate) {
         this.$el.on(eventName, selector, callback);
@@ -98,47 +81,6 @@
           this[key] = $(event.target).val();
         }, delegate);
     }
-
-    notify(key) {
-      if (!this.boardcasts[key]) {
-        return;
-      }
-
-      $.each(this.boardcasts[key], (i, e) => {
-        e.callback(e.element, this.data[key]);
-      });
-    }
-  }
-
-  function marshalElement ($element) {
-    if (typeof $element === 'string' || !($element instanceof this.$)) {
-      $element = this.$($element);
-    }
-
-    return $element;
-  }
-
-  function defineReactive(object, key, value) {
-    const property = Object.getOwnPropertyDescriptor(object, key);
-
-    if (property && property.configurable === false) {
-      return;
-    }
-
-    const getter = property && property.get;
-    const setter = property && property.set;
-
-    Object.defineProperty(object, key, {
-      get: function () {
-        //value = getter ? getter.call(object) : value;
-        object.notify(key);
-        return object.data[key];
-      },
-      set: function (newValue) {
-        object.data[key] = newValue;
-        object.notify(key);
-      }
-    });
   }
 
   /**

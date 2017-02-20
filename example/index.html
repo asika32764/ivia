@@ -69,7 +69,12 @@
 			foo: 'bar',
       flower: 'sakura',
       yoo: null,
-      items: []
+      items: [
+          'a', 'b', {foo: 'yoo'}
+      ],
+      flower: {
+			    sakura: 'bloom'
+      }
 		},
     created: function () {
       this.model('#inputEmail3', 'foo');
