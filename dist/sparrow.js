@@ -86,7 +86,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    GNU General Public License version 2 or later.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _observer = __webpack_require__(2);
+var _observable = __webpack_require__(4);
+
+var _watcher = __webpack_require__(6);
+
+var _watcher2 = _interopRequireDefault(_watcher);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -113,6 +119,7 @@ var SparrowCore = function () {
       this.data = options.data;
       this.options = $.extend(true, {}, defaultOptions, options);
       this.watchers = {};
+      this.instance = instance;
 
       this.initState();
       this.options.created.call(instance);
@@ -125,21 +132,50 @@ var SparrowCore = function () {
   }, {
     key: 'initState',
     value: function initState() {
-      (0, _observer.createChildObserver)(this.data);
+      (0, _observable.createObservable)(this.data);
+
+      //for (let i in this.data) {
+      //  this.instance[i] = this.data[i];
+      //}
+
       console.log(this.data);
     }
   }, {
-    key: 'notify',
-    value: function notify(key) {
-      var _this = this;
+    key: 'addWatcher',
+    value: function addWatcher(path, $element, callback) {
+      var paths = path.split('.');
+      var current = void 0;
+      var previous = this.data;
+      var key = void 0;
 
-      if (!this.watchers[key]) {
-        return;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = paths[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          key = _step.value;
+
+          current = previous[key];
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
 
-      $.each(this.watchers[key], function (i, e) {
-        e.callback(e.element, _this.data[key]);
-      });
+      previous.__ob__.get(key).addWatcher(new _watcher2.default(key, $element, callback));
+
+      return this;
     }
   }, {
     key: 'marshalElement',
@@ -158,178 +194,8 @@ var SparrowCore = function () {
 exports.default = SparrowCore;
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
- * @license    GNU General Public License version 2 or later.
- */
-
-var Dispatcher = function () {
-  function Dispatcher() {
-    var watchers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-    _classCallCheck(this, Dispatcher);
-
-    this.watchers = watchers;
-  }
-
-  _createClass(Dispatcher, [{
-    key: "notify",
-    value: function notify() {
-      this.watchers.forEach(function () {
-        this.update();
-      });
-    }
-  }]);
-
-  return Dispatcher;
-}();
-
-exports.default = Dispatcher;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-exports.createChildObserver = createChildObserver;
-exports.defineReactive = defineReactive;
-
-var _dispatcher = __webpack_require__(1);
-
-var _dispatcher2 = _interopRequireDefault(_dispatcher);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Observer = function () {
-  function Observer(value) {
-    var dispatcher = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    _classCallCheck(this, Observer);
-
-    this.value = value;
-    this.dispatcher = dispatcher || new _dispatcher2.default();
-
-    this.prepareProperties(value);
-  }
-
-  _createClass(Observer, [{
-    key: 'prepareProperties',
-    value: function prepareProperties(value) {
-      if (Array.isArray(value)) {
-        value.forEach(function () {
-          createChildObserver(this);
-        });
-      } else {
-        var keys = Object.keys(value);
-
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var key = _step.value;
-
-            defineReactive(value, key, value[key]);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      }
-    }
-  }]);
-
-  return Observer;
-}();
-
-exports.default = Observer;
-function createChildObserver(value) {
-  if (value === null || (typeof value === 'undefined' ? 'undefined' : _typeof(value)) !== 'object') {
-    return;
-  }
-
-  if (!value.hasOwnProperty('__ob__') || !(value.__ob__ instanceof Observer)) {
-    Object.defineProperty(value, '__ob__', {
-      value: new Observer(value),
-      enumerable: false
-    });
-  }
-
-  return value.__ob__;
-}
-
-function defineReactive(object, key, value) {
-  var property = Object.getOwnPropertyDescriptor(object, key);
-
-  if (property && property.configurable === false) {
-    return;
-  }
-
-  var getter = property && property.get;
-  var setter = property && property.set;
-
-  var childObserver = createChildObserver(value);
-
-  Object.defineProperty(object, key, {
-    get: function get() {
-      //value = getter ? getter.call(object) : value;
-
-      return value;
-    },
-    set: function set(newValue) {
-      // Loop deep
-      createChildObserver(newValue);
-
-      object.data[key] = newValue;
-    }
-  });
-}
-
-/***/ }),
+/* 1 */,
+/* 2 */,
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -375,10 +241,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function bind(selector, key, callback) {
         var $element = core.marshalElement(selector);
 
-        if (!core.watchers[key]) {
-          core.watchers[key] = [];
-        }
-
         // Default callback
         if (typeof callback === 'string') {
           var name = callback;
@@ -404,10 +266,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           };
         }
 
-        core.watchers[key].push({
-          element: $element,
-          callback: callback
-        });
+        core.addWatcher(key, $element, callback);
 
         return this;
       }
@@ -429,12 +288,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'model',
       value: function model(selector, key) {
-        var _this = this;
-
         var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
         this.bind(selector, key, 'value').on(selector, 'change', function (event) {
-          _this[key] = $(event.target).val();
+          core.data[key] = $(event.target).val();
         }, delegate);
       }
     }]);
@@ -463,6 +320,290 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   window.Sparrow = Sparrow;
 })(jQuery);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+exports.createObservable = createObservable;
+exports.defineReactive = defineReactive;
+
+var _collection = __webpack_require__(5);
+
+var _collection2 = _interopRequireDefault(_collection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Observerable = function () {
+  function Observerable() {
+    var watchers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+    _classCallCheck(this, Observerable);
+
+    this.watchers = watchers;
+  }
+
+  _createClass(Observerable, [{
+    key: 'addWatcher',
+    value: function addWatcher(watcher) {
+      this.watchers.push(watcher);
+    }
+  }, {
+    key: 'notify',
+    value: function notify(value, oldValue) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.watchers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var watcher = _step.value;
+
+          watcher.update(value, oldValue);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return Observerable;
+}();
+
+exports.default = Observerable;
+function createObservable(value) {
+  if (Array.isArray(value)) {
+    value.forEach(function () {
+      createObservable(this);
+    });
+  } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value !== null) {
+    if (!value.hasOwnProperty('__ob__') || !(value.__ob__ instanceof _collection2.default)) {
+      Object.defineProperty(value, '__ob__', {
+        value: new _collection2.default(),
+        enumerable: false
+      });
+    }
+
+    var keys = Object.keys(value);
+
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var key = _step2.value;
+
+        value.__ob__.add(key, defineReactive(value, key, value[key]));
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+
+    return value.__ob__;
+  }
+}
+
+function defineReactive(object, key, value) {
+  var property = Object.getOwnPropertyDescriptor(object, key);
+  var observable = new Observerable();
+
+  if (property && property.configurable === false) {
+    return;
+  }
+
+  var getter = property && property.get;
+  var setter = property && property.set;
+
+  var childObserver = createObservable(value);
+
+  Object.defineProperty(object, key, {
+    get: function get() {
+      //value = getter ? getter.call(object) : value;
+
+      return value;
+    },
+    set: function set(newValue) {
+      createObservable(object, key, newValue);
+
+      observable.notify(newValue, value);
+
+      value = newValue;
+    }
+  });
+
+  return observable;
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
+ */
+
+var ObservableCollection = function () {
+  function ObservableCollection() {
+    var observables = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, ObservableCollection);
+
+    this.observables = observables;
+  }
+
+  _createClass(ObservableCollection, [{
+    key: 'get',
+    value: function get(name) {
+      if (this.has(name)) {
+        return this.observables[name];
+      }
+
+      return null;
+    }
+  }, {
+    key: 'has',
+    value: function has(name) {
+      return typeof this.observables[name] !== 'undefined';
+    }
+  }, {
+    key: 'add',
+    value: function add(name, observable) {
+      this.observables[name] = observable;
+
+      return this;
+    }
+  }, {
+    key: 'remove',
+    value: function remove(name) {
+      delete this.observables[name];
+
+      return this;
+    }
+  }, {
+    key: 'getAll',
+    value: function getAll() {
+      return this.observables;
+    }
+  }, {
+    key: 'notify',
+    value: function notify(name) {
+      var observable = this.get(name);
+
+      if (observable) {
+        observable.notify();
+      }
+    }
+  }, {
+    key: Symbol.iterator,
+    value: function value() {
+      return this.observables;
+    }
+  }]);
+
+  return ObservableCollection;
+}();
+
+exports.default = ObservableCollection;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
+ */
+
+var Watcher = function () {
+  function Watcher(key, $element, callback) {
+    _classCallCheck(this, Watcher);
+
+    this.key = key;
+    this.callback = callback;
+    this.$element = $element;
+  }
+
+  _createClass(Watcher, [{
+    key: "update",
+    value: function update(value) {
+      var oldValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      this.callback(this.$element, value, oldValue);
+    }
+  }]);
+
+  return Watcher;
+}();
+
+exports.default = Watcher;
 
 /***/ })
 /******/ ]);

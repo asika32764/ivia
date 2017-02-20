@@ -5,7 +5,8 @@
  * @license    GNU General Public License version 2 or later.
  */
 
-import { createChildObserver } from './observer/observer';
+import { createObservable } from './observer/observable';
+import Watcher from './observer/watcher';
 
 /**
  * Default options.
@@ -24,6 +25,7 @@ export default class SparrowCore {
     this.data = options.data;
     this.options = $.extend(true, {}, defaultOptions, options);
     this.watchers = {};
+    this.instance = instance;
 
     this.initState();
     this.options.created.call(instance);
@@ -35,18 +37,28 @@ export default class SparrowCore {
   }
 
   initState() {
-    createChildObserver(this.data);
+    createObservable(this.data);
+
+    //for (let i in this.data) {
+    //  this.instance[i] = this.data[i];
+    //}
+
     console.log(this.data);
   }
 
-  notify(key) {
-    if (!this.watchers[key]) {
-      return;
+  addWatcher(path, $element, callback) {
+    let paths = path.split('.');
+    let current;
+    let previous = this.data;
+    let key;
+
+    for (key of paths) {
+      current = previous[key];
     }
 
-    $.each(this.watchers[key], (i, e) => {
-      e.callback(e.element, this.data[key]);
-    });
+    previous.__ob__.get(key).addWatcher(new Watcher(key, $element, callback));
+
+    return this;
   }
 
   marshalElement ($element) {

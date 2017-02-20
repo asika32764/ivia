@@ -6,11 +6,13 @@
  */
 
 export default class Watcher {
-  constructor () {
-
+  constructor (key, $element, callback) {
+    this.key = key;
+    this.callback = callback;
+    this.$element = $element;
   }
 
-  update() {
-
+  update(value, oldValue = null) {
+    this.callback(this.$element, value, oldValue);
   }
 }

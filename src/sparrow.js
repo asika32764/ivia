@@ -25,10 +25,6 @@ import SparrowCore from './core';
     bind(selector, key, callback) {
       const $element = core.marshalElement(selector);
 
-      if (!core.watchers[key]) {
-        core.watchers[key] = [];
-      }
-
       // Default callback
       if (typeof callback === 'string') {
         const name = callback;
@@ -54,10 +50,7 @@ import SparrowCore from './core';
         };
       }
 
-      core.watchers[key].push({
-        element: $element,
-        callback: callback
-      });
+      core.addWatcher(key, $element, callback);
 
       return this;
     }
@@ -78,7 +71,7 @@ import SparrowCore from './core';
       this
         .bind(selector, key, 'value')
         .on(selector, 'change', event => {
-          this[key] = $(event.target).val();
+          core.data[key] = $(event.target).val();
         }, delegate);
     }
   }
