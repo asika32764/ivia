@@ -66,18 +66,19 @@
 	var sp = new Sparrow({
 		el: $('#sparrow-form'),
 		data: {
-			foo: 'bar',
+			foo: {
+			    bar: {
+			        yoo: 'goo'
+          }
+      },
       flower: 'sakura',
       yoo: null,
       items: [
           'a', 'b', {foo: 'yoo'}
-      ],
-      flower: {
-			    sakura: 'bloom'
-      }
+      ]
 		},
     created: function () {
-      this.model('#inputEmail3', 'foo');
+      this.model('#inputEmail3', 'foo.bar.yoo');
     },
 		methods: {
 

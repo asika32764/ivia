@@ -5,8 +5,8 @@
  * @license    GNU General Public License version 2 or later.
  */
 
-import { createObservable } from './observer/observable';
-import Watcher from './observer/watcher';
+import { ObserverFactory } from './observer/observer';
+import Watcher from "./observer/watcher";
 
 /**
  * Default options.
@@ -15,9 +15,16 @@ import Watcher from './observer/watcher';
  */
 const defaultOptions = {};
 
-export default class SparrowCore {
+let uid = 0;
+
+export default class Application {
   constructor ($) {
+    this.id = ++uid;
     this.$ = $;
+    this.watchers = [];
+    this.observerFactory = new ObserverFactory(this);
+    this.currentWatcher = null;
+    this.watcherStack = [];
   }
 
   init(instance, options = {}) {
@@ -25,7 +32,7 @@ export default class SparrowCore {
     this.data = options.data;
     this.options = $.extend(true, {}, defaultOptions, options);
     this.watchers = {};
-    this.instance = instance;
+    this.app = instance;
 
     this.initState();
     this.options.created.call(instance);
@@ -37,7 +44,7 @@ export default class SparrowCore {
   }
 
   initState() {
-    createObservable(this.data);
+    this.observerFactory.create(this.data);
 
     //for (let i in this.data) {
     //  this.instance[i] = this.data[i];
@@ -47,16 +54,7 @@ export default class SparrowCore {
   }
 
   addWatcher(path, $element, callback) {
-    let paths = path.split('.');
-    let current;
-    let previous = this.data;
-    let key;
-
-    for (key of paths) {
-      current = previous[key];
-    }
-
-    previous.__ob__.get(key).addWatcher(new Watcher(key, $element, callback));
+    const watcher = new Watcher(this, path, callback);
 
     return this;
   }
@@ -67,5 +65,17 @@ export default class SparrowCore {
     }
 
     return $element;
+  }
+
+  pushStack (watcher) {
+    if (this.currentWatcher) {
+      this.watcherStack.push(this.currentWatcher);
+    }
+
+    this.currentWatcher = watcher;
+  }
+
+  popStack () {
+    this.currentWatcher = this.watcherStack.pop();
   }
 }

@@ -5,7 +5,7 @@
  * @license    GNU General Public License version 2 or later.
  */
 
-import SparrowCore from './core';
+import Application from './app';
 
 ;(function ($) {
   /**
@@ -15,15 +15,14 @@ import SparrowCore from './core';
    */
   const plugin = "sparrow";
 
-  const core = new SparrowCore($);
-
   class Sparrow {
     constructor (options = {}) {
-      core.init(this, options);
+      this.app = new Application($);
+      this.app.init(this, options);
     }
 
-    bind(selector, key, callback) {
-      const $element = core.marshalElement(selector);
+    bind (selector, key, callback) {
+      const $element = this.app.marshalElement(selector);
 
       // Default callback
       if (typeof callback === 'string') {
@@ -50,13 +49,13 @@ import SparrowCore from './core';
         };
       }
 
-      core.addWatcher(key, $element, callback);
+      this.app.addWatcher(key, $element, callback);
 
       return this;
     }
 
-    on(selector, eventName, callback, delegate = false) {
-      const $element = core.marshalElement(selector);
+    on (selector, eventName, callback, delegate = false) {
+      const $element = this.app.marshalElement(selector);
 
       if (delegate) {
         this.$el.on(eventName, selector, callback);
@@ -67,11 +66,11 @@ import SparrowCore from './core';
       return this;
     }
 
-    model(selector, key, delegate = false) {
+    model (selector, key, delegate = false) {
       this
         .bind(selector, key, 'value')
         .on(selector, 'change', event => {
-          core.data[key] = $(event.target).val();
+          this.app.data[key] = $(event.target).val();
         }, delegate);
     }
   }
