@@ -6,6 +6,7 @@
  */
 
 import Application from './app';
+import Utilities from "./util/utilities";
 
 ;(function ($) {
   /**
@@ -21,35 +22,37 @@ import Application from './app';
       this.app.init(this, options);
     }
 
-    bind (selector, key, callback) {
+    bind (selector, key, callback, conditions = {}) {
       const $element = this.app.marshalElement(selector);
 
       // Default callback
       if (typeof callback === 'string') {
         const name = callback;
-        callback = ($input, value) => {
+        callback = ($element, value) => {
           switch (name) {
             case ':html':
-              $input.html(value);
+              $element.html(value);
               break;
 
             case ':text':
-              $input.text(value);
+              $element.text(value);
               break;
 
             case 'value':
-              if ($input[0].tagName === 'INPUT') {
-                $input.val(value);
+              if ($element[0].tagName === 'INPUT') {
+                $element.val(value);
                 break;
               }
 
             default:
-              $input.attr(name, value);
+              $element.attr(name, value);
           }
         };
       }
 
-      this.app.addWatcher(key, $element, callback);
+      this.app.watch(key, $element, (value, oldValue) => {
+        callback($element, value, oldValue);
+      });
 
       return this;
     }

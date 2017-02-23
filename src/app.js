@@ -7,6 +7,8 @@
 
 import { ObserverFactory } from './observer/observer';
 import Watcher from "./observer/watcher";
+import Registry from "./util/registry";
+import Scheduler from "./observer/scheduler";
 
 /**
  * Default options.
@@ -22,9 +24,13 @@ export default class Application {
     this.id = ++uid;
     this.$ = $;
     this.watchers = [];
-    this.observerFactory = new ObserverFactory(this);
     this.currentWatcher = null;
     this.watcherStack = [];
+
+    this.registry = new Registry(this, {
+      'observerFactory': new ObserverFactory(this),
+      'scheduler': new Scheduler(this)
+    });
   }
 
   init(instance, options = {}) {
@@ -53,7 +59,7 @@ export default class Application {
     console.log(this.data);
   }
 
-  addWatcher(path, $element, callback) {
+  watch (path, $element, callback) {
     const watcher = new Watcher(this, path, callback);
 
     return this;

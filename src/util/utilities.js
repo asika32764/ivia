@@ -117,6 +117,10 @@ export default class Utilities {
   static isPlainObject (data) {
     return Object.prototype.toString.call(data) === '[object Object]';
   }
+
+  static isNative (object) {
+    return /native code/.test(object.toString());
+  }
 }
 
 function remove (data, key) {

@@ -15,6 +15,10 @@ export default class Watcher {
     this.path = path;
     this.callback = callback;
     this.app = app;
+    this.active = true;
+    this.deep = false;
+    this.user = false;
+    this.sync = false;
     this.options  = options;
     this.dispatcherIds = [];
     this.dispatchers = [];
@@ -48,8 +52,25 @@ export default class Watcher {
     return value;
   }
 
-  run () {
+  update () {
+    if (this.sync) {
+      this.run();
+    } else {
+      this.app.scheduler.enqueueWatcher(this);
+    }
+  }
 
+  run () {
+    if (this.active) {
+      const value = this.get();
+
+      if (value !== this.value || this.deep || Utilities.isObject(value)) {
+        const oldValue = this.value;
+        this.value = value;
+
+        this.callback.call(this.app, value, oldValue);
+      }
+    }
   }
 
   resetDispatchers () {
@@ -85,5 +106,11 @@ export default class Watcher {
 
   removeDispatcher (dispatcher) {
     Utilities.removeElement(this.dispatchers, dispatcher);
+  }
+
+  teardown () {
+    for (let dispatcher of this.dispatchers) {
+      dispatcher.detach(this);
+    }
   }
 }
