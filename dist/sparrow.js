@@ -175,7 +175,7 @@ var Dispatcher = function () {
     key: "notify",
     value: function notify() {
       this.watchers.forEach(function (watcher) {
-        return watcher.run();
+        return watcher.update();
       });
     }
   }]);
@@ -208,15 +208,19 @@ var _utilities = __webpack_require__(2);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _dispatcher = __webpack_require__(0);
-
-var _dispatcher2 = _interopRequireDefault(_dispatcher);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var uid = 0;
+
+var defaultOptions = {
+  deep: false,
+  user: false,
+  sync: false,
+  computed: false,
+  deferred: false
+};
 
 var Watcher = function () {
   function Watcher(app, path, callback) {
@@ -224,33 +228,37 @@ var Watcher = function () {
 
     _classCallCheck(this, Watcher);
 
+    this.options = app.$.extend({}, defaultOptions, options);
+
     this.id = ++uid;
     this.path = path;
     this.callback = callback;
     this.app = app;
     this.active = true;
-    this.deep = false;
-    this.user = false;
-    this.sync = false;
-    this.options = options;
+    this.deep = this.options.deep;
+    this.user = this.options.user;
+    this.sync = this.options.sync;
+    this.computed = this.options.computed;
+    this.deferred = this.options.deferred;
+    this.expression = ''; // TODO: print handler string if DEBUG
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
     this.newDisptachers = [];
 
-    if (typeof path === 'function') {
-      this.getter = path;
+    if (typeof this.path === 'function') {
+      this.getter = this.path;
     } else {
       this.getter = function (value) {
         return _utilities2.default.get(value, path);
       };
     }
 
-    this.value = this.get();
+    this.value = this.computed ? undefined : this.get();
   }
 
   _createClass(Watcher, [{
-    key: "get",
+    key: 'get',
     value: function get() {
       this.app.pushStack(this);
 
@@ -267,16 +275,18 @@ var Watcher = function () {
       return value;
     }
   }, {
-    key: "update",
+    key: 'update',
     value: function update() {
-      if (this.sync) {
+      if (this.computed) {
+        this.deferred = true;
+      } else if (this.sync) {
         this.run();
       } else {
         this.app.scheduler.enqueueWatcher(this);
       }
     }
   }, {
-    key: "run",
+    key: 'run',
     value: function run() {
       if (this.active) {
         var value = this.get();
@@ -290,7 +300,24 @@ var Watcher = function () {
       }
     }
   }, {
-    key: "resetDispatchers",
+    key: 'getCachedValue',
+    value: function getCachedValue() {
+      if (this.defer) {
+        this.get();
+        this.defer = false;
+      }
+
+      // Push all dispatchers of this watcher to current active watcher.
+      if (this.app.currentWatcher) {
+        for (var k in this.watcher.dispatchers) {
+          this.dispatchers[k].attach(this.app.currentWatcher);
+        }
+      }
+
+      return this.value;
+    }
+  }, {
+    key: 'resetDispatchers',
     value: function resetDispatchers() {
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -331,7 +358,7 @@ var Watcher = function () {
       this.newDisptacherIds.length = 0;
     }
   }, {
-    key: "addDispatcher",
+    key: 'addDispatcher',
     value: function addDispatcher(dispatcher) {
       var id = dispatcher.id;
       if (this.newDisptacherIds.indexOf(id) === -1) {
@@ -344,12 +371,12 @@ var Watcher = function () {
       }
     }
   }, {
-    key: "removeDispatcher",
+    key: 'removeDispatcher',
     value: function removeDispatcher(dispatcher) {
       _utilities2.default.removeElement(this.dispatchers, dispatcher);
     }
   }, {
-    key: "teardown",
+    key: 'teardown',
     value: function teardown() {
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -543,6 +570,12 @@ var Utilities = function () {
       return (/native code/.test(object.toString())
       );
     }
+  }, {
+    key: 'isReserved',
+    value: function isReserved(string) {
+      var str = (string + '').charCodeAt(0);
+      return str === '$' || str === '_';
+    }
   }]);
 
   return Utilities;
@@ -589,6 +622,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    GNU General Public License version 2 or later.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
+exports.proxy = proxy;
+
 var _observer = __webpack_require__(4);
 
 var _watcher = __webpack_require__(1);
@@ -603,6 +638,14 @@ var _scheduler = __webpack_require__(6);
 
 var _scheduler2 = _interopRequireDefault(_scheduler);
 
+var _error = __webpack_require__(10);
+
+var _error2 = _interopRequireDefault(_error);
+
+var _utilities = __webpack_require__(2);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -612,7 +655,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * @type {Object}
  */
-var defaultOptions = {};
+var defaultOptions = {
+  data: {}
+};
 
 var uid = 0;
 
@@ -628,7 +673,8 @@ var Application = function () {
 
     this.registry = new _registry2.default(this, {
       'observerFactory': new _observer.ObserverFactory(this),
-      'scheduler': new _scheduler2.default(this)
+      'scheduler': new _scheduler2.default(this),
+      'error': new _error2.default()
     });
   }
 
@@ -639,32 +685,30 @@ var Application = function () {
 
       this.$el = this.marshalElement.call(options.el);
       this.data = options.data;
-      this.options = $.extend(true, {}, defaultOptions, options);
+      this.options = this.$.extend({}, defaultOptions, options);
       this.watchers = {};
-      this.app = instance;
+      this.instance = instance;
 
-      this.initState();
-      this.options.created.call(instance);
+      initState(this);
+
+      // Lifecycle
+      this.hook('created');
 
       // Push properties back to instance
-      instance.$ = $;
+      instance.$ = this.$;
       instance.$el = this.$el;
-      instance.data = this.data;
+      instance.$data = this.options.data;
     }
   }, {
-    key: "initState",
-    value: function initState() {
-      this.observerFactory.create(this.data);
-
-      //for (let i in this.data) {
-      //  this.instance[i] = this.data[i];
-      //}
-
-      console.log(this.data);
+    key: "hook",
+    value: function hook(name) {
+      if (this.options.hasOwnProperty(name) && typeof this.options[name] === 'function') {
+        this.options[name].call(this.instance);
+      }
     }
   }, {
     key: "watch",
-    value: function watch(path, $element, callback) {
+    value: function watch(path, callback) {
       var watcher = new _watcher2.default(this, path, callback);
 
       return this;
@@ -698,6 +742,122 @@ var Application = function () {
 }();
 
 exports.default = Application;
+
+
+function initState(app) {
+  // TODO: Init Props
+  initData(app, app.options.data);
+
+  if (app.options.methods) {
+    initMethods(app, app.options.methods);
+  }
+
+  if (app.options.computed) {
+    initComputed(app, app.options.computed);
+  }
+
+  if (app.options.watch) {
+    initWatchers(app, app.options.watch);
+  }
+}
+
+function initData(app, data) {
+  // TODO: Check no props conflict
+  for (var key in data) {
+    if (!_utilities2.default.isReserved(key)) {
+      proxy(app.instance, data, key);
+    }
+  }
+
+  app.observerFactory.create(data);
+}
+
+function initMethods(app, methods) {
+  var _loop = function _loop(key) {
+    var method = app.methods[key];
+    if (!app.options.data[key] && typeof method === 'function') {
+      // Faster binding function
+      app.instance[key] = function (arg) {
+        var len = arguments.length;
+        if (len === 1) {
+          return method.call(app, arg);
+        } else if (len === 0) {
+          return method.call(app);
+        }
+
+        return method.apply(app, arguments);
+      };
+    }
+  };
+
+  for (var key in methods) {
+    _loop(key);
+  }
+}
+
+function initWatchers(app, watches) {
+  for (var key in watches) {
+    var handler = watches[key];
+    var options = void 0;
+
+    if (_utilities2.default.isPlainObject(handler)) {
+      options = handler;
+      handler = handler.handler;
+    }
+
+    if (typeof handler === 'string') {
+      handler = app[handler];
+    }
+
+    app.watch(key, handler, options);
+  }
+}
+
+function initComputed(app, computed) {
+  var _loop2 = function _loop2(key) {
+    var handler = computed[key];
+    var setter = _utilities.nullFunction;
+    var getter = void 0;
+    var cache = void 0;
+
+    getter = typeof handler === 'function' ? handler : handler.get;
+
+    var watcher = new _watcher2.default(app, key, getter, { lazy: true });
+
+    if (!app.hasOwnProperty(key)) {
+
+      if (typeof handler !== 'function') {
+        setter = handler.set;
+        cache = handler.cache;
+        getter = cache === false ? _utilities.nullFunction : function () {
+          return watcher.getCachedValue();
+        };
+      }
+
+      Object.defineProperty(app.data, key, {
+        enumerable: true,
+        configurable: true,
+        get: getter,
+        set: setter
+      });
+    }
+  };
+
+  for (var key in computed) {
+    _loop2(key);
+  }
+}
+
+function proxy(target, source, key) {
+  Object.defineProperty(target, key, {
+    get: function proxyGetter() {
+      return source[key];
+    },
+    set: function proxySetter(value) {
+      source[key] = value;
+    }
+  });
+}
 
 /***/ }),
 /* 4 */
@@ -1012,7 +1172,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           };
         }
 
-        this.app.watch(key, $element, function (value, oldValue) {
+        this.app.watch(key, function (value, oldValue) {
           callback($element, value, oldValue);
         });
 
@@ -1041,7 +1201,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
         this.bind(selector, key, 'value').on(selector, 'change', function (event) {
-          _this.app.data[key] = $(event.target).val();
+          return _utilities2.default.set(_this.app.data, key, _this.app.$(event.target).val());
+        }, delegate).on(selector, 'keyup', function (event) {
+          return _utilities2.default.set(_this.app.data, key, _this.app.$(event.target).val());
         }, delegate);
       }
     }]);
@@ -1081,7 +1243,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TaskQueue = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Part of sparrow project.
@@ -1091,9 +1252,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _utilities = __webpack_require__(2);
+var _queue = __webpack_require__(9);
 
-var _environment = __webpack_require__(7);
+var _queue2 = _interopRequireDefault(_queue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1117,17 +1280,17 @@ var Scheduler = function () {
   }
 
   _createClass(Scheduler, [{
-    key: "setState",
+    key: 'setState',
     value: function setState(state) {
       this.state = state;
     }
   }, {
-    key: "is",
+    key: 'is',
     value: function is(state) {
       return this.state === state;
     }
   }, {
-    key: "enqueueWatcher",
+    key: 'enqueueWatcher',
     value: function enqueueWatcher(watcher) {
       // Make sure watcher is already in queue
       if (!this.watchers[watcher.id]) {
@@ -1139,7 +1302,7 @@ var Scheduler = function () {
 
             this.setState(State.RUNNING);
 
-            TaskQueue.nextTick(this.execute);
+            _queue2.default.nextTick(this.execute, this);
             break;
 
           case State.RUNNING:
@@ -1151,12 +1314,12 @@ var Scheduler = function () {
               i--;
             }
 
-            this.queue.splice(Math.max(i, index) + 1, 0, watcher);
+            this.queue.splice(Math.max(i, this.index) + 1, 0, watcher);
         }
       }
     }
   }, {
-    key: "execute",
+    key: 'execute',
     value: function execute() {
       // Sort queue before flush.
       // This ensures that:
@@ -1220,7 +1383,7 @@ var Scheduler = function () {
       this.reset();
     }
   }, {
-    key: "reset",
+    key: 'reset',
     value: function reset() {
       this.queue.length = 0;
       this.watchers = {};
@@ -1233,122 +1396,6 @@ var Scheduler = function () {
 }();
 
 exports.default = Scheduler;
-var TaskQueue = exports.TaskQueue = {
-  pending: false,
-  tasks: [],
-  handler: null,
-  nextTick: function nextTick(callback, app) {
-    var handler = this.getHandler();
-
-    var _resolve = void 0;
-    this.tasks.push(function () {
-      if (callback) {
-        callback.call(app);
-      }
-
-      if (_resolve) {
-        _resolve(app);
-      }
-    });
-
-    if (!this.pending) {
-      this.pending = true;
-      handler();
-    }
-
-    if (!callback && typeof Promise !== 'undefined') {
-      return new Promise(function (resolve) {
-        _resolve = resolve;
-      });
-    }
-  },
-  execute: function execute() {
-    this.pending = false;
-    var tasks = this.tasks.slice(0);
-    this.tasks.length = 0;
-
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = tasks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var task = _step2.value;
-
-        task();
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
-  },
-  /**
-   * This method based on Vue.$nextTick to handle callback asynchronously.
-   */
-  getHandler: function getHandler() {
-    var _this = this;
-
-    if (typeof this.handler !== 'function') {
-      // the nextTick behavior leverages the microtask queue, which can be accessed
-      // via either native Promise.then or MutationObserver.
-      // MutationObserver has wider support, however it is seriously bugged in
-      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
-      // completely stops working after triggering a few times... so, if native
-      // Promise is available, we will use it:
-      /* istanbul ignore if */
-      if (typeof Promise !== 'undefined' && _utilities.Utilities.isNative(Promise)) {
-        var p = Promise.resolve();
-        this.handler = function () {
-          p.then(_this.execute).catch(function (err) {
-            return console.error(err);
-          });
-
-          // in problematic UIWebViews, Promise.then doesn't completely break, but
-          // it can get stuck in a weird state where callbacks are pushed into the
-          // microtask queue but the queue isn't being flushed, until the browser
-          // needs to do some other work, e.g. handle a timer. Therefore we can
-          // "force" the microtask queue to be flushed by adding an empty timer.
-          if (_environment.isIOS) {
-            setTimeout(_utilities.nullFunction);
-          }
-        };
-      } else if (typeof MutationObserver !== 'undefined' && (_utilities.Utilities.isNative(MutationObserver) ||
-      // PhantomJS and iOS 7.x
-      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
-        // use MutationObserver where native Promise is not available,
-        // e.g. PhantomJS IE11, iOS7, Android 4.4
-        var counter = 1;
-        var observer = new MutationObserver(this.execute);
-        var textNode = document.createTextNode(String(counter));
-        observer.observe(textNode, {
-          characterData: true
-        });
-        this.handler = function () {
-          counter = (counter + 1) % 2;
-          textNode.data = String(counter);
-        };
-      } else {
-        // fallback to setTimeout
-        /* istanbul ignore next */
-        this.handler = function () {
-          setTimeout(_this.execute, 0);
-        };
-      }
-    }
-
-    return this.handler;
-  }
-};
 
 /***/ }),
 /* 7 */
@@ -1438,6 +1485,195 @@ var Registry = function () {
 }();
 
 exports.default = Registry;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utilities = __webpack_require__(2);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+var _environment = __webpack_require__(7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TaskQueue = {
+  pending: false,
+  tasks: [],
+  handler: null,
+  nextTick: function nextTick(callback, app) {
+    var handler = this.getHandler();
+
+    var _resolve = void 0;
+    this.tasks.push(function () {
+      if (callback) {
+        callback.call(app);
+      }
+
+      if (_resolve) {
+        _resolve(app);
+      }
+    });
+
+    if (!this.pending) {
+      this.pending = true;
+      handler();
+    }
+
+    if (!callback && typeof Promise !== 'undefined') {
+      return new Promise(function (resolve) {
+        _resolve = resolve;
+      });
+    }
+  },
+  execute: function execute() {
+    TaskQueue.pending = false;
+    var tasks = TaskQueue.tasks.slice(0);
+    TaskQueue.tasks.length = 0;
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var task = _step.value;
+
+        task();
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  },
+  /**
+   * This method based on Vue.$nextTick to handle callback asynchronously.
+   */
+  getHandler: function getHandler() {
+    var _this = this;
+
+    if (typeof this.handler !== 'function') {
+      // the nextTick behavior leverages the microtask queue, which can be accessed
+      // via either native Promise.then or MutationObserver.
+      // MutationObserver has wider support, however it is seriously bugged in
+      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
+      // completely stops working after triggering a few times... so, if native
+      // Promise is available, we will use it:
+      /* istanbul ignore if */
+      if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
+        var p = Promise.resolve();
+        this.handler = function () {
+          p.then(_this.execute).catch(function (err) {
+            return console.error(err);
+          });
+
+          // in problematic UIWebViews, Promise.then doesn't completely break, but
+          // it can get stuck in a weird state where callbacks are pushed into the
+          // microtask queue but the queue isn't being flushed, until the browser
+          // needs to do some other work, e.g. handle a timer. Therefore we can
+          // "force" the microtask queue to be flushed by adding an empty timer.
+          if (_environment.isIOS) {
+            setTimeout(_utilities.nullFunction);
+          }
+        };
+      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
+      // PhantomJS and iOS 7.x
+      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
+        // use MutationObserver where native Promise is not available,
+        // e.g. PhantomJS IE11, iOS7, Android 4.4
+        var counter = 1;
+        var observer = new MutationObserver(this.execute);
+        var textNode = document.createTextNode(String(counter));
+        observer.observe(textNode, {
+          characterData: true
+        });
+        this.handler = function () {
+          counter = (counter + 1) % 2;
+          textNode.data = String(counter);
+        };
+      } else {
+        // fallback to setTimeout
+        /* istanbul ignore next */
+        this.handler = function () {
+          setTimeout(_this.execute, 0);
+        };
+      }
+    }
+
+    return this.handler;
+  }
+}; /**
+    * Part of sparrow project.
+    *
+    * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+    * @license    __LICENSE__
+    */
+
+exports.default = TaskQueue;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var ErrorHandler = function () {
+  function ErrorHandler(app) {
+    _classCallCheck(this, ErrorHandler);
+
+    this.app = app;
+  }
+
+  _createClass(ErrorHandler, [{
+    key: "warn",
+    value: function warn(message) {
+      console.warn(message);
+    }
+  }, {
+    key: "log",
+    value: function log(message) {
+      console.log(message);
+    }
+  }]);
+
+  return ErrorHandler;
+}();
+
+exports.default = ErrorHandler;
 
 /***/ })
 /******/ ]);

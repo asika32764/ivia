@@ -37,16 +37,19 @@
 		</div>
 
 		<fieldset class="form-horizontal">
-			<div id="inputEmail3-control" class="form-group">
-				<label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+			<div id="inputName-control" class="form-group">
+				<label for="inputName" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
-					<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+					<input type="text" class="form-control" id="inputName" placeholder="Name">
 				</div>
 			</div>
+      <p id="email-desc">
+
+      </p>
 			<div id="inputPassword3-control" class="form-group">
 				<label for="inputPassword3" class="col-sm-2 control-label">Password</label>
 				<div class="col-sm-10">
-					<input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+					<input type="text" class="form-control" id="inputPassword3" placeholder="Password">
 				</div>
 			</div>
 			<div id="inputCheckbox-control" class="form-group">
@@ -78,7 +81,8 @@
       ]
 		},
     created: function () {
-      this.model('#inputEmail3', 'foo.bar.yoo');
+      this.model('#inputName', 'foo.bar.yoo');
+      this.bind('#email-desc', 'foo.bar.yoo', ':text');
     },
 		methods: {
 

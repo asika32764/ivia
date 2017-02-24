@@ -66,6 +66,6 @@ export default class Dispatcher {
    * Notify all watchers to update themselves.
    */
   notify () {
-    this.watchers.forEach(watcher => watcher.run());
+    this.watchers.forEach(watcher => watcher.update());
   }
 }

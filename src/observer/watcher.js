@@ -4,36 +4,47 @@
  * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
  * @license    __LICENSE__
  */
-  import Utilities from "../util/utilities";
-import Dispatcher from "./dispatcher";
+import Utilities from "../util/utilities";
 
 let uid = 0;
 
+const defaultOptions = {
+  deep: false,
+  user: false,
+  sync: false,
+  computed: false,
+  deferred: false
+};
+
 export default class Watcher {
   constructor (app, path, callback, options = {}) {
+    this.options = app.$.extend({}, defaultOptions, options);
+
     this.id   = ++uid;
     this.path = path;
     this.callback = callback;
     this.app = app;
     this.active = true;
-    this.deep = false;
-    this.user = false;
-    this.sync = false;
-    this.options  = options;
+    this.deep = this.options.deep;
+    this.user = this.options.user;
+    this.sync = this.options.sync;
+    this.computed = this.options.computed;
+    this.deferred = this.options.deferred;
+    this.expression = ''; // TODO: print handler string if DEBUG
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
     this.newDisptachers = [];
 
-    if (typeof path === 'function') {
-      this.getter = path;
+    if (typeof this.path === 'function') {
+      this.getter = this.path;
     } else {
       this.getter = function (value) {
         return Utilities.get(value, path);
       }
     }
 
-    this.value = this.get();
+    this.value = this.computed ? undefined : this.get();
   }
 
   get () {
@@ -53,7 +64,9 @@ export default class Watcher {
   }
 
   update () {
-    if (this.sync) {
+    if (this.computed) {
+      this.deferred = true;
+    } else if (this.sync) {
       this.run();
     } else {
       this.app.scheduler.enqueueWatcher(this);
@@ -71,6 +84,22 @@ export default class Watcher {
         this.callback.call(this.app, value, oldValue);
       }
     }
+  }
+
+  getCachedValue () {
+    if (this.defer) {
+      this.get();
+      this.defer = false;
+    }
+
+    // Push all dispatchers of this watcher to current active watcher.
+    if (this.app.currentWatcher) {
+      for (let k in this.watcher.dispatchers) {
+        this.dispatchers[k].attach(this.app.currentWatcher);
+      }
+    }
+
+    return this.value;
   }
 
   resetDispatchers () {

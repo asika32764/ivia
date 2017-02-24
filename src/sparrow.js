@@ -50,7 +50,7 @@ import Utilities from "./util/utilities";
         };
       }
 
-      this.app.watch(key, $element, (value, oldValue) => {
+      this.app.watch(key, (value, oldValue) => {
         callback($element, value, oldValue);
       });
 
@@ -72,9 +72,8 @@ import Utilities from "./util/utilities";
     model (selector, key, delegate = false) {
       this
         .bind(selector, key, 'value')
-        .on(selector, 'change', event => {
-          this.app.data[key] = $(event.target).val();
-        }, delegate);
+        .on(selector, 'change', event => Utilities.set(this.app.data, key, this.app.$(event.target).val()), delegate)
+        .on(selector, 'keyup', event => Utilities.set(this.app.data, key, this.app.$(event.target).val()), delegate);
     }
   }
 

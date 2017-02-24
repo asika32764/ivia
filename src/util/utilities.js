@@ -121,6 +121,11 @@ export default class Utilities {
   static isNative (object) {
     return /native code/.test(object.toString());
   }
+
+  static isReserved (string) {
+    const str = (string + '').charCodeAt(0);
+    return str === '$' || str === '_';
+  }
 }
 
 function remove (data, key) {
