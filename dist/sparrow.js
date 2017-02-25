@@ -637,6 +637,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 exports.proxy = proxy;
+exports.proxyMethod = proxyMethod;
 
 var _observer = __webpack_require__(6);
 
@@ -667,6 +668,10 @@ var _utilities2 = _interopRequireDefault(_utilities);
 var _promise = __webpack_require__(11);
 
 var _promise2 = _interopRequireDefault(_promise);
+
+var _event = __webpack_require__(12);
+
+var _event2 = _interopRequireDefault(_event);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -700,7 +705,8 @@ var Application = function () {
     this.registry = new _registry2.default(this, {
       'observerFactory': new _observer.ObserverFactory(this),
       'scheduler': new _scheduler2.default(this),
-      'error': new _error2.default()
+      'error': new _error2.default(),
+      'event': new _event2.default(this)
     });
   }
 
@@ -712,10 +718,19 @@ var Application = function () {
       this.options = this.$.extend({}, defaultOptions, options);
       this.data = options.data;
       this.instance = instance;
+
       // Push properties back to instance
       instance.$ = this.$;
       instance.$data = this.options.data;
-      instance.$find = this.find;
+      proxyMethod(instance, this, 'find');
+      proxyMethod(instance, this, 'async');
+      proxyMethod(instance, this, 'mount');
+      proxyMethod(instance, this, 'watch');
+      proxyMethod(instance, this, 'nextTick');
+      proxyMethod(instance, this.event, 'on', true);
+      proxyMethod(instance, this.event, 'off', true);
+      proxyMethod(instance, this.event, 'once', true);
+      proxyMethod(instance, this.event, 'emit', true);
 
       this.hook('beforeCreate');
 
@@ -808,26 +823,11 @@ var Application = function () {
   }, {
     key: "async",
     value: function async(handler) {
-      //const defaultOptions = {
-      //  childList: true,
-      //  attributes: true,
-      //  characterData: true,
-      //  subtree: true
-      //};
-      //
-      //options = this.$.extend({}, defaultOptions, options);
-      //
-      //return new Promise(resolve => {
-      //  const observer = new MutationObserver(() => {
-      //    resolve.call(this.instance);
-      //  });
-      //
-      //  observer.observe(this.$el[0], options);
-      //
-      //  handler.call(this.instance);
-      //});
-
-      return Application.Promise.resolve().then(handler);
+      return new Application.Promise(function (resolve) {
+        Application.Promise.resolve().then(handler).then(function (value) {
+          return resolve(value);
+        });
+      });
     }
   }, {
     key: "pushStack",
@@ -953,7 +953,22 @@ function proxy(target, source, key) {
   });
 }
 
-Application.Promise = typeof Promise === 'undefined' ? _promise2.default : Promise;
+function proxyMethod(target, source, key) {
+  var chain = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+  var methodName = '$' + key;
+  target[methodName] = function () {
+    var r = source[key].apply(source, arguments);
+
+    if (chain) {
+      return target;
+    }
+
+    return r;
+  };
+}
+
+Application.Promise = _promise2.default;
 
 /***/ }),
 /* 4 */
@@ -1748,6 +1763,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return Sparrow;
   }();
 
+  Sparrow.Promise = _app2.default.Promise;
+
   /**
    * Push plugins.
    *
@@ -1755,8 +1772,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *
    * @returns {*}
    */
-
-
   $.fn[plugin] = function (options) {
     if (!$.data(this, plugin)) {
       options.el = this;
@@ -1801,6 +1816,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var $ = window.jQuery;
 
+var uid = 0;
+var events = {};
+
 var PromiseAdapter = function () {
   function PromiseAdapter(callback) {
     _classCallCheck(this, PromiseAdapter);
@@ -1815,27 +1833,43 @@ var PromiseAdapter = function () {
   }
 
   _createClass(PromiseAdapter, [{
-    key: "then",
+    key: 'then',
     value: function then(onFulfilled, onRejected) {
       return this.defer.then(onFulfilled, onRejected);
     }
   }, {
-    key: "catch",
+    key: 'catch',
     value: function _catch(handler) {
       return this.defer.catch(onRejected);
     }
   }], [{
-    key: "all",
+    key: 'all',
     value: function all(promises) {
       return $.when.apply($, _toConsumableArray(promises));
     }
   }, {
-    key: "rase",
-    value: function rase(promises) {
-      return $.when.apply($, _toConsumableArray(promises));
+    key: 'race',
+    value: function race(promises) {
+      var id = ++uid;
+      var eventName = 'sparrow.promise.race.' + id;
+
+      return new PromiseAdapter(function (resolve) {
+        events[eventName] = function (v) {
+          resolve(v);
+          delete events[eventName];
+        };
+
+        promises.map(function (promise) {
+          promise.then(function (v) {
+            if (events.hasOwnProperty(eventName)) {
+              events[eventName](v);
+            }
+          });
+        });
+      });
     }
   }, {
-    key: "resolve",
+    key: 'resolve',
     value: function resolve(object) {
       if (object instanceof PromiseAdapter) {
         object.defer.resolve();
@@ -1854,7 +1888,7 @@ var PromiseAdapter = function () {
       return promise;
     }
   }, {
-    key: "reject",
+    key: 'reject',
     value: function reject(reason) {
       return new PromiseAdapter(function (resolve, reject) {
         return reject(reason);
@@ -1866,6 +1900,141 @@ var PromiseAdapter = function () {
 }();
 
 exports.default = PromiseAdapter;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var EventHandler = function () {
+  function EventHandler(app) {
+    _classCallCheck(this, EventHandler);
+
+    this.app = app;
+    this.events = {};
+  }
+
+  _createClass(EventHandler, [{
+    key: 'on',
+    value: function on(name, callback) {
+      var _this = this;
+
+      if (Array.isArray(name)) {
+        name.map(function (n) {
+          return _this.on(n, callback);
+        });
+        return this;
+      }
+
+      add(this.events, name, callback);
+
+      return this;
+    }
+  }, {
+    key: 'once',
+    value: function once(name, callback) {
+      var _this2 = this,
+          _arguments = arguments;
+
+      var fn = function fn() {
+        var r = callback.apply(_this2.app.instance, _arguments);
+
+        _this2.off(name);
+
+        return r;
+      };
+
+      return this.on(name, callback);
+    }
+  }, {
+    key: 'off',
+    value: function off() {
+      var _this3 = this;
+
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (name === null) {
+        this.events = {};
+      } else if (Array.isArray(name)) {
+        name.map(function (n) {
+          return _this3.on(n, callback);
+        });
+        return this;
+      }
+
+      if (!this.events.hasOwnProperty(name)) {
+        return this;
+      }
+
+      if (callback === null) {
+        this.events[name] = [];
+      } else if (typeof callback === 'function' && Array.isArray(this.events[name])) {
+        for (var k in this.events[name]) {
+          var fn = this.events[name][k];
+
+          if (fn === callback) {
+            this.events[name].splice(k, 1);
+          }
+        }
+      }
+
+      return this;
+    }
+  }, {
+    key: 'emit',
+    value: function emit(name) {
+      if (!this.events.hasOwnProperty(name)) {
+        return this;
+      }
+
+      if (!Array.isArray(this.events[name])) {
+        return this;
+      }
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      for (var k in this.events[name]) {
+        var callback = this.events[name][k];
+        callback.call.apply(callback, [this.app.instance].concat(args));
+      }
+
+      return this;
+    }
+  }]);
+
+  return EventHandler;
+}();
+
+exports.default = EventHandler;
+
+
+function add(queue, name, value) {
+  if (!queue.hasOwnProperty(name)) {
+    queue[name] = [];
+  }
+
+  queue[name].push(value);
+}
 
 /***/ })
 /******/ ]);

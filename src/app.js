@@ -13,6 +13,7 @@ import TaskQueue from "./observer/queue";
 import ErrorHandler from "./error/error";
 import Utilities, { nullFunction } from "./util/utilities";
 import PromiseAdapter from "./promise/promise";
+import EventHandler from "./event";
 
 /**
  * Default options.
@@ -40,7 +41,8 @@ export default class Application {
     this.registry = new Registry(this, {
       'observerFactory': new ObserverFactory(this),
       'scheduler': new Scheduler(this),
-      'error': new ErrorHandler
+      'error': new ErrorHandler,
+      'event': new EventHandler(this)
     });
   }
 
@@ -48,10 +50,19 @@ export default class Application {
     this.options = this.$.extend({}, defaultOptions, options);
     this.data = options.data;
     this.instance = instance;
+
     // Push properties back to instance
     instance.$ = this.$;
     instance.$data = this.options.data;
-    instance.$find = this.find;
+    proxyMethod(instance, this, 'find');
+    proxyMethod(instance, this, 'async');
+    proxyMethod(instance, this, 'mount');
+    proxyMethod(instance, this, 'watch');
+    proxyMethod(instance, this, 'nextTick');
+    proxyMethod(instance, this.event, 'on', true);
+    proxyMethod(instance, this.event, 'off', true);
+    proxyMethod(instance, this.event, 'once', true);
+    proxyMethod(instance, this.event, 'emit', true);
 
     this.hook('beforeCreate');
 
@@ -129,26 +140,11 @@ export default class Application {
   }
 
   async (handler) {
-    //const defaultOptions = {
-    //  childList: true,
-    //  attributes: true,
-    //  characterData: true,
-    //  subtree: true
-    //};
-    //
-    //options = this.$.extend({}, defaultOptions, options);
-    //
-    //return new Promise(resolve => {
-    //  const observer = new MutationObserver(() => {
-    //    resolve.call(this.instance);
-    //  });
-    //
-    //  observer.observe(this.$el[0], options);
-    //
-    //  handler.call(this.instance);
-    //});
-
-    return Application.Promise.resolve().then(handler);
+    return new Application.Promise(resolve => {
+      Application.Promise.resolve()
+        .then(handler)
+        .then((value) => resolve(value))
+    });
   }
 
   pushStack (watcher) {
@@ -262,4 +258,17 @@ export function proxy (target, source, key) {
   });
 }
 
-Application.Promise = typeof Promise === 'undefined' ? PromiseAdapter : Promise;
+export function proxyMethod (target, source, key, chain = false) {
+  const methodName = '$' + key;
+  target[methodName] = function (...args) {
+    const r = source[key](...args);
+
+    if (chain) {
+      return target;
+    }
+
+    return r;
+  }
+}
+
+Application.Promise = PromiseAdapter;

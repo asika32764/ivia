@@ -63,6 +63,8 @@
 			</div>
 		</fieldset>
     <ul class="logs"></ul>
+    <ul class="logs2"></ul>
+    <ul class="logs3"></ul>
 	</form>
 </div>
 
@@ -93,11 +95,14 @@
           $ele.slideUp();
         }
 
-        this.app.async(() => {
-          for (let i = 0; i < 999; i++) {
-            this.$find('.logs').append(`<li>${value}</li>`);
-          }
-        }).then(() => console.log('done'));
+        Sparrow.Promise.race([
+          this.$async(() => $.get('http://localhost/test/ajax/wait.php?sec=1').done((r) => {console.log(r)}))
+          ,
+          this.$async(() => $.get('http://localhost/test/ajax/wait.php?sec=5').done((r) => {console.log(r)}))
+        ]).then((v) => console.log('all complete', v));
+          this.$async(() => {
+            for (let i = 0; i < 999; i++) { this.$find('.logs').append(`<li>${value}</li>`);}
+          });
 
 
 

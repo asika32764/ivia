@@ -102,6 +102,8 @@ import SPromise from "./promise/promise";
     }
   }
 
+  Sparrow.Promise = Application.Promise;
+
   /**
    * Push plugins.
    *

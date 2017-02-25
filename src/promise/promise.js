@@ -8,6 +8,9 @@ import Utilities from "../util/utilities";
 
 const $ = window.jQuery;
 
+let uid = 0;
+const events = {};
+
 export default class PromiseAdapter {
   constructor (callback) {
     const deferred = $.Deferred();
@@ -31,8 +34,24 @@ export default class PromiseAdapter {
     return $.when(...promises);
   }
 
-  static rase (promises) {
-    return $.when(...promises);
+  static race (promises) {
+    let id = ++uid;
+    const eventName = 'sparrow.promise.race.' + id;
+
+    return new PromiseAdapter(resolve => {
+      events[eventName] = (v) => {
+        resolve(v);
+        delete events[eventName];
+      };
+
+      promises.map(promise => {
+        promise.then((v) => {
+          if (events.hasOwnProperty(eventName)) {
+            events[eventName](v);
+          }
+        });
+      });
+    });
   }
 
   static resolve (object) {
