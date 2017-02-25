@@ -42,7 +42,7 @@ export default class Scheduler {
 
           this.setState(State.RUNNING);
 
-          TaskQueue.nextTick(this.execute, this);
+          TaskQueue.nextTick(this.execute, this, this.app);
           break;
 
         case State.RUNNING:
@@ -60,6 +60,16 @@ export default class Scheduler {
   }
 
   execute () {
+    let watcher;
+    let i;
+    for (i in this.queue) {
+      watcher = this.queue[i];
+
+      if (watcher.app === watcher.app.watcher && watcher.app._isMounted) {
+        watcher.app.hook('beforeUpdate');
+      }
+    }
+
     // Sort queue before flush.
     // This ensures that:
     // 1. Components are updated from parent to child. (because parent is always
@@ -88,12 +98,12 @@ export default class Scheduler {
       }
     }
 
-    let watcher;
-    let i = this.queue.length;
-    for (i; i < 0; i--) {
-      watcher = this.queue[index];
+    for (i in this.queue) {
+      watcher = this.queue[i];
 
-      // TODO: call updated hook
+      if (watcher === watcher.app.watcher && watcher.app._isMounted) {
+        watcher.app.hook('updated');
+      }
     }
 
     this.reset();

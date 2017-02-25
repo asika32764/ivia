@@ -126,6 +126,19 @@ export default class Utilities {
     const str = (string + '').charCodeAt(0);
     return str === '$' || str === '_';
   }
+
+  static bind (method, target) {
+    return (function (arg) {
+      const len = arguments.length;
+      if (len === 1) {
+        return method.call(target, arg);
+      } else if (len === 0) {
+        return method.call(target);
+      }
+
+      return method.apply(target, arguments);
+    });
+  }
 }
 
 function remove (data, key) {

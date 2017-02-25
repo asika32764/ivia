@@ -28,16 +28,9 @@ export default class Dispatcher {
   /**
    * Add Watcher.
    * @param {Watcher} watcher
-   * @returns {function()}
    */
   attach (watcher) {
     this.watchers.push(watcher);
-    let removeDispatcher = watcher.addDispatcher(this);
-
-    return () => {
-      this.detach(watcher);
-      removeDispatcher();
-    }
   }
 
   /**
@@ -58,7 +51,7 @@ export default class Dispatcher {
    */
   attachCurrent () {
     if (this.app.currentWatcher) {
-      this.attach(this.app.currentWatcher);
+      this.app.currentWatcher.addDispatcher(this);
     }
   }
 

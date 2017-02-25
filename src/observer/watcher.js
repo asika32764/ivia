@@ -30,7 +30,7 @@ export default class Watcher {
     this.sync = this.options.sync;
     this.computed = this.options.computed;
     this.deferred = this.options.deferred;
-    this.expression = ''; // TODO: print handler string if DEBUG
+    this.expression = callback + ''; // TODO: print handler string if DEBUG
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
@@ -44,7 +44,7 @@ export default class Watcher {
       }
     }
 
-    this.value = this.computed ? undefined : this.get();
+    //this.value = this.computed ? undefined : this.get();
   }
 
   get () {
@@ -52,7 +52,7 @@ export default class Watcher {
 
     let value;
 
-    value = this.getter.call(this.app, this.app.data);
+    value = this.getter.call(this.app.instance, this.app.data);
 
     // TODO: deep
 
@@ -81,7 +81,7 @@ export default class Watcher {
         const oldValue = this.value;
         this.value = value;
 
-        this.callback.call(this.app, value, oldValue);
+        this.callback.call(this.app.instance, value, oldValue);
       }
     }
   }
@@ -95,7 +95,7 @@ export default class Watcher {
     // Push all dispatchers of this watcher to current active watcher.
     if (this.app.currentWatcher) {
       for (let k in this.watcher.dispatchers) {
-        this.dispatchers[k].attach(this.app.currentWatcher);
+        this.app.currentWatcher.addDispatcher(this.dispatchers[k]);
       }
     }
 
@@ -103,11 +103,11 @@ export default class Watcher {
   }
 
   resetDispatchers () {
-    for (let dispatcher of this.dispatchers) {
+    this.dispatchers.map(dispatcher => {
       if (this.newDisptacherIds.indexOf(dispatcher.id) === -1) {
         dispatcher.detach(this);
       }
-    }
+    });
 
     let temp;
     temp = this.newDisptachers;
@@ -123,6 +123,7 @@ export default class Watcher {
 
   addDispatcher(dispatcher) {
     const id = dispatcher.id;
+
     if (this.newDisptacherIds.indexOf(id) === -1) {
       this.newDisptacherIds.push(id);
       this.newDisptachers.push(dispatcher);
@@ -135,11 +136,13 @@ export default class Watcher {
 
   removeDispatcher (dispatcher) {
     Utilities.removeElement(this.dispatchers, dispatcher);
+    dispatcher.detach(this);
   }
 
   teardown () {
-    for (let dispatcher of this.dispatchers) {
-      dispatcher.detach(this);
-    }
+    this.dispatchers.map(dispatcher => {
+      this.removeDispatcher(dispatcher);
+      Utilities.removeElement(this.watchers, this);
+    });
   }
 }

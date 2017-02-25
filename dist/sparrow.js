@@ -63,355 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-var _watcher = __webpack_require__(1);
-
-var _watcher2 = _interopRequireDefault(_watcher);
-
-var _utilities = __webpack_require__(2);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var uid = 0;
-
-/**
- * Dispatcher object.
- */
-
-var Dispatcher = function () {
-  /**
-   * Class init.
-   * @param {Application} app
-   * @param {Watcher[]}   watchers
-   */
-  function Dispatcher(app) {
-    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-    _classCallCheck(this, Dispatcher);
-
-    this.id = ++uid;
-    this.watchers = watchers;
-    this.app = app;
-  }
-
-  /**
-   * Add Watcher.
-   * @param {Watcher} watcher
-   * @returns {function()}
-   */
-
-
-  _createClass(Dispatcher, [{
-    key: "attach",
-    value: function attach(watcher) {
-      var _this = this;
-
-      this.watchers.push(watcher);
-      var removeDispatcher = watcher.addDispatcher(this);
-
-      return function () {
-        _this.detach(watcher);
-        removeDispatcher();
-      };
-    }
-
-    /**
-     * Remove Watcher.
-     * @param {Watcher} watcher
-     * @returns {Dispatcher}
-     */
-
-  }, {
-    key: "detach",
-    value: function detach(watcher) {
-      _utilities2.default.removeElement(this.watchers, watcher);
-
-      watcher.removeDispatcher();
-
-      return this;
-    }
-
-    /**
-     * Attach current watcher to self.
-     */
-
-  }, {
-    key: "attachCurrent",
-    value: function attachCurrent() {
-      if (this.app.currentWatcher) {
-        this.attach(this.app.currentWatcher);
-      }
-    }
-
-    /**
-     * Notify all watchers to update themselves.
-     */
-
-  }, {
-    key: "notify",
-    value: function notify() {
-      this.watchers.forEach(function (watcher) {
-        return watcher.update();
-      });
-    }
-  }]);
-
-  return Dispatcher;
-}();
-
-exports.default = Dispatcher;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _utilities = __webpack_require__(2);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var uid = 0;
-
-var defaultOptions = {
-  deep: false,
-  user: false,
-  sync: false,
-  computed: false,
-  deferred: false
-};
-
-var Watcher = function () {
-  function Watcher(app, path, callback) {
-    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-    _classCallCheck(this, Watcher);
-
-    this.options = app.$.extend({}, defaultOptions, options);
-
-    this.id = ++uid;
-    this.path = path;
-    this.callback = callback;
-    this.app = app;
-    this.active = true;
-    this.deep = this.options.deep;
-    this.user = this.options.user;
-    this.sync = this.options.sync;
-    this.computed = this.options.computed;
-    this.deferred = this.options.deferred;
-    this.expression = ''; // TODO: print handler string if DEBUG
-    this.dispatcherIds = [];
-    this.dispatchers = [];
-    this.newDisptacherIds = [];
-    this.newDisptachers = [];
-
-    if (typeof this.path === 'function') {
-      this.getter = this.path;
-    } else {
-      this.getter = function (value) {
-        return _utilities2.default.get(value, path);
-      };
-    }
-
-    this.value = this.computed ? undefined : this.get();
-  }
-
-  _createClass(Watcher, [{
-    key: 'get',
-    value: function get() {
-      this.app.pushStack(this);
-
-      var value = void 0;
-
-      value = this.getter.call(this.app, this.app.data);
-
-      // TODO: deep
-
-      this.app.popStack();
-
-      this.resetDispatchers();
-
-      return value;
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      if (this.computed) {
-        this.deferred = true;
-      } else if (this.sync) {
-        this.run();
-      } else {
-        this.app.scheduler.enqueueWatcher(this);
-      }
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      if (this.active) {
-        var value = this.get();
-
-        if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
-          var oldValue = this.value;
-          this.value = value;
-
-          this.callback.call(this.app, value, oldValue);
-        }
-      }
-    }
-  }, {
-    key: 'getCachedValue',
-    value: function getCachedValue() {
-      if (this.defer) {
-        this.get();
-        this.defer = false;
-      }
-
-      // Push all dispatchers of this watcher to current active watcher.
-      if (this.app.currentWatcher) {
-        for (var k in this.watcher.dispatchers) {
-          this.dispatchers[k].attach(this.app.currentWatcher);
-        }
-      }
-
-      return this.value;
-    }
-  }, {
-    key: 'resetDispatchers',
-    value: function resetDispatchers() {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = this.dispatchers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var dispatcher = _step.value;
-
-          if (this.newDisptacherIds.indexOf(dispatcher.id) === -1) {
-            dispatcher.detach(this);
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      var temp = void 0;
-      temp = this.newDisptachers;
-      this.dispatchers = this.newDisptachers;
-      this.newDisptachers = temp;
-      this.newDisptachers.length = 0;
-
-      temp = this.newDisptacherIds;
-      this.dispatcherIds = this.newDisptacherIds;
-      this.newDisptacherIds = temp;
-      this.newDisptacherIds.length = 0;
-    }
-  }, {
-    key: 'addDispatcher',
-    value: function addDispatcher(dispatcher) {
-      var id = dispatcher.id;
-      if (this.newDisptacherIds.indexOf(id) === -1) {
-        this.newDisptacherIds.push(id);
-        this.newDisptachers.push(dispatcher);
-
-        if (this.dispatcherIds.indexOf(id) === -1) {
-          dispatcher.attach(this);
-        }
-      }
-    }
-  }, {
-    key: 'removeDispatcher',
-    value: function removeDispatcher(dispatcher) {
-      _utilities2.default.removeElement(this.dispatchers, dispatcher);
-    }
-  }, {
-    key: 'teardown',
-    value: function teardown() {
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = this.dispatchers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var dispatcher = _step2.value;
-
-          dispatcher.detach(this);
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-    }
-  }]);
-
-  return Watcher;
-}();
-
-exports.default = Watcher;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -576,6 +232,20 @@ var Utilities = function () {
       var str = (string + '').charCodeAt(0);
       return str === '$' || str === '_';
     }
+  }, {
+    key: 'bind',
+    value: function bind(method, target) {
+      return function (arg) {
+        var len = arguments.length;
+        if (len === 1) {
+          return method.call(target, arg);
+        } else if (len === 0) {
+          return method.call(target);
+        }
+
+        return method.apply(target, arguments);
+      };
+    }
   }]);
 
   return Utilities;
@@ -603,6 +273,350 @@ function _remove(data, key) {
 function nullFunction() {}
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+var _environment = __webpack_require__(8);
+
+var _app = __webpack_require__(3);
+
+var _app2 = _interopRequireDefault(_app);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var TaskQueue = {
+  pending: false,
+  tasks: [],
+  handler: null,
+  nextTick: function nextTick(callback, target, app) {
+    var handler = this.getHandler();
+
+    var _resolve = void 0;
+    this.tasks.push(function () {
+      if (callback) {
+        callback.call(target);
+      }
+
+      if (_resolve) {
+        _resolve(target);
+      }
+    });
+
+    if (!this.pending) {
+      this.pending = true;
+
+      if (app) {
+        app.hook('beforeUpdate');
+      }
+
+      handler();
+    }
+
+    if (!callback && typeof Promise !== 'undefined') {
+      return _app2.default.Promise(function (resolve) {
+        _resolve = resolve;
+      });
+    }
+  },
+  execute: function execute() {
+    TaskQueue.pending = false;
+    var tasks = TaskQueue.tasks.slice(0);
+    TaskQueue.tasks.length = 0;
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var task = _step.value;
+
+        task();
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  },
+  /**
+   * This method based on Vue.$nextTick to handle callback asynchronously.
+   */
+  getHandler: function getHandler() {
+    var _this = this;
+
+    if (typeof this.handler !== 'function') {
+      // the nextTick behavior leverages the microtask queue, which can be accessed
+      // via either native Promise.then or MutationObserver.
+      // MutationObserver has wider support, however it is seriously bugged in
+      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
+      // completely stops working after triggering a few times... so, if native
+      // Promise is available, we will use it:
+      /* istanbul ignore if */
+      if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
+        var p = Promise.resolve();
+        this.handler = function () {
+          p.then(_this.execute).catch(function (err) {
+            return console.error(err);
+          });
+
+          // in problematic UIWebViews, Promise.then doesn't completely break, but
+          // it can get stuck in a weird state where callbacks are pushed into the
+          // microtask queue but the queue isn't being flushed, until the browser
+          // needs to do some other work, e.g. handle a timer. Therefore we can
+          // "force" the microtask queue to be flushed by adding an empty timer.
+          if (_environment.isIOS) {
+            setTimeout(_utilities.nullFunction);
+          }
+        };
+      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
+      // PhantomJS and iOS 7.x
+      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
+        // use MutationObserver where native Promise is not available,
+        // e.g. PhantomJS IE11, iOS7, Android 4.4
+        var counter = 1;
+        var observer = new MutationObserver(this.execute);
+        var textNode = document.createTextNode(String(counter));
+        observer.observe(textNode, {
+          characterData: true
+        });
+        this.handler = function () {
+          counter = (counter + 1) % 2;
+          textNode.data = String(counter);
+        };
+      } else {
+        // fallback to setTimeout
+        /* istanbul ignore next */
+        this.handler = function () {
+          setTimeout(_this.execute, 0);
+        };
+      }
+    }
+
+    return this.handler;
+  }
+};
+
+exports.default = TaskQueue;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var uid = 0;
+
+var defaultOptions = {
+  deep: false,
+  user: false,
+  sync: false,
+  computed: false,
+  deferred: false
+};
+
+var Watcher = function () {
+  function Watcher(app, path, callback) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+    _classCallCheck(this, Watcher);
+
+    this.options = app.$.extend({}, defaultOptions, options);
+
+    this.id = ++uid;
+    this.path = path;
+    this.callback = callback;
+    this.app = app;
+    this.active = true;
+    this.deep = this.options.deep;
+    this.user = this.options.user;
+    this.sync = this.options.sync;
+    this.computed = this.options.computed;
+    this.deferred = this.options.deferred;
+    this.expression = callback + ''; // TODO: print handler string if DEBUG
+    this.dispatcherIds = [];
+    this.dispatchers = [];
+    this.newDisptacherIds = [];
+    this.newDisptachers = [];
+
+    if (typeof this.path === 'function') {
+      this.getter = this.path;
+    } else {
+      this.getter = function (value) {
+        return _utilities2.default.get(value, path);
+      };
+    }
+
+    //this.value = this.computed ? undefined : this.get();
+  }
+
+  _createClass(Watcher, [{
+    key: 'get',
+    value: function get() {
+      this.app.pushStack(this);
+
+      var value = void 0;
+
+      value = this.getter.call(this.app.instance, this.app.data);
+
+      // TODO: deep
+
+      this.app.popStack();
+
+      this.resetDispatchers();
+
+      return value;
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      if (this.computed) {
+        this.deferred = true;
+      } else if (this.sync) {
+        this.run();
+      } else {
+        this.app.scheduler.enqueueWatcher(this);
+      }
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      if (this.active) {
+        var value = this.get();
+
+        if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
+          var oldValue = this.value;
+          this.value = value;
+
+          this.callback.call(this.app.instance, value, oldValue);
+        }
+      }
+    }
+  }, {
+    key: 'getCachedValue',
+    value: function getCachedValue() {
+      if (this.defer) {
+        this.get();
+        this.defer = false;
+      }
+
+      // Push all dispatchers of this watcher to current active watcher.
+      if (this.app.currentWatcher) {
+        for (var k in this.watcher.dispatchers) {
+          this.app.currentWatcher.addDispatcher(this.dispatchers[k]);
+        }
+      }
+
+      return this.value;
+    }
+  }, {
+    key: 'resetDispatchers',
+    value: function resetDispatchers() {
+      var _this = this;
+
+      this.dispatchers.map(function (dispatcher) {
+        if (_this.newDisptacherIds.indexOf(dispatcher.id) === -1) {
+          dispatcher.detach(_this);
+        }
+      });
+
+      var temp = void 0;
+      temp = this.newDisptachers;
+      this.dispatchers = this.newDisptachers;
+      this.newDisptachers = temp;
+      this.newDisptachers.length = 0;
+
+      temp = this.newDisptacherIds;
+      this.dispatcherIds = this.newDisptacherIds;
+      this.newDisptacherIds = temp;
+      this.newDisptacherIds.length = 0;
+    }
+  }, {
+    key: 'addDispatcher',
+    value: function addDispatcher(dispatcher) {
+      var id = dispatcher.id;
+
+      if (this.newDisptacherIds.indexOf(id) === -1) {
+        this.newDisptacherIds.push(id);
+        this.newDisptachers.push(dispatcher);
+
+        if (this.dispatcherIds.indexOf(id) === -1) {
+          dispatcher.attach(this);
+        }
+      }
+    }
+  }, {
+    key: 'removeDispatcher',
+    value: function removeDispatcher(dispatcher) {
+      _utilities2.default.removeElement(this.dispatchers, dispatcher);
+      dispatcher.detach(this);
+    }
+  }, {
+    key: 'teardown',
+    value: function teardown() {
+      var _this2 = this;
+
+      this.dispatchers.map(function (dispatcher) {
+        _this2.removeDispatcher(dispatcher);
+        _utilities2.default.removeElement(_this2.watchers, _this2);
+      });
+    }
+  }]);
+
+  return Watcher;
+}();
+
+exports.default = Watcher;
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -624,27 +638,35 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.proxy = proxy;
 
-var _observer = __webpack_require__(4);
+var _observer = __webpack_require__(6);
 
-var _watcher = __webpack_require__(1);
+var _watcher = __webpack_require__(2);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
-var _registry = __webpack_require__(8);
+var _registry = __webpack_require__(9);
 
 var _registry2 = _interopRequireDefault(_registry);
 
-var _scheduler = __webpack_require__(6);
+var _scheduler = __webpack_require__(7);
 
 var _scheduler2 = _interopRequireDefault(_scheduler);
 
-var _error = __webpack_require__(10);
+var _queue = __webpack_require__(1);
+
+var _queue2 = _interopRequireDefault(_queue);
+
+var _error = __webpack_require__(4);
 
 var _error2 = _interopRequireDefault(_error);
 
-var _utilities = __webpack_require__(2);
+var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
+
+var _promise = __webpack_require__(11);
+
+var _promise2 = _interopRequireDefault(_promise);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -667,9 +689,13 @@ var Application = function () {
 
     this.id = ++uid;
     this.$ = $;
+    this.watcher = null;
     this.watchers = [];
     this.currentWatcher = null;
     this.watcherStack = [];
+    this.elements = {};
+
+    this._isMounted = false;
 
     this.registry = new _registry2.default(this, {
       'observerFactory': new _observer.ObserverFactory(this),
@@ -683,21 +709,60 @@ var Application = function () {
     value: function init(instance) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      this.$el = this.marshalElement.call(options.el);
-      this.data = options.data;
       this.options = this.$.extend({}, defaultOptions, options);
-      this.watchers = {};
+      this.data = options.data;
       this.instance = instance;
+      // Push properties back to instance
+      instance.$ = this.$;
+      instance.$data = this.options.data;
+      instance.$find = this.find;
+
+      this.hook('beforeCreate');
 
       initState(this);
 
       // Lifecycle
       this.hook('created');
 
-      // Push properties back to instance
-      instance.$ = this.$;
-      instance.$el = this.$el;
-      instance.$data = this.options.data;
+      if (options.el) {
+        this.mount(options.el);
+      }
+    }
+  }, {
+    key: "mount",
+    value: function mount(el) {
+      var _this = this;
+
+      this.hook('beforeMount');
+
+      this.$el = el instanceof this.$ ? el : this.$(el);
+      this.instance.$el = this.$el;
+
+      this._isMounted = true;
+
+      this.hook('mounted');
+
+      this.watcher = new _watcher2.default(this, function () {
+        this.app.watchers.map(function (watcher) {
+          return watcher.update();
+        });
+      }, _utilities.nullFunction);
+
+      // Manually add all watchers to root watcher
+      this.currentWatcher = this.watcher;
+      this.watchers.map(function (watcher) {
+        return _utilities2.default.get(_this.data, watcher.path);
+      });
+      this.currentWatcher = null;
+
+      this.forceUpdate();
+    }
+  }, {
+    key: "forceUpdate",
+    value: function forceUpdate() {
+      if (this.watcher) {
+        this.watcher.update();
+      }
     }
   }, {
     key: "hook",
@@ -710,17 +775,59 @@ var Application = function () {
     key: "watch",
     value: function watch(path, callback) {
       var watcher = new _watcher2.default(this, path, callback);
+      this.watchers.push(watcher);
 
-      return this;
+      return function unwatch() {
+        watcher.teardown();
+      };
     }
   }, {
-    key: "marshalElement",
-    value: function marshalElement($element) {
-      if (typeof $element === 'string' || (typeof $element === "undefined" ? "undefined" : _typeof($element)) === 'object' && !($element instanceof this.$)) {
-        $element = this.$($element);
+    key: "find",
+    value: function find(selector) {
+      var refresh = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      if ((typeof selector === "undefined" ? "undefined" : _typeof(selector)) === 'object' && !(selector instanceof this.$)) {
+        return this.$(selector);
       }
 
-      return $element;
+      if (selector === 'string') {
+        if (!this.elements.hasOwnProperty(selector) || refresh) {
+          this.elements[selector] = this.$el.find(selector);
+        }
+
+        return this.elements[selector];
+      }
+
+      return this.$(selector);
+    }
+  }, {
+    key: "nextTick",
+    value: function nextTick(callback) {
+      return _queue2.default.nextTick(callback);
+    }
+  }, {
+    key: "async",
+    value: function async(handler) {
+      //const defaultOptions = {
+      //  childList: true,
+      //  attributes: true,
+      //  characterData: true,
+      //  subtree: true
+      //};
+      //
+      //options = this.$.extend({}, defaultOptions, options);
+      //
+      //return new Promise(resolve => {
+      //  const observer = new MutationObserver(() => {
+      //    resolve.call(this.instance);
+      //  });
+      //
+      //  observer.observe(this.$el[0], options);
+      //
+      //  handler.call(this.instance);
+      //});
+
+      return Application.Promise.resolve().then(handler);
     }
   }, {
     key: "pushStack",
@@ -773,25 +880,12 @@ function initData(app, data) {
 }
 
 function initMethods(app, methods) {
-  var _loop = function _loop(key) {
-    var method = app.methods[key];
+  for (var key in methods) {
+    var method = methods[key];
     if (!app.options.data[key] && typeof method === 'function') {
       // Faster binding function
-      app.instance[key] = function (arg) {
-        var len = arguments.length;
-        if (len === 1) {
-          return method.call(app, arg);
-        } else if (len === 0) {
-          return method.call(app);
-        }
-
-        return method.apply(app, arguments);
-      };
+      app.instance[key] = _utilities2.default.bind(method, app.instance);
     }
-  };
-
-  for (var key in methods) {
-    _loop(key);
   }
 }
 
@@ -814,7 +908,7 @@ function initWatchers(app, watches) {
 }
 
 function initComputed(app, computed) {
-  var _loop2 = function _loop2(key) {
+  var _loop = function _loop(key) {
     var handler = computed[key];
     var setter = _utilities.nullFunction;
     var getter = void 0;
@@ -844,7 +938,7 @@ function initComputed(app, computed) {
   };
 
   for (var key in computed) {
-    _loop2(key);
+    _loop(key);
   }
 }
 
@@ -859,8 +953,166 @@ function proxy(target, source, key) {
   });
 }
 
+Application.Promise = typeof Promise === 'undefined' ? _promise2.default : Promise;
+
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var ErrorHandler = function () {
+  function ErrorHandler(app) {
+    _classCallCheck(this, ErrorHandler);
+
+    this.app = app;
+  }
+
+  _createClass(ErrorHandler, [{
+    key: "warn",
+    value: function warn(message) {
+      console.warn(message);
+    }
+  }, {
+    key: "log",
+    value: function log(message) {
+      console.log(message);
+    }
+  }]);
+
+  return ErrorHandler;
+}();
+
+exports.default = ErrorHandler;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _watcher = __webpack_require__(2);
+
+var _watcher2 = _interopRequireDefault(_watcher);
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var uid = 0;
+
+/**
+ * Dispatcher object.
+ */
+
+var Dispatcher = function () {
+  /**
+   * Class init.
+   * @param {Application} app
+   * @param {Watcher[]}   watchers
+   */
+  function Dispatcher(app) {
+    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+    _classCallCheck(this, Dispatcher);
+
+    this.id = ++uid;
+    this.watchers = watchers;
+    this.app = app;
+  }
+
+  /**
+   * Add Watcher.
+   * @param {Watcher} watcher
+   */
+
+
+  _createClass(Dispatcher, [{
+    key: "attach",
+    value: function attach(watcher) {
+      this.watchers.push(watcher);
+    }
+
+    /**
+     * Remove Watcher.
+     * @param {Watcher} watcher
+     * @returns {Dispatcher}
+     */
+
+  }, {
+    key: "detach",
+    value: function detach(watcher) {
+      _utilities2.default.removeElement(this.watchers, watcher);
+
+      watcher.removeDispatcher();
+
+      return this;
+    }
+
+    /**
+     * Attach current watcher to self.
+     */
+
+  }, {
+    key: "attachCurrent",
+    value: function attachCurrent() {
+      if (this.app.currentWatcher) {
+        this.app.currentWatcher.addDispatcher(this);
+      }
+    }
+
+    /**
+     * Notify all watchers to update themselves.
+     */
+
+  }, {
+    key: "notify",
+    value: function notify() {
+      this.watchers.forEach(function (watcher) {
+        return watcher.update();
+      });
+    }
+  }]);
+
+  return Dispatcher;
+}();
+
+exports.default = Dispatcher;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -873,11 +1125,11 @@ exports.ObserverFactory = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _utilities = __webpack_require__(2);
+var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _dispatcher = __webpack_require__(0);
+var _dispatcher = __webpack_require__(5);
 
 var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
@@ -1019,11 +1271,11 @@ var ObserverFactory = exports.ObserverFactory = function () {
            * Let's push it into current Dispatcher instance.
            */
           if (self.app.currentWatcher) {
-            dispatcher.attach(self.app.currentWatcher);
+            self.app.currentWatcher.addDispatcher(dispatcher);
 
             // If child value is object, also inject active Watcher to their dispatcher.
             if (childObserver) {
-              childObserver.dispatcher.attach(self.app.currentWatcher);
+              self.app.currentWatcher.addDispatcher(childObserver.dispatcher);
             }
 
             if (Array.isArray(value)) {
@@ -1070,7 +1322,7 @@ var ObserverFactory = exports.ObserverFactory = function () {
         for (var _iterator2 = value[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var ele = _step2.value;
 
-          ele && ele.__observer__ && ele.__observer__.dispatcher.attach(this.app.currentWatcher);
+          ele && ele.__observer__ && this.app.currentWatcher.addDispatcher(ele.__observer__.dispatcher);
 
           if (Array.isArray(ele)) {
             this.attachArray(ele);
@@ -1097,144 +1349,7 @@ var ObserverFactory = exports.ObserverFactory = function () {
 }();
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-var _app = __webpack_require__(3);
-
-var _app2 = _interopRequireDefault(_app);
-
-var _utilities = __webpack_require__(2);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-;(function ($) {
-  /**
-   * Plugin Name.
-   *
-   * @type {string}
-   */
-  var plugin = "sparrow";
-
-  var Sparrow = function () {
-    function Sparrow() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck(this, Sparrow);
-
-      this.app = new _app2.default($);
-      this.app.init(this, options);
-    }
-
-    _createClass(Sparrow, [{
-      key: "bind",
-      value: function bind(selector, key, callback) {
-        var conditions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-        var $element = this.app.marshalElement(selector);
-
-        // Default callback
-        if (typeof callback === 'string') {
-          var name = callback;
-          callback = function callback($element, value) {
-            switch (name) {
-              case ':html':
-                $element.html(value);
-                break;
-
-              case ':text':
-                $element.text(value);
-                break;
-
-              case 'value':
-                if ($element[0].tagName === 'INPUT') {
-                  $element.val(value);
-                  break;
-                }
-
-              default:
-                $element.attr(name, value);
-            }
-          };
-        }
-
-        this.app.watch(key, function (value, oldValue) {
-          callback($element, value, oldValue);
-        });
-
-        return this;
-      }
-    }, {
-      key: "on",
-      value: function on(selector, eventName, callback) {
-        var delegate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-        var $element = this.app.marshalElement(selector);
-
-        if (delegate) {
-          this.$el.on(eventName, selector, callback);
-        } else {
-          $element.on(eventName, callback);
-        }
-
-        return this;
-      }
-    }, {
-      key: "model",
-      value: function model(selector, key) {
-        var _this = this;
-
-        var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-        this.bind(selector, key, 'value').on(selector, 'change', function (event) {
-          return _utilities2.default.set(_this.app.data, key, _this.app.$(event.target).val());
-        }, delegate).on(selector, 'keyup', function (event) {
-          return _utilities2.default.set(_this.app.data, key, _this.app.$(event.target).val());
-        }, delegate);
-      }
-    }]);
-
-    return Sparrow;
-  }();
-
-  /**
-   * Push plugins.
-   *
-   * @param {Object} options
-   *
-   * @returns {*}
-   */
-
-
-  $.fn[plugin] = function (options) {
-    if (!$.data(this, plugin)) {
-      options.el = this;
-
-      $.data(this, plugin, new Sparrow(options));
-    }
-
-    return $.data(this, plugin);
-  };
-
-  window.Sparrow = Sparrow;
-})(jQuery);
-
-/***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1252,7 +1367,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _queue = __webpack_require__(9);
+var _queue = __webpack_require__(1);
 
 var _queue2 = _interopRequireDefault(_queue);
 
@@ -1302,7 +1417,7 @@ var Scheduler = function () {
 
             this.setState(State.RUNNING);
 
-            _queue2.default.nextTick(this.execute, this);
+            _queue2.default.nextTick(this.execute, this, this.app);
             break;
 
           case State.RUNNING:
@@ -1321,6 +1436,16 @@ var Scheduler = function () {
   }, {
     key: 'execute',
     value: function execute() {
+      var watcher = void 0;
+      var i = void 0;
+      for (i in this.queue) {
+        watcher = this.queue[i];
+
+        if (watcher.app === watcher.app.watcher && watcher.app._isMounted) {
+          watcher.app.hook('beforeUpdate');
+        }
+      }
+
       // Sort queue before flush.
       // This ensures that:
       // 1. Components are updated from parent to child. (because parent is always
@@ -1372,12 +1497,12 @@ var Scheduler = function () {
         }
       }
 
-      var watcher = void 0;
-      var i = this.queue.length;
-      for (i; i < 0; i--) {
-        watcher = this.queue[index];
+      for (i in this.queue) {
+        watcher = this.queue[i];
 
-        // TODO: call updated hook
+        if (watcher === watcher.app.watcher && watcher.app._isMounted) {
+          watcher.app.hook('updated');
+        }
       }
 
       this.reset();
@@ -1398,7 +1523,7 @@ var Scheduler = function () {
 exports.default = Scheduler;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1424,7 +1549,7 @@ var isAndroid = exports.isAndroid = UA && UA.indexOf('android') > 0;
 var isIOS = exports.isIOS = UA && /iphone|ipad|ipod|ios/.test(UA);
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1487,193 +1612,260 @@ var Registry = function () {
 exports.default = Registry;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _utilities = __webpack_require__(2);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-var _environment = __webpack_require__(7);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var TaskQueue = {
-  pending: false,
-  tasks: [],
-  handler: null,
-  nextTick: function nextTick(callback, app) {
-    var handler = this.getHandler();
-
-    var _resolve = void 0;
-    this.tasks.push(function () {
-      if (callback) {
-        callback.call(app);
-      }
-
-      if (_resolve) {
-        _resolve(app);
-      }
-    });
-
-    if (!this.pending) {
-      this.pending = true;
-      handler();
-    }
-
-    if (!callback && typeof Promise !== 'undefined') {
-      return new Promise(function (resolve) {
-        _resolve = resolve;
-      });
-    }
-  },
-  execute: function execute() {
-    TaskQueue.pending = false;
-    var tasks = TaskQueue.tasks.slice(0);
-    TaskQueue.tasks.length = 0;
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var task = _step.value;
-
-        task();
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-  },
-  /**
-   * This method based on Vue.$nextTick to handle callback asynchronously.
-   */
-  getHandler: function getHandler() {
-    var _this = this;
-
-    if (typeof this.handler !== 'function') {
-      // the nextTick behavior leverages the microtask queue, which can be accessed
-      // via either native Promise.then or MutationObserver.
-      // MutationObserver has wider support, however it is seriously bugged in
-      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
-      // completely stops working after triggering a few times... so, if native
-      // Promise is available, we will use it:
-      /* istanbul ignore if */
-      if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
-        var p = Promise.resolve();
-        this.handler = function () {
-          p.then(_this.execute).catch(function (err) {
-            return console.error(err);
-          });
-
-          // in problematic UIWebViews, Promise.then doesn't completely break, but
-          // it can get stuck in a weird state where callbacks are pushed into the
-          // microtask queue but the queue isn't being flushed, until the browser
-          // needs to do some other work, e.g. handle a timer. Therefore we can
-          // "force" the microtask queue to be flushed by adding an empty timer.
-          if (_environment.isIOS) {
-            setTimeout(_utilities.nullFunction);
-          }
-        };
-      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
-      // PhantomJS and iOS 7.x
-      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
-        // use MutationObserver where native Promise is not available,
-        // e.g. PhantomJS IE11, iOS7, Android 4.4
-        var counter = 1;
-        var observer = new MutationObserver(this.execute);
-        var textNode = document.createTextNode(String(counter));
-        observer.observe(textNode, {
-          characterData: true
-        });
-        this.handler = function () {
-          counter = (counter + 1) % 2;
-          textNode.data = String(counter);
-        };
-      } else {
-        // fallback to setTimeout
-        /* istanbul ignore next */
-        this.handler = function () {
-          setTimeout(_this.execute, 0);
-        };
-      }
-    }
-
-    return this.handler;
-  }
-}; /**
-    * Part of sparrow project.
-    *
-    * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-    * @license    __LICENSE__
-    */
-
-exports.default = TaskQueue;
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _app = __webpack_require__(3);
+
+var _app2 = _interopRequireDefault(_app);
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+var _promise = __webpack_require__(11);
+
+var _promise2 = _interopRequireDefault(_promise);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+;(function ($) {
+  /**
+   * Plugin Name.
+   *
+   * @type {string}
+   */
+  var plugin = "sparrow";
+
+  var Sparrow = function () {
+    function Sparrow() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Sparrow);
+
+      this.app = new _app2.default($);
+      this.app.init(this, options);
+    }
+
+    _createClass(Sparrow, [{
+      key: "bind",
+      value: function bind(selector, key, callback) {
+        var conditions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+        var $element = this.app.find(selector);
+
+        // Default callback
+        if (typeof callback === 'string') {
+          var name = callback;
+          callback = function callback($element, value) {
+            switch (name) {
+              case ':html':
+                $element.html(value);
+                break;
+
+              case ':text':
+                $element.text(value);
+                break;
+
+              case 'value':
+                if ($element[0].tagName === 'INPUT') {
+                  switch ($element.attr('type')) {
+                    case 'radio':
+                    case 'checkbox':
+                      $element.filter("[value=" + value + "]").prop('checked', true);
+                      break;
+                    default:
+                      $element.val(value);
+                  }
+                  break;
+                }
+              default:
+                $element.attr(name, value);
+            }
+          };
+        }
+
+        this.app.watch(key, function biding(value, oldValue) {
+          callback.call(this, $element, value, oldValue);
+        });
+
+        return this;
+      }
+    }, {
+      key: "on",
+      value: function on(selector, eventName, callback) {
+        var delegate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+        var $element = this.app.find(selector);
+        var self = this;
+
+        var handler = function handler(event) {
+          callback.call(self, self.$(this), event);
+        };
+
+        if (delegate) {
+          this.app.$el.on(eventName, selector, handler);
+        } else {
+          $element.on(eventName, handler);
+        }
+
+        return this;
+      }
+    }, {
+      key: "model",
+      value: function model(selector, key) {
+        var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+        var handler = function handler($element, event) {
+          var value = void 0;
+          switch ($element.attr('type')) {
+            case 'radio':
+              value = $element[0].value;
+              break;
+            default:
+              value = $element.val();
+          }
+
+          return _utilities2.default.set(this.app.data, key, value);
+        };
+
+        this.bind(selector, key, 'value').on(selector, 'change', handler, delegate).on(selector, 'keyup', handler, delegate);
+      }
+    }]);
+
+    return Sparrow;
+  }();
+
+  /**
+   * Push plugins.
+   *
+   * @param {Object} options
+   *
+   * @returns {*}
+   */
+
+
+  $.fn[plugin] = function (options) {
+    if (!$.data(this, plugin)) {
+      options.el = this;
+
+      $.data(this, plugin, new Sparrow(options));
+    }
+
+    return $.data(this, plugin);
+  };
+
+  window.Sparrow = Sparrow;
+})(jQuery);
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
+var $ = window.jQuery;
 
-var ErrorHandler = function () {
-  function ErrorHandler(app) {
-    _classCallCheck(this, ErrorHandler);
+var SPromise = function () {
+  function SPromise(callback) {
+    _classCallCheck(this, SPromise);
 
-    this.app = app;
+    var deferred = $.Deferred();
+    var resolve = deferred.resolve;
+    var reject = deferred.reject;
+
+    callback(resolve, reject);
+
+    this.defer = $.when(deferred);
   }
 
-  _createClass(ErrorHandler, [{
-    key: "warn",
-    value: function warn(message) {
-      console.warn(message);
+  _createClass(SPromise, [{
+    key: "then",
+    value: function then(onFulfilled, onRejected) {
+      return this.defer.then(onFulfilled, onRejected);
     }
   }, {
-    key: "log",
-    value: function log(message) {
-      console.log(message);
+    key: "catch",
+    value: function _catch(handler) {
+      return this.defer.catch(onRejected);
+    }
+  }], [{
+    key: "all",
+    value: function all(promises) {
+      return $.when.apply($, _toConsumableArray(promises));
+    }
+  }, {
+    key: "rase",
+    value: function rase(promises) {
+      return $.when.apply($, _toConsumableArray(promises));
+    }
+  }, {
+    key: "resolve",
+    value: function resolve(object) {
+      if (object instanceof SPromise) {
+        object.defer.resolve();
+
+        return object;
+      }
+
+      var promise = new SPromise(function (resolve) {
+        return resolve(object);
+      });
+
+      if (_utilities2.default.isObject(object) && object.hasOwnProperty('then')) {
+        return promise.then(object.then);
+      }
+
+      return promise;
+    }
+  }, {
+    key: "reject",
+    value: function reject(reason) {
+      return new SPromise(function (resolve, reject) {
+        return reject(reason);
+      });
     }
   }]);
 
-  return ErrorHandler;
+  return SPromise;
 }();
 
-exports.default = ErrorHandler;
+exports.default = SPromise;
 
 /***/ })
 /******/ ]);

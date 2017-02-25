@@ -100,11 +100,11 @@ export class ObserverFactory {
          * Let's push it into current Dispatcher instance.
          */
         if (self.app.currentWatcher) {
-          dispatcher.attach(self.app.currentWatcher);
+          self.app.currentWatcher.addDispatcher(dispatcher);
 
           // If child value is object, also inject active Watcher to their dispatcher.
           if (childObserver) {
-            childObserver.dispatcher.attach(self.app.currentWatcher);
+            self.app.currentWatcher.addDispatcher(childObserver.dispatcher);
           }
 
           if (Array.isArray(value)) {
@@ -140,7 +140,7 @@ export class ObserverFactory {
    */
   attachArray (value = []) {
     for (let ele of value) {
-      ele && ele.__observer__ && ele.__observer__.dispatcher.attach(this.app.currentWatcher);
+      ele && ele.__observer__ && this.app.currentWatcher.addDispatcher(ele.__observer__.dispatcher);
 
       if (Array.isArray(ele)) {
         this.attachArray(ele);

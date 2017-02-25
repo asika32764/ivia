@@ -9,8 +9,10 @@ import { ObserverFactory } from './observer/observer';
 import Watcher from "./observer/watcher";
 import Registry from "./util/registry";
 import Scheduler from "./observer/scheduler";
+import TaskQueue from "./observer/queue";
 import ErrorHandler from "./error/error";
 import Utilities, { nullFunction } from "./util/utilities";
+import SPromise from "./promise/promise";
 
 /**
  * Default options.
@@ -27,9 +29,13 @@ export default class Application {
   constructor ($) {
     this.id = ++uid;
     this.$ = $;
+    this.watcher = null;
     this.watchers = [];
     this.currentWatcher = null;
     this.watcherStack = [];
+    this.elements = {};
+
+    this._isMounted = false;
 
     this.registry = new Registry(this, {
       'observerFactory': new ObserverFactory(this),
@@ -39,21 +45,52 @@ export default class Application {
   }
 
   init(instance, options = {}) {
-    this.$el = this.marshalElement.call(options.el);
-    this.data = options.data;
     this.options = this.$.extend({}, defaultOptions, options);
-    this.watchers = {};
+    this.data = options.data;
     this.instance = instance;
+    // Push properties back to instance
+    instance.$ = this.$;
+    instance.$data = this.options.data;
+    instance.$find = this.find;
+
+    this.hook('beforeCreate');
 
     initState(this);
 
     // Lifecycle
     this.hook('created');
 
-    // Push properties back to instance
-    instance.$ = this.$;
-    instance.$el = this.$el;
-    instance.$data = this.options.data;
+    if (options.el) {
+      this.mount(options.el);
+    }
+  }
+
+  mount (el) {
+    this.hook('beforeMount');
+
+    this.$el = el instanceof this.$ ? el : this.$(el);
+    this.instance.$el = this.$el;
+
+    this._isMounted = true;
+
+    this.hook('mounted');
+
+    this.watcher = new Watcher(this, function () {
+      this.app.watchers.map(watcher => watcher.update());
+    }, nullFunction);
+
+    // Manually add all watchers to root watcher
+    this.currentWatcher = this.watcher;
+    this.watchers.map(watcher => Utilities.get(this.data, watcher.path));
+    this.currentWatcher = null;
+
+    this.forceUpdate();
+  }
+
+  forceUpdate () {
+    if (this.watcher) {
+      this.watcher.update();
+    }
   }
 
   hook (name) {
@@ -64,16 +101,54 @@ export default class Application {
 
   watch (path, callback) {
     const watcher = new Watcher(this, path, callback);
+    this.watchers.push(watcher);
 
-    return this;
+    return (function unwatch () {
+      watcher.teardown();
+    });
   }
 
-  marshalElement ($element) {
-    if (typeof $element === 'string' || (typeof $element === 'object' && !($element instanceof this.$))) {
-      $element = this.$($element);
+  find (selector, refresh = false) {
+    if (typeof selector === 'object' && !(selector instanceof this.$)) {
+      return this.$(selector);
     }
 
-    return $element;
+    if (selector === 'string') {
+      if (!this.elements.hasOwnProperty(selector) || refresh) {
+        this.elements[selector] = this.$el.find(selector);
+      }
+
+      return this.elements[selector];
+    }
+
+    return this.$(selector);
+  }
+
+  nextTick (callback) {
+    return TaskQueue.nextTick(callback);
+  }
+
+  async (handler) {
+    //const defaultOptions = {
+    //  childList: true,
+    //  attributes: true,
+    //  characterData: true,
+    //  subtree: true
+    //};
+    //
+    //options = this.$.extend({}, defaultOptions, options);
+    //
+    //return new Promise(resolve => {
+    //  const observer = new MutationObserver(() => {
+    //    resolve.call(this.instance);
+    //  });
+    //
+    //  observer.observe(this.$el[0], options);
+    //
+    //  handler.call(this.instance);
+    //});
+
+    return Application.Promise.resolve().then(handler);
   }
 
   pushStack (watcher) {
@@ -119,19 +194,10 @@ function initData (app, data) {
 
 function initMethods (app, methods) {
   for (let key in methods) {
-    const method = app.methods[key];
+    const method = methods[key];
     if (!app.options.data[key] && typeof method === 'function') {
       // Faster binding function
-      app.instance[key] = (function (arg) {
-        const len = arguments.length;
-        if (len === 1) {
-          return method.call(app, arg);
-        } else if (len === 0) {
-          return method.call(app);
-        }
-
-        return method.apply(app, arguments);
-      });
+      app.instance[key] = Utilities.bind(method, app.instance);
     }
   }
 }
@@ -195,3 +261,5 @@ export function proxy (target, source, key) {
     }
   });
 }
+
+Application.Promise = typeof Promise === 'undefined' ? SPromise : Promise;

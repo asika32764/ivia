@@ -8,34 +8,40 @@
 import { nullFunction } from "../util/utilities";
 import Utilities from "../util/utilities";
 import { isIOS } from "../util/environment";
+import Application from "../app";
 
 const TaskQueue = {
   pending: false,
   tasks: [],
   handler: null,
-  nextTick: function (callback, app) {
+  nextTick: function (callback, target, app) {
     const handler = this.getHandler();
 
     let _resolve;
     this.tasks.push(() => {
       if (callback) {
-        callback.call(app);
+        callback.call(target);
       }
 
       if (_resolve) {
-        _resolve(app);
+        _resolve(target);
       }
     });
 
     if (!this.pending) {
       this.pending = true;
+
+      if (app) {
+        app.hook('beforeUpdate');
+      }
+
       handler();
     }
 
     if (!callback && typeof Promise !== 'undefined') {
-      return new Promise(resolve => {
+      return Application.Promise(resolve => {
         _resolve = resolve;
-      })
+      });
     }
   },
   execute: function () {

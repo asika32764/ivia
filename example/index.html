@@ -18,13 +18,13 @@
 		<div class="radios">
 			<div class="radio">
 				<label>
-					<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+					<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
 					Option one is this and that&mdash;be sure to include why it's great
 				</label>
 			</div>
 			<div class="radio">
 				<label>
-					<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+					<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>
 					Option two can be something else and selecting it will deselect option one
 				</label>
 			</div>
@@ -36,7 +36,7 @@
 			</div>
 		</div>
 
-		<fieldset class="form-horizontal">
+		<fieldset id="user-form" class="form-horizontal" style="">
 			<div id="inputName-control" class="form-group">
 				<label for="inputName" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
@@ -62,6 +62,7 @@
 				</div>
 			</div>
 		</fieldset>
+    <ul class="logs"></ul>
 	</form>
 </div>
 
@@ -78,15 +79,68 @@
       yoo: null,
       items: [
           'a', 'b', {foo: 'yoo'}
-      ]
+      ],
+      radio: 'option1'
 		},
-    created: function () {
+    mounted: function () {
       this.model('#inputName', 'foo.bar.yoo');
       this.bind('#email-desc', 'foo.bar.yoo', ':text');
+      this.model('input[name=optionsRadios]', 'radio');
+      this.bind('#user-form', 'radio', function ($ele, value) {
+        if (value === 'option2') {
+          $ele.slideDown();
+        } else {
+          $ele.slideUp();
+        }
+
+        this.app.async(() => {
+          for (let i = 0; i < 999; i++) {
+            this.$find('.logs').append(`<li>${value}</li>`);
+          }
+        }).then(() => console.log('done'));
+
+
+
+//        this.app.async(() => {
+//          for (let i = 0; i < 999; i++) {
+//            this.$find('.logs').append(`<li>${value}</li>`);
+//          }
+//        }).then(() => {
+//          console.log('wait', this.$find('.logs li', true).length);
+//        });
+//
+//        console.log('go', this.$find('.logs li', true).length);
+//        this.app.nextTick(() => {
+//          console.log('Tick', this.$find('.logs li', true).length);
+//        });
+      });
+
+//      this.on('input[name=optionsRadios]', 'change', function ($element, event) {
+//        if ($element.val() === 'option2') {
+//          this.$find('#user-form').slideDown();
+//        } else {
+//          this.$find('#user-form').slideUp();
+//        }
+//      });
+    },
+    updated: function () {
+      console.log('Updated');
     },
 		methods: {
+      changeRadios () {
+          this.radio = this.radio == 'option1' ? 'option2' : 'option1';
 
-		}
+      }
+		},
+    watch: {
+//		    radio: function (value) {
+//          if (value === 'option2') {
+//            this.$find('#user-form').slideDown();
+//          } else {
+//            this.$find('#user-form').slideUp();
+//          }
+//        }
+    }
 	});
 </script>
 

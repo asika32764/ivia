@@ -7,6 +7,7 @@
 
 import Application from './app';
 import Utilities from "./util/utilities";
+import SPromise from "./promise/promise";
 
 ;(function ($) {
   /**
@@ -23,7 +24,7 @@ import Utilities from "./util/utilities";
     }
 
     bind (selector, key, callback, conditions = {}) {
-      const $element = this.app.marshalElement(selector);
+      const $element = this.app.find(selector);
 
       // Default callback
       if (typeof callback === 'string') {
@@ -40,40 +41,64 @@ import Utilities from "./util/utilities";
 
             case 'value':
               if ($element[0].tagName === 'INPUT') {
-                $element.val(value);
+                switch ($element.attr('type')) {
+                  case 'radio':
+                  case 'checkbox':
+                    $element.filter(`[value=${value}]`).prop('checked', true);
+                    break;
+                  default:
+                    $element.val(value);
+                }
                 break;
               }
-
             default:
               $element.attr(name, value);
           }
         };
       }
 
-      this.app.watch(key, (value, oldValue) => {
-        callback($element, value, oldValue);
+      this.app.watch(key, function biding (value, oldValue) {
+        callback.call(this, $element, value, oldValue);
       });
 
       return this;
     }
 
     on (selector, eventName, callback, delegate = false) {
-      const $element = this.app.marshalElement(selector);
+      const $element = this.app.find(selector);
+      let self = this;
+
+      const handler = function (event) {
+        callback.call(self, self.$(this), event);
+      };
 
       if (delegate) {
-        this.$el.on(eventName, selector, callback);
+        this.app.$el.on(eventName, selector, handler);
       } else {
-        $element.on(eventName, callback);
+        $element.on(eventName, handler);
       }
 
       return this;
     }
 
     model (selector, key, delegate = false) {
+      const handler = function ($element, event) {
+        let value;
+        switch ($element.attr('type')) {
+          case 'radio':
+            value = $element[0].value;
+            break;
+          default:
+            value = $element.val();
+        }
+
+        return Utilities.set(this.app.data, key, value);
+      };
+
       this
         .bind(selector, key, 'value')
-        .on(selector, 'change', event => Utilities.set(this.app.data, key, this.app.$(event.target).val()), delegate)
-        .on(selector, 'keyup', event => Utilities.set(this.app.data, key, this.app.$(event.target).val()), delegate);
+        .on(selector, 'change', handler, delegate)
+        .on(selector, 'keyup', handler, delegate);
     }
   }
 
