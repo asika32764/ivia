@@ -4,11 +4,11 @@
  * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
  * @license    __LICENSE__
  */
-  import Utilities from "../util/utilities";
+import Utilities from "../util/utilities";
 
 const $ = window.jQuery;
 
-export default class SPromise {
+export default class PromiseAdapter {
   constructor (callback) {
     const deferred = $.Deferred();
     const resolve = deferred.resolve;
@@ -36,13 +36,13 @@ export default class SPromise {
   }
 
   static resolve (object) {
-    if (object instanceof SPromise) {
+    if (object instanceof PromiseAdapter) {
       object.defer.resolve();
 
       return object;
     }
 
-    const promise = new SPromise(resolve => resolve(object));
+    const promise = new PromiseAdapter(resolve => resolve(object));
 
     if (Utilities.isObject(object) && object.hasOwnProperty('then')) {
       return promise.then(object.then);
@@ -52,6 +52,6 @@ export default class SPromise {
   }
 
   static reject (reason) {
-    return new SPromise((resolve, reject) => reject(reason));
+    return new PromiseAdapter((resolve, reject) => reject(reason));
   }
 }

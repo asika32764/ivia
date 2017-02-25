@@ -12,7 +12,7 @@ import Scheduler from "./observer/scheduler";
 import TaskQueue from "./observer/queue";
 import ErrorHandler from "./error/error";
 import Utilities, { nullFunction } from "./util/utilities";
-import SPromise from "./promise/promise";
+import PromiseAdapter from "./promise/promise";
 
 /**
  * Default options.
@@ -262,4 +262,4 @@ export function proxy (target, source, key) {
   });
 }
 
-Application.Promise = typeof Promise === 'undefined' ? SPromise : Promise;
+Application.Promise = typeof Promise === 'undefined' ? PromiseAdapter : Promise;

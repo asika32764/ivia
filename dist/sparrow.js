@@ -1801,9 +1801,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var $ = window.jQuery;
 
-var SPromise = function () {
-  function SPromise(callback) {
-    _classCallCheck(this, SPromise);
+var PromiseAdapter = function () {
+  function PromiseAdapter(callback) {
+    _classCallCheck(this, PromiseAdapter);
 
     var deferred = $.Deferred();
     var resolve = deferred.resolve;
@@ -1814,7 +1814,7 @@ var SPromise = function () {
     this.defer = $.when(deferred);
   }
 
-  _createClass(SPromise, [{
+  _createClass(PromiseAdapter, [{
     key: "then",
     value: function then(onFulfilled, onRejected) {
       return this.defer.then(onFulfilled, onRejected);
@@ -1837,13 +1837,13 @@ var SPromise = function () {
   }, {
     key: "resolve",
     value: function resolve(object) {
-      if (object instanceof SPromise) {
+      if (object instanceof PromiseAdapter) {
         object.defer.resolve();
 
         return object;
       }
 
-      var promise = new SPromise(function (resolve) {
+      var promise = new PromiseAdapter(function (resolve) {
         return resolve(object);
       });
 
@@ -1856,16 +1856,16 @@ var SPromise = function () {
   }, {
     key: "reject",
     value: function reject(reason) {
-      return new SPromise(function (resolve, reject) {
+      return new PromiseAdapter(function (resolve, reject) {
         return reject(reason);
       });
     }
   }]);
 
-  return SPromise;
+  return PromiseAdapter;
 }();
 
-exports.default = SPromise;
+exports.default = PromiseAdapter;
 
 /***/ })
 /******/ ]);
