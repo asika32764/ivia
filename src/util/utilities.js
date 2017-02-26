@@ -5,6 +5,8 @@
  * @license    __LICENSE__
  */
 
+import Sparrow from "../sparrow";
+
 export default class Utilities {
   static get (data, path, def) {
     if (path.indexOf('.') !== -1) {
@@ -115,7 +117,7 @@ export default class Utilities {
   }
 
   static isPlainObject (data) {
-    return Object.prototype.toString.call(data) === '[object Object]';
+    return Sparrow.$.isPlainObject(data);
   }
 
   static isNative (object) {
@@ -138,6 +140,10 @@ export default class Utilities {
 
       return method.apply(target, arguments);
     });
+  }
+
+  static isJquery (object) {
+    return 'jquery' in object || Sparrow.$.zepto.isZ(object);
   }
 }
 

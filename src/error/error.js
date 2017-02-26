@@ -14,8 +14,12 @@ export default class ErrorHandler {
     console.warn(this.format(message));
   }
 
+  error (message) {
+    console.error(this.format(message));
+  }
+
   log (message) {
-    console.log(message);
+    console.log(this.format(message));
   }
 
   format (message) {

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>-->
   <script src="../dist/sparrow.js"></script>
 
   <script>
@@ -27,7 +28,7 @@
         ],
         radio: 'option2'
       },
-      mounted: function () {
+      configure: function () {
         this.$model('#inputName', 'foo.bar.yoo');
         this.$bind('#email-desc', 'foo.bar.yoo', function ($ele, v) {
           $ele[0].textContent = v;
@@ -40,15 +41,16 @@
         this.$model('input[name=optionsRadios]', 'radio');
         this.$bind('#user-form', 'radio', function ($ele, value, oldValue) {
           if (value === 'option2') {
-            $ele.slideDown();
+            $ele.show();
           } else {
-            $ele.slideUp();
+            $ele.hide();
           }
         });
 
         this.$bind('#hello', 'hello', ':text');
+        this.$bind('#list-show li', 'foo.bar.yoo', ':text');
         this.$model('#list', 'list');
-        this.$show('#list-show', 'list', e => e.slideDown(), 'fadeOut');
+        this.$show('#list-show li', 'list', 'fadeToggle');
       },
       methods: {
         changeRadios () {

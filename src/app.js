@@ -110,6 +110,8 @@ export default class Application {
 
     this._isMounted = true;
 
+    this.hook('configure');
+
     this.hook('mounted');
 
     this.watcher = new Watcher(this, function () {
@@ -205,11 +207,12 @@ export default class Application {
       );
     }
 
-    this.watch(key, function (value) {
+    this.watch(function () {
+      const value = Utilities.get(this.$data, key);
       if ($element.val() !== value) {
         FormHelper.update($element, value);
       }
-    });
+    }, nullFunction);
 
     this.on(selector, 'change', handler, delegate);
 
@@ -220,12 +223,23 @@ export default class Application {
     return this;
   }
 
-  show (selector, key, onShow = 'show', onHide = 'hide') {
+  show (selector, key, onShow = null, onHide = null) {
     const $element = this.find(selector);
+
+    if (onShow !== null) {
+      onHide = onHide || onShow;
+    }
+
+    onShow = onShow || 'show';
+    onHide = onHide || 'hide';
 
     const toggleHandler = ((handler) => {
       return (() => {
         if (typeof handler === 'string') {
+          if (process.env.NODE_ENV === 'development' && typeof $element[handler] !== 'function') {
+            this.error.error(`Method: ${handler}() not found in ${Sparrow.$._name} object.`);
+          }
+
           return () => $element[handler]();
         } else if (typeof handler === 'function') {
           return (value, oldValue, ctrl) => handler.call(this.instance, $element, value, oldValue, ctrl);
@@ -234,8 +248,10 @@ export default class Application {
     });
 
     const handler = function (value, oldValue, ctrl) {
-      if (value !== oldValue) {
-        if (value == true || value != 0) {
+      const valueBool = (value == true || value != 0);
+
+      if (valueBool != (oldValue == true || oldValue != 0)) {
+        if (valueBool) {
           toggleHandler(onShow)(value, oldValue, ctrl);
         } else {
           toggleHandler(onHide)(value, oldValue, ctrl);

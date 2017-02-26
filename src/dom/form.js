@@ -4,10 +4,11 @@
  * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
+import Utilities from "../util/utilities";
 
 export default class FormHelper {
   static isFormElement ($element) {
-    const tag = 'jquery' in $element ? $element[0].tagName : $element.tagName;
+    const tag = Utilities.isJquery($element) ? $element[0].tagName : $element.tagName;
 
     return [FormHelper.INPUT, FormHelper.SELECT, FormHelper.TEXTAREA].indexOf(tag) !== -1;
   }

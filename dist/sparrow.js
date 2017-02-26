@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,18 +79,22 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 exports.nullFunction = nullFunction;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _sparrow = __webpack_require__(4);
 
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
+var _sparrow2 = _interopRequireDefault(_sparrow);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Utilities = function () {
   function Utilities() {
@@ -218,7 +222,7 @@ var Utilities = function () {
   }, {
     key: 'isPlainObject',
     value: function isPlainObject(data) {
-      return Object.prototype.toString.call(data) === '[object Object]';
+      return _sparrow2.default.$.isPlainObject(data);
     }
   }, {
     key: 'isNative',
@@ -245,6 +249,11 @@ var Utilities = function () {
 
         return method.apply(target, arguments);
       };
+    }
+  }, {
+    key: 'isJquery',
+    value: function isJquery(object) {
+      return 'jquery' in object || _sparrow2.default.$.zepto.isZ(object);
     }
   }]);
 
@@ -295,25 +304,25 @@ var _createClass = function () { function defineProperties(target, props) { for 
 exports.proxy = proxy;
 exports.proxyMethod = proxyMethod;
 
-var _observer = __webpack_require__(8);
+var _observer = __webpack_require__(10);
 
-var _watcher = __webpack_require__(4);
+var _watcher = __webpack_require__(3);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
-var _registry = __webpack_require__(11);
+var _registry = __webpack_require__(14);
 
 var _registry2 = _interopRequireDefault(_registry);
 
-var _scheduler = __webpack_require__(9);
+var _scheduler = __webpack_require__(11);
 
 var _scheduler2 = _interopRequireDefault(_scheduler);
 
-var _queue = __webpack_require__(3);
+var _queue = __webpack_require__(2);
 
 var _queue2 = _interopRequireDefault(_queue);
 
-var _error = __webpack_require__(5);
+var _error = __webpack_require__(7);
 
 var _error2 = _interopRequireDefault(_error);
 
@@ -321,15 +330,15 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _promise = __webpack_require__(2);
+var _promise = __webpack_require__(12);
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _event = __webpack_require__(6);
+var _event = __webpack_require__(8);
 
 var _event2 = _interopRequireDefault(_event);
 
-var _form = __webpack_require__(14);
+var _form = __webpack_require__(6);
 
 var _form2 = _interopRequireDefault(_form);
 
@@ -438,6 +447,8 @@ var Application = function () {
 
       this._isMounted = true;
 
+      this.hook('configure');
+
       this.hook('mounted');
 
       this.watcher = new _watcher2.default(this, function () {
@@ -541,11 +552,12 @@ var Application = function () {
         this.error.warn('Please only use two-way-binding on input, select or textarea elements. The element you selected: ' + $element[0].outerHTML.substr(0, 50) + '...');
       }
 
-      this.watch(key, function (value) {
+      this.watch(function () {
+        var value = _utilities2.default.get(this.$data, key);
         if ($element.val() !== value) {
           _form2.default.update($element, value);
         }
-      });
+      }, _utilities.nullFunction);
 
       this.on(selector, 'change', handler, delegate);
 
@@ -560,14 +572,25 @@ var Application = function () {
     value: function show(selector, key) {
       var _this = this;
 
-      var onShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'show';
-      var onHide = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hide';
+      var onShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var onHide = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
       var $element = this.find(selector);
+
+      if (onShow !== null) {
+        onHide = onHide || onShow;
+      }
+
+      onShow = onShow || 'show';
+      onHide = onHide || 'hide';
 
       var toggleHandler = function toggleHandler(handler) {
         return function () {
           if (typeof handler === 'string') {
+            if ("development" === 'development' && typeof $element[handler] !== 'function') {
+              _this.error.error("Method: " + handler + "() not found in " + Sparrow.$._name + " object.");
+            }
+
             return function () {
               return $element[handler]();
             };
@@ -580,8 +603,10 @@ var Application = function () {
       };
 
       var handler = function handler(value, oldValue, ctrl) {
-        if (value !== oldValue) {
-          if (value == true || value != 0) {
+        var valueBool = value == true || value != 0;
+
+        if (valueBool != (oldValue == true || oldValue != 0)) {
+          if (valueBool) {
             toggleHandler(onShow)(value, oldValue, ctrl);
           } else {
             toggleHandler(onHide)(value, oldValue, ctrl);
@@ -792,120 +817,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
 var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var $ = window.jQuery;
-
-var PromiseAdapter = function () {
-  function PromiseAdapter(callback) {
-    _classCallCheck(this, PromiseAdapter);
-
-    var deferred = $.Deferred();
-    var resolve = deferred.resolve;
-    var reject = deferred.reject;
-
-    callback(resolve, reject);
-
-    this.defer = $.when(deferred);
-  }
-
-  _createClass(PromiseAdapter, [{
-    key: "then",
-    value: function then(onFulfilled, onRejected) {
-      return this.defer.then(onFulfilled, onRejected);
-    }
-  }, {
-    key: "catch",
-    value: function _catch(onRejected) {
-      return this.defer.catch(onRejected);
-    }
-  }], [{
-    key: "all",
-    value: function all(promises) {
-      return $.when.apply($, _toConsumableArray(promises));
-    }
-  }, {
-    key: "race",
-    value: function race(promises) {
-      var _resolve = void 0;
-
-      return new PromiseAdapter(function (resolve) {
-        _resolve = resolve;
-
-        promises.map(function (promise) {
-          promise.then(function (v) {
-            if (_resolve) {
-              resolve(v);
-            }
-          });
-        });
-      });
-    }
-  }, {
-    key: "resolve",
-    value: function resolve(object) {
-      if (object instanceof PromiseAdapter) {
-        object.defer.resolve();
-
-        return object;
-      }
-
-      var promise = new PromiseAdapter(function (resolve) {
-        return resolve(object);
-      });
-
-      if (_utilities2.default.isObject(object) && object.hasOwnProperty('then')) {
-        return promise.then(object.then);
-      }
-
-      return promise;
-    }
-  }, {
-    key: "reject",
-    value: function reject(reason) {
-      return new PromiseAdapter(function (resolve, reject) {
-        return reject(reason);
-      });
-    }
-  }]);
-
-  return PromiseAdapter;
-}();
-
-exports.default = PromiseAdapter;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _utilities = __webpack_require__(0);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-var _environment = __webpack_require__(10);
+var _environment = __webpack_require__(13);
 
 var _app = __webpack_require__(1);
 
@@ -1045,7 +961,7 @@ var TaskQueue = {
 exports.default = TaskQueue;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1242,7 +1158,243 @@ var Watcher = function () {
 exports.default = Watcher;
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _app = __webpack_require__(1);
+
+var _app2 = _interopRequireDefault(_app);
+
+var _element = __webpack_require__(5);
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var plugin = "sparrow";
+
+var Sparrow = function () {
+  function Sparrow() {
+    var _this = this;
+
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    _classCallCheck(this, Sparrow);
+
+    var el = null;
+    $ = $ || Sparrow.$;
+
+    if (options.domready) {
+      el = options.el;
+      options.el = null;
+
+      $(document).ready(function ($) {
+        _this.$options.el = el;
+        _this.$mount(el);
+      });
+    }
+
+    this.app = new _app2.default($);
+    this.app.init(this, options);
+  }
+
+  _createClass(Sparrow, null, [{
+    key: 'plugin',
+    value: function plugin(name) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      var $ = Sparrow.$;
+
+      $.fn[name] = function (customOptions) {
+        var $this = $(this[0]);
+
+        if (!$this.data(name)) {
+          options = $.extend(true, {}, options, customOptions);
+          options.el = $this;
+
+          $this.data(name, new Sparrow(options));
+        }
+
+        return $this.data(name);
+      };
+    }
+  }, {
+    key: '$',
+    set: function set(value) {
+      Object.defineProperty(Sparrow, '$', {
+        value: value
+      });
+
+      Sparrow.$._name = 'zepto' in Sparrow.$ ? 'Zepto' : 'jQuery';
+
+      Sparrow.plugin(plugin);
+    }
+  }]);
+
+  return Sparrow;
+}();
+
+exports.default = Sparrow;
+
+
+Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
+Sparrow.Promise = _app2.default.Promise;
+
+/***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.default = createElement;
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
+ */
+
+function createElement(name) {
+  var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var content = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+  var ele = document.createElement(name);
+
+  for (var key in attrs) {
+    var value = attrs[key];
+
+    ele.setAttribute(key, value);
+  }
+
+  addContent(ele, content);
+
+  return ele;
+}
+
+function addContent(ele, content) {
+  if (content !== null) {
+    if (typeof content === 'string' || typeof content === 'number') {
+      ele.append(content);
+    } else if (content instanceof Element) {
+      ele.appendChild(content);
+    } else if (content instanceof window.jQuery || 'jquery' in content) {
+      content.each(function () {
+        ele.appendChild(this);
+      });
+    } else if (Array.isArray(content) || (typeof content === 'undefined' ? 'undefined' : _typeof(content)) === 'object') {
+      for (var k in content) {
+        addContent(ele, content[k]);
+      }
+    }
+  }
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FormHelper = function () {
+  function FormHelper() {
+    _classCallCheck(this, FormHelper);
+  }
+
+  _createClass(FormHelper, null, [{
+    key: 'isFormElement',
+    value: function isFormElement($element) {
+      var tag = _utilities2.default.isJquery($element) ? $element[0].tagName : $element.tagName;
+
+      return [FormHelper.INPUT, FormHelper.SELECT, FormHelper.TEXTAREA].indexOf(tag) !== -1;
+    }
+  }, {
+    key: 'update',
+    value: function update($element, value) {
+      var method = 'update' + $element[0].tagName;
+
+      FormHelper[method]($element, value);
+    }
+  }, {
+    key: 'updateINPUT',
+    value: function updateINPUT($element, value) {
+      switch ($element.attr('type')) {
+        case 'radio':
+        case 'checkbox':
+          $element.filter('[value=' + value + ']').prop('checked', true);
+          break;
+        default:
+          $element.val(value);
+      }
+    }
+  }, {
+    key: 'updateTEXTAREA',
+    value: function updateTEXTAREA($element, value) {
+      $element.val(value);
+    }
+  }, {
+    key: 'updateSELECT',
+    value: function updateSELECT($element, value) {
+      $element.val(value);
+    }
+  }]);
+
+  return FormHelper;
+}();
+
+exports.default = FormHelper;
+
+
+FormHelper.INPUT = 'INPUT';
+FormHelper.SELECT = 'SELECT';
+FormHelper.TEXTAREA = 'TEXTAREA';
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1276,9 +1428,14 @@ var ErrorHandler = function () {
       console.warn(this.format(message));
     }
   }, {
+    key: "error",
+    value: function error(message) {
+      console.error(this.format(message));
+    }
+  }, {
     key: "log",
     value: function log(message) {
-      console.log(message);
+      console.log(this.format(message));
     }
   }, {
     key: "format",
@@ -1293,7 +1450,7 @@ var ErrorHandler = function () {
 exports.default = ErrorHandler;
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1423,7 +1580,7 @@ var EventHandler = function () {
 exports.default = EventHandler;
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1440,7 +1597,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    __LICENSE__
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _watcher = __webpack_require__(4);
+var _watcher = __webpack_require__(3);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
@@ -1537,7 +1694,7 @@ var Dispatcher = function () {
 exports.default = Dispatcher;
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1554,7 +1711,7 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _dispatcher = __webpack_require__(7);
+var _dispatcher = __webpack_require__(9);
 
 var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
@@ -1912,7 +2069,7 @@ var ObserverFactory = exports.ObserverFactory = function () {
 }();
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1930,7 +2087,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _queue = __webpack_require__(3);
+var _queue = __webpack_require__(2);
 
 var _queue2 = _interopRequireDefault(_queue);
 
@@ -2067,7 +2224,116 @@ var Scheduler = function () {
 exports.default = Scheduler;
 
 /***/ }),
-/* 10 */
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = window.jQuery;
+
+var PromiseAdapter = function () {
+  function PromiseAdapter(callback) {
+    _classCallCheck(this, PromiseAdapter);
+
+    var deferred = $.Deferred();
+    var resolve = deferred.resolve;
+    var reject = deferred.reject;
+
+    callback(resolve, reject);
+
+    this.defer = $.when(deferred);
+  }
+
+  _createClass(PromiseAdapter, [{
+    key: "then",
+    value: function then(onFulfilled, onRejected) {
+      return this.defer.then(onFulfilled, onRejected);
+    }
+  }, {
+    key: "catch",
+    value: function _catch(onRejected) {
+      return this.defer.catch(onRejected);
+    }
+  }], [{
+    key: "all",
+    value: function all(promises) {
+      return $.when.apply($, _toConsumableArray(promises));
+    }
+  }, {
+    key: "race",
+    value: function race(promises) {
+      var _resolve = void 0;
+
+      return new PromiseAdapter(function (resolve) {
+        _resolve = resolve;
+
+        promises.map(function (promise) {
+          promise.then(function (v) {
+            if (_resolve) {
+              resolve(v);
+            }
+          });
+        });
+      });
+    }
+  }, {
+    key: "resolve",
+    value: function resolve(object) {
+      if (object instanceof PromiseAdapter) {
+        object.defer.resolve();
+
+        return object;
+      }
+
+      var promise = new PromiseAdapter(function (resolve) {
+        return resolve(object);
+      });
+
+      if (_utilities2.default.isObject(object) && object.hasOwnProperty('then')) {
+        return promise.then(object.then);
+      }
+
+      return promise;
+    }
+  }, {
+    key: "reject",
+    value: function reject(reason) {
+      return new PromiseAdapter(function (resolve, reject) {
+        return reject(reason);
+      });
+    }
+  }]);
+
+  return PromiseAdapter;
+}();
+
+exports.default = PromiseAdapter;
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2093,7 +2359,7 @@ var isAndroid = exports.isAndroid = UA && UA.indexOf('android') > 0;
 var isIOS = exports.isIOS = UA && /iphone|ipad|ipod|ios/.test(UA);
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2156,228 +2422,31 @@ var Registry = function () {
 exports.default = Registry;
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _sparrow = __webpack_require__(4);
 
-var _app = __webpack_require__(1);
-
-var _app2 = _interopRequireDefault(_app);
-
-var _element = __webpack_require__(13);
-
-var _element2 = _interopRequireDefault(_element);
+var _sparrow2 = _interopRequireDefault(_sparrow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var jQuery = void 0; /**
+                      * Part of Sparrow project.
+                      *
+                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                      * @license    GNU General Public License version 2 or later.
+                      */
+
+var Zepto = void 0;
 
 (function ($) {
-  /**
-   * Plugin Name.
-   *
-   * @type {string}
-   */
-  var plugin = "sparrow";
-
-  var Sparrow = function () {
-    function Sparrow() {
-      var _this = this;
-
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      _classCallCheck(this, Sparrow);
-
-      var el = null;
-      $ = $ || Sparrow.$;
-
-      if (options.domready) {
-        el = options.el;
-        options.el = null;
-
-        $(document).ready(function ($) {
-          _this.$options.el = el;
-          _this.$mount(el);
-        });
-      }
-
-      this.app = new _app2.default($);
-      this.app.init(this, options);
-    }
-
-    _createClass(Sparrow, null, [{
-      key: 'plugin',
-      value: function plugin(name) {
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        var $ = Sparrow.$;
-
-        $.fn[name] = function (customOptions) {
-          var $this = $(this[0]);
-
-          if (!$this.data(name)) {
-            options = $.extend(true, {}, options, customOptions);
-            options.el = $this;
-
-            $this.data(name, new Sparrow(options));
-          }
-
-          return $this.data(name);
-        };
-      }
-    }]);
-
-    return Sparrow;
-  }();
-
-  Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
-  Sparrow.Promise = _app2.default.Promise;
-  Sparrow.$ = $;
-  Sparrow.plugin(plugin);
-
-  window.Sparrow = Sparrow;
-})(jQuery);
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.default = createElement;
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
- * @license    GNU General Public License version 2 or later.
- */
-
-function createElement(name) {
-  var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var content = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-  var ele = document.createElement(name);
-
-  for (var key in attrs) {
-    var value = attrs[key];
-
-    ele.setAttribute(key, value);
-  }
-
-  addContent(ele, content);
-
-  return ele;
-}
-
-function addContent(ele, content) {
-  if (content !== null) {
-    if (typeof content === 'string' || typeof content === 'number') {
-      ele.append(content);
-    } else if (content instanceof Element) {
-      ele.appendChild(content);
-    } else if (content instanceof window.jQuery || 'jquery' in content) {
-      content.each(function () {
-        ele.appendChild(this);
-      });
-    } else if (Array.isArray(content) || (typeof content === 'undefined' ? 'undefined' : _typeof(content)) === 'object') {
-      for (var k in content) {
-        addContent(ele, content[k]);
-      }
-    }
-  }
-}
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
- * @license    GNU General Public License version 2 or later.
- */
-
-var FormHelper = function () {
-  function FormHelper() {
-    _classCallCheck(this, FormHelper);
-  }
-
-  _createClass(FormHelper, null, [{
-    key: 'isFormElement',
-    value: function isFormElement($element) {
-      var tag = 'jquery' in $element ? $element[0].tagName : $element.tagName;
-
-      return [FormHelper.INPUT, FormHelper.SELECT, FormHelper.TEXTAREA].indexOf(tag) !== -1;
-    }
-  }, {
-    key: 'update',
-    value: function update($element, value) {
-      var method = 'update' + $element[0].tagName;
-
-      FormHelper[method]($element, value);
-    }
-  }, {
-    key: 'updateINPUT',
-    value: function updateINPUT($element, value) {
-      switch ($element.attr('type')) {
-        case 'radio':
-        case 'checkbox':
-          $element.filter('[value=' + value + ']').prop('checked', true);
-          break;
-        default:
-          $element.val(value);
-      }
-    }
-  }, {
-    key: 'updateTEXTAREA',
-    value: function updateTEXTAREA($element, value) {
-      $element.val(value);
-    }
-  }, {
-    key: 'updateSELECT',
-    value: function updateSELECT($element, value) {
-      $element.val(value);
-    }
-  }]);
-
-  return FormHelper;
-}();
-
-exports.default = FormHelper;
-
-
-FormHelper.INPUT = 'INPUT';
-FormHelper.SELECT = 'SELECT';
-FormHelper.TEXTAREA = 'TEXTAREA';
+  _sparrow2.default.$ = $;
+  window.Sparrow = _sparrow2.default;
+})(jQuery || Zepto || $);
 
 /***/ })
 /******/ ]);

@@ -8,56 +8,54 @@
 import Application from './app';
 import createElement from './dom/element';
 
-(function ($) {
-  /**
-   * Plugin Name.
-   *
-   * @type {string}
-   */
-  const plugin = "sparrow";
+const plugin = "sparrow";
 
-  class Sparrow {
-    constructor (options = {}, $ = null) {
-      let el = null;
-      $ = $ || Sparrow.$;
+export default class Sparrow {
+  constructor (options = {}, $ = null) {
+    let el = null;
+    $ = $ || Sparrow.$;
 
-      if (options.domready) {
-        el = options.el;
-        options.el = null;
+    if (options.domready) {
+      el = options.el;
+      options.el = null;
 
-        $(document).ready($ => {
-          this.$options.el = el;
-          this.$mount(el);
-        });
-      }
-
-      this.app = new Application($);
-      this.app.init(this, options);
+      $(document).ready($ => {
+        this.$options.el = el;
+        this.$mount(el);
+      });
     }
 
-    static plugin (name, options = {}) {
-      const $ = Sparrow.$;
-
-      $.fn[name] = function (customOptions) {
-        const $this = $(this[0]);
-
-        if (!$this.data(name)) {
-          options = $.extend(true, {}, options, customOptions);
-          options.el = $this;
-
-          $this.data(name, new Sparrow(options));
-        }
-
-        return $this.data(name);
-      };
-    }
+    this.app = new Application($);
+    this.app.init(this, options);
   }
 
-  Sparrow.prototype.$createElement = Sparrow.createElement = createElement;
-  Sparrow.Promise = Application.Promise;
-  Sparrow.$ = $;
-  Sparrow.plugin(plugin);
+  static set $(value) {
+    Object.defineProperty(Sparrow, '$', {
+      value: value
+    });
 
-  window.Sparrow = Sparrow;
+    Sparrow.$._name = ('zepto' in Sparrow.$) ? 'Zepto' : 'jQuery';
 
-})(jQuery);
+    Sparrow.plugin(plugin);
+  }
+
+  static plugin (name, options = {}) {
+    const $ = Sparrow.$;
+
+    $.fn[name] = function (customOptions) {
+      const $this = $(this[0]);
+
+      if (!$this.data(name)) {
+        options = $.extend(true, {}, options, customOptions);
+        options.el = $this;
+
+        $this.data(name, new Sparrow(options));
+      }
+
+      return $this.data(name);
+    };
+  }
+}
+
+Sparrow.prototype.$createElement = Sparrow.createElement = createElement;
+Sparrow.Promise = Application.Promise;

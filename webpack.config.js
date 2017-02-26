@@ -8,7 +8,7 @@
 const webpack = require('webpack');
 
 const config = {
-  entry: "./src/sparrow.js",
+  entry: "./src/index.js",
   output: {
     path: 'dist',
     filename: process.env.NODE_ENV === 'production' ? "sparrow.min.js" : "sparrow.js"
