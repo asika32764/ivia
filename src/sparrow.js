@@ -15,6 +15,10 @@ export default class Sparrow {
     let el = null;
     $ = $ || Sparrow.$;
 
+    if (!$) {
+      console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+    }
+
     if (options.domready) {
       el = options.el;
       options.el = null;
@@ -41,6 +45,10 @@ export default class Sparrow {
 
   static plugin (name, options = {}) {
     const $ = Sparrow.$;
+
+    if (!$) {
+      console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+    }
 
     $.fn[name] = function (customOptions) {
       const $this = $(this[0]);

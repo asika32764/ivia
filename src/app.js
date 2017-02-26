@@ -95,7 +95,7 @@ export default class Application {
 
     this.hook('beforeMount');
 
-    const $el = el instanceof this.$ ? el : this.$(el);
+    const $el = Utilities.isJquery(el) ? el : this.$(el);
 
     if ($el.length === 0) {
       if (process.env.NODE_ENV === 'development') {
@@ -280,7 +280,7 @@ export default class Application {
   }
 
   find (selector, refresh = false) {
-    if (typeof selector === 'object' && !(selector instanceof this.$)) {
+    if (typeof selector === 'object' && !Utilities.isJquery(selector)) {
       return this.$(selector);
     }
 

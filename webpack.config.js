@@ -11,7 +11,9 @@ const config = {
   entry: "./src/index.js",
   output: {
     path: 'dist',
-    filename: process.env.NODE_ENV === 'production' ? "sparrow.min.js" : "sparrow.js"
+    filename: process.env.NODE_ENV === 'production' ? "sparrow.min.js" : "sparrow.js",
+    libraryTarget: "var",
+    library: ['Sparrow']
   },
   module: {
     loaders: [{

@@ -143,7 +143,11 @@ export default class Utilities {
   }
 
   static isJquery (object) {
-    return 'jquery' in object || Sparrow.$.zepto.isZ(object);
+    if (!Utilities.isObject(object)) {
+      return false;
+    }
+
+    return object instanceof Sparrow.$ || 'jquery' in object || Sparrow.$.zepto.isZ(object);
   }
 }
 

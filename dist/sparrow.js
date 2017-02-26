@@ -1,3 +1,4 @@
+var Sparrow =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -88,7 +89,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.nullFunction = nullFunction;
 
-var _sparrow = __webpack_require__(4);
+var _sparrow = __webpack_require__(1);
 
 var _sparrow2 = _interopRequireDefault(_sparrow);
 
@@ -253,7 +254,11 @@ var Utilities = function () {
   }, {
     key: 'isJquery',
     value: function isJquery(object) {
-      return 'jquery' in object || _sparrow2.default.$.zepto.isZ(object);
+      if (!Utilities.isObject(object)) {
+        return false;
+      }
+
+      return object instanceof _sparrow2.default.$ || 'jquery' in object || _sparrow2.default.$.zepto.isZ(object);
     }
   }]);
 
@@ -292,6 +297,115 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _app = __webpack_require__(2);
+
+var _app2 = _interopRequireDefault(_app);
+
+var _element = __webpack_require__(5);
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var plugin = "sparrow";
+
+var Sparrow = function () {
+  function Sparrow() {
+    var _this = this;
+
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    _classCallCheck(this, Sparrow);
+
+    var el = null;
+    $ = $ || Sparrow.$;
+
+    if (!$) {
+      console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+    }
+
+    if (options.domready) {
+      el = options.el;
+      options.el = null;
+
+      $(document).ready(function ($) {
+        _this.$options.el = el;
+        _this.$mount(el);
+      });
+    }
+
+    this.app = new _app2.default($);
+    this.app.init(this, options);
+  }
+
+  _createClass(Sparrow, null, [{
+    key: 'plugin',
+    value: function plugin(name) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      var $ = Sparrow.$;
+
+      if (!$) {
+        console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      }
+
+      $.fn[name] = function (customOptions) {
+        var $this = $(this[0]);
+
+        if (!$this.data(name)) {
+          options = $.extend(true, {}, options, customOptions);
+          options.el = $this;
+
+          $this.data(name, new Sparrow(options));
+        }
+
+        return $this.data(name);
+      };
+    }
+  }, {
+    key: '$',
+    set: function set(value) {
+      Object.defineProperty(Sparrow, '$', {
+        value: value
+      });
+
+      Sparrow.$._name = 'zepto' in Sparrow.$ ? 'Zepto' : 'jQuery';
+
+      Sparrow.plugin(plugin);
+    }
+  }]);
+
+  return Sparrow;
+}();
+
+exports.default = Sparrow;
+
+
+Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
+Sparrow.Promise = _app2.default.Promise;
+module.exports = exports['default'];
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
@@ -306,7 +420,7 @@ exports.proxyMethod = proxyMethod;
 
 var _observer = __webpack_require__(10);
 
-var _watcher = __webpack_require__(3);
+var _watcher = __webpack_require__(4);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
@@ -318,7 +432,7 @@ var _scheduler = __webpack_require__(11);
 
 var _scheduler2 = _interopRequireDefault(_scheduler);
 
-var _queue = __webpack_require__(2);
+var _queue = __webpack_require__(3);
 
 var _queue2 = _interopRequireDefault(_queue);
 
@@ -432,7 +546,7 @@ var Application = function () {
 
       this.hook('beforeMount');
 
-      var $el = el instanceof this.$ ? el : this.$(el);
+      var $el = _utilities2.default.isJquery(el) ? el : this.$(el);
 
       if ($el.length === 0) {
         if (true) {
@@ -641,7 +755,7 @@ var Application = function () {
     value: function find(selector) {
       var refresh = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-      if ((typeof selector === "undefined" ? "undefined" : _typeof(selector)) === 'object' && !(selector instanceof this.$)) {
+      if ((typeof selector === "undefined" ? "undefined" : _typeof(selector)) === 'object' && !_utilities2.default.isJquery(selector)) {
         return this.$(selector);
       }
 
@@ -807,7 +921,7 @@ function proxyMethod(target, source, key) {
 Application.Promise = _promise2.default;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -823,7 +937,7 @@ var _utilities2 = _interopRequireDefault(_utilities);
 
 var _environment = __webpack_require__(13);
 
-var _app = __webpack_require__(1);
+var _app = __webpack_require__(2);
 
 var _app2 = _interopRequireDefault(_app);
 
@@ -959,9 +1073,10 @@ var TaskQueue = {
 };
 
 exports.default = TaskQueue;
+module.exports = exports["default"];
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1156,106 +1271,7 @@ var Watcher = function () {
 }();
 
 exports.default = Watcher;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-var _app = __webpack_require__(1);
-
-var _app2 = _interopRequireDefault(_app);
-
-var _element = __webpack_require__(5);
-
-var _element2 = _interopRequireDefault(_element);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var plugin = "sparrow";
-
-var Sparrow = function () {
-  function Sparrow() {
-    var _this = this;
-
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    _classCallCheck(this, Sparrow);
-
-    var el = null;
-    $ = $ || Sparrow.$;
-
-    if (options.domready) {
-      el = options.el;
-      options.el = null;
-
-      $(document).ready(function ($) {
-        _this.$options.el = el;
-        _this.$mount(el);
-      });
-    }
-
-    this.app = new _app2.default($);
-    this.app.init(this, options);
-  }
-
-  _createClass(Sparrow, null, [{
-    key: 'plugin',
-    value: function plugin(name) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      var $ = Sparrow.$;
-
-      $.fn[name] = function (customOptions) {
-        var $this = $(this[0]);
-
-        if (!$this.data(name)) {
-          options = $.extend(true, {}, options, customOptions);
-          options.el = $this;
-
-          $this.data(name, new Sparrow(options));
-        }
-
-        return $this.data(name);
-      };
-    }
-  }, {
-    key: '$',
-    set: function set(value) {
-      Object.defineProperty(Sparrow, '$', {
-        value: value
-      });
-
-      Sparrow.$._name = 'zepto' in Sparrow.$ ? 'Zepto' : 'jQuery';
-
-      Sparrow.plugin(plugin);
-    }
-  }]);
-
-  return Sparrow;
-}();
-
-exports.default = Sparrow;
-
-
-Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
-Sparrow.Promise = _app2.default.Promise;
+module.exports = exports['default'];
 
 /***/ }),
 /* 5 */
@@ -1268,15 +1284,24 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /**
+                                                                                                                                                                                                                                                                               * Part of sparrow project.
+                                                                                                                                                                                                                                                                               *
+                                                                                                                                                                                                                                                                               * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                                                                                                                                                                                                                                               * @license    GNU General Public License version 2 or later.
+                                                                                                                                                                                                                                                                               */
 
 exports.default = createElement;
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
- * @license    GNU General Public License version 2 or later.
- */
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+var _sparrow = __webpack_require__(1);
+
+var _sparrow2 = _interopRequireDefault(_sparrow);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function createElement(name) {
   var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1301,17 +1326,18 @@ function addContent(ele, content) {
       ele.append(content);
     } else if (content instanceof Element) {
       ele.appendChild(content);
-    } else if (content instanceof window.jQuery || 'jquery' in content) {
+    } else if (content instanceof _sparrow2.default.$ || _utilities2.default.isJquery(content)) {
       content.each(function () {
         ele.appendChild(this);
       });
-    } else if (Array.isArray(content) || (typeof content === 'undefined' ? 'undefined' : _typeof(content)) === 'object') {
+    } else if (Array.isArray(content) || (typeof content === "undefined" ? "undefined" : _typeof(content)) === 'object') {
       for (var k in content) {
         addContent(ele, content[k]);
       }
     }
   }
 }
+module.exports = exports["default"];
 
 /***/ }),
 /* 6 */
@@ -1392,6 +1418,7 @@ exports.default = FormHelper;
 FormHelper.INPUT = 'INPUT';
 FormHelper.SELECT = 'SELECT';
 FormHelper.TEXTAREA = 'TEXTAREA';
+module.exports = exports['default'];
 
 /***/ }),
 /* 7 */
@@ -1448,6 +1475,7 @@ var ErrorHandler = function () {
 }();
 
 exports.default = ErrorHandler;
+module.exports = exports["default"];
 
 /***/ }),
 /* 8 */
@@ -1578,6 +1606,7 @@ var EventHandler = function () {
 }();
 
 exports.default = EventHandler;
+module.exports = exports['default'];
 
 /***/ }),
 /* 9 */
@@ -1597,7 +1626,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    __LICENSE__
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _watcher = __webpack_require__(3);
+var _watcher = __webpack_require__(4);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
@@ -1692,6 +1721,7 @@ var Dispatcher = function () {
 }();
 
 exports.default = Dispatcher;
+module.exports = exports["default"];
 
 /***/ }),
 /* 10 */
@@ -2087,7 +2117,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _queue = __webpack_require__(2);
+var _queue = __webpack_require__(3);
 
 var _queue2 = _interopRequireDefault(_queue);
 
@@ -2222,6 +2252,7 @@ var Scheduler = function () {
 }();
 
 exports.default = Scheduler;
+module.exports = exports['default'];
 
 /***/ }),
 /* 12 */
@@ -2331,6 +2362,7 @@ var PromiseAdapter = function () {
 }();
 
 exports.default = PromiseAdapter;
+module.exports = exports["default"];
 
 /***/ }),
 /* 13 */
@@ -2420,6 +2452,7 @@ var Registry = function () {
 }();
 
 exports.default = Registry;
+module.exports = exports["default"];
 
 /***/ }),
 /* 15 */
@@ -2428,25 +2461,29 @@ exports.default = Registry;
 "use strict";
 
 
-var _sparrow = __webpack_require__(4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _sparrow = __webpack_require__(1);
 
 var _sparrow2 = _interopRequireDefault(_sparrow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var jQuery = void 0; /**
-                      * Part of Sparrow project.
-                      *
-                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                      * @license    GNU General Public License version 2 or later.
-                      */
+var $ = window.jQuery || window.Zepto || window.$ || null; /**
+                                                            * Part of Sparrow project.
+                                                            *
+                                                            * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+                                                            * @license    GNU General Public License version 2 or later.
+                                                            */
 
-var Zepto = void 0;
-
-(function ($) {
+if ($) {
   _sparrow2.default.$ = $;
-  window.Sparrow = _sparrow2.default;
-})(jQuery || Zepto || $);
+}
+
+exports.default = _sparrow2.default;
+module.exports = exports["default"];
 
 /***/ })
 /******/ ]);

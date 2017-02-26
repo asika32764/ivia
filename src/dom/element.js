@@ -5,6 +5,9 @@
  * @license    GNU General Public License version 2 or later.
  */
 
+import Utilities from "../util/utilities";
+import Sparrow from "../sparrow";
+
 export default function createElement (name, attrs = {}, content = null) {
   const ele = document.createElement(name);
 
@@ -25,7 +28,7 @@ function addContent (ele, content) {
       ele.append(content);
     } else if (content instanceof Element) {
       ele.appendChild(content);
-    } else if (content instanceof window.jQuery || 'jquery' in content) {
+    } else if (content instanceof Sparrow.$ || Utilities.isJquery(content)) {
       content.each(function () {
         ele.appendChild(this);
       });

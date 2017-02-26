@@ -7,10 +7,10 @@
 
 import Sparrow from "./sparrow";
 
-let jQuery;
-let Zepto;
+let $ = window.jQuery || window.Zepto || window.$ || null;
 
-(function ($) {
+if ($) {
   Sparrow.$ = $;
-  window.Sparrow = Sparrow;
-})(jQuery || Zepto || $);
+}
+
+export default Sparrow;
