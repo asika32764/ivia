@@ -54,7 +54,7 @@ const TaskQueue = {
     }
   },
   /**
-   * This method based on Vue.$nextTick to handle callback asynchronously.
+   * This method based listen Vue.$nextTick to handle callback asynchronously.
    */
   getHandler: function () {
     if (typeof this.handler !== 'function') {

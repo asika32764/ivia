@@ -54,15 +54,19 @@ export default class Application {
     // Push properties back to instance
     instance.$ = this.$;
     instance.$data = this.options.data;
+    instance.$options = this.options;
     proxyMethod(instance, this, 'find');
     proxyMethod(instance, this, 'async');
     proxyMethod(instance, this, 'mount');
     proxyMethod(instance, this, 'watch');
     proxyMethod(instance, this, 'nextTick');
-    proxyMethod(instance, this.event, 'on', true);
+    proxyMethod(instance, this, 'forceUpdate');
+    proxyMethod(instance, this.event, 'listen', true);
     proxyMethod(instance, this.event, 'off', true);
     proxyMethod(instance, this.event, 'once', true);
     proxyMethod(instance, this.event, 'emit', true);
+    proxyMethod(instance, this.observerFactory, 'set', true);
+    proxyMethod(instance, this.observerFactory, 'delete', true);
 
     this.hook('beforeCreate');
 
@@ -77,6 +81,11 @@ export default class Application {
   }
 
   mount (el) {
+    if (this._isMounted) {
+      this.error.warn('This app has been already mounted.');
+      return;
+    }
+
     this.hook('beforeMount');
 
     this.$el = el instanceof this.$ ? el : this.$(el);
@@ -89,11 +98,6 @@ export default class Application {
     this.watcher = new Watcher(this, function () {
       this.app.watchers.map(watcher => watcher.update());
     }, nullFunction);
-
-    // Manually add all watchers to root watcher
-    this.currentWatcher = this.watcher;
-    this.watchers.map(watcher => Utilities.get(this.data, watcher.path));
-    this.currentWatcher = null;
 
     this.forceUpdate();
   }
@@ -110,9 +114,13 @@ export default class Application {
     }
   }
 
-  watch (path, callback) {
-    const watcher = new Watcher(this, path, callback);
+  watch (path, callback, options = {}) {
+    const watcher = new Watcher(this, path, callback, options);
     this.watchers.push(watcher);
+
+    if (options.immediate) {
+      callback.call(this.instance, watcher.get());
+    }
 
     return (function unwatch () {
       watcher.teardown();
@@ -263,11 +271,7 @@ export function proxyMethod (target, source, key, chain = false) {
   target[methodName] = function (...args) {
     const r = source[key](...args);
 
-    if (chain) {
-      return target;
-    }
-
-    return r;
+    return chain ? target : r;
   }
 }
 

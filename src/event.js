@@ -11,13 +11,17 @@ export default class EventHandler {
     this.events = {};
   }
 
-  on (name, callback) {
+  listen (name, callback) {
     if (Array.isArray(name)) {
-      name.map(n => this.on(n, callback));
+      name.map(n => this.listen(n, callback));
       return this;
     }
 
-    add(this.events, name, callback);
+    if (!this.events.hasOwnProperty(name)) {
+      this.events[name] = [];
+    }
+
+    this.events[name].push(callback);
 
     return this;
   }
@@ -31,14 +35,14 @@ export default class EventHandler {
       return r;
     };
 
-    return this.on(name, callback);
+    return this.listen(name, fn);
   }
 
   off (name = null, callback = null) {
     if (name === null) {
       this.events = {};
     } else if (Array.isArray(name)) {
-      name.map(n => this.on(n, callback));
+      name.map(n => this.listen(n, callback));
       return this;
     }
 
@@ -77,12 +81,4 @@ export default class EventHandler {
 
     return this;
   }
-}
-
-function add (queue, name, value) {
-  if (!queue.hasOwnProperty(name)) {
-    queue[name] = [];
-  }
-
-  queue[name].push(value);
 }

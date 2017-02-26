@@ -46,7 +46,7 @@ export default class Scheduler {
           break;
 
         case State.RUNNING:
-          // if already flushing, splice the watcher based on its id
+          // if already flushing, splice the watcher based listen its id
           // if already past its id, it will be run next immediately.
           let i = this.queue.length - 1;
 
@@ -60,16 +60,6 @@ export default class Scheduler {
   }
 
   execute () {
-    let watcher;
-    let i;
-    for (i in this.queue) {
-      watcher = this.queue[i];
-
-      if (watcher.app === watcher.app.watcher && watcher.app._isMounted) {
-        watcher.app.hook('beforeUpdate');
-      }
-    }
-
     // Sort queue before flush.
     // This ensures that:
     // 1. Components are updated from parent to child. (because parent is always
@@ -95,14 +85,6 @@ export default class Scheduler {
           console.log('Infinite loop for max 1000 times');
           break;
         }
-      }
-    }
-
-    for (i in this.queue) {
-      watcher = this.queue[i];
-
-      if (watcher === watcher.app.watcher && watcher.app._isMounted) {
-        watcher.app.hook('updated');
       }
     }
 

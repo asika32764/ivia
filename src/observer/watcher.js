@@ -25,6 +25,7 @@ export default class Watcher {
     this.callback = callback;
     this.app = app;
     this.active = true;
+    this.ctrl = null;
     this.deep = this.options.deep;
     this.user = this.options.user;
     this.sync = this.options.sync;
@@ -63,7 +64,9 @@ export default class Watcher {
     return value;
   }
 
-  update () {
+  update (ctrl = null) {
+    this.ctrl = ctrl;
+
     if (this.computed) {
       this.deferred = true;
     } else if (this.sync) {
@@ -81,9 +84,11 @@ export default class Watcher {
         const oldValue = this.value;
         this.value = value;
 
-        this.callback.call(this.app.instance, value, oldValue);
+        this.callback.call(this.app.instance, value, oldValue, this.ctrl);
       }
     }
+
+    this.ctrl = null;
   }
 
   getCachedValue () {

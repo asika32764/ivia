@@ -1,110 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Showon Example</title>
+  <meta charset="UTF-8">
+  <title>Showon Example</title>
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="../dist/sparrow.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="../dist/sparrow.js"></script>
 </head>
 <body>
 
-
 <div class="container" style="margin-top: 150px">
 
-	<form id="sparrow-form" action="">
-		<div class="radios">
-			<div class="radio">
-				<label>
-					<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-					Option one is this and that&mdash;be sure to include why it's great
-				</label>
-			</div>
-			<div class="radio">
-				<label>
-					<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>
-					Option two can be something else and selecting it will deselect option one
-				</label>
-			</div>
-			<div class="radio disabled">
-				<label>
-					<input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" disabled>
-					Option three is disabled
-				</label>
-			</div>
-		</div>
+  <form id="sparrow-form" action="">
+    <div class="radios">
+      <div class="radio">
+        <label>
+          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+          Option one is this and that&mdash;be sure to include why it's great
+        </label>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+          Option two can be something else and selecting it will deselect option one
+        </label>
+      </div>
+      <div class="radio disabled">
+        <label>
+          <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" disabled>
+          Option three is disabled
+        </label>
+      </div>
+    </div>
 
-		<fieldset id="user-form" class="form-horizontal" style="">
-			<div id="inputName-control" class="form-group">
-				<label for="inputName" class="col-sm-2 control-label">Email</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputName" placeholder="Name">
-				</div>
-			</div>
-      <p id="email-desc">
+    <fieldset id="user-form" class="form-horizontal" style="">
+      <div id="inputName-control" class="form-group">
+        <label for="inputName" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="inputName" placeholder="Name">
+        </div>
+      </div>
+      <p id="email-desc"></p>
+      <p id="hello"></p>
 
-      </p>
-			<div id="inputPassword3-control" class="form-group">
-				<label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputPassword3" placeholder="Password">
-				</div>
-			</div>
-			<div id="inputCheckbox-control" class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label>
-							<input id="inputCheckbox" type="checkbox"> Remember me
-						</label>
-					</div>
-				</div>
-			</div>
-		</fieldset>
+      <div id="inputPassword3-control" class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="inputPassword3" placeholder="Password">
+        </div>
+      </div>
+      <div id="inputCheckbox-control" class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input id="inputCheckbox" type="checkbox"> Remember me
+            </label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
     <ul class="logs"></ul>
     <ul class="logs2"></ul>
     <ul class="logs3"></ul>
-	</form>
+  </form>
 </div>
 
 <script>
-	var sp = new Sparrow({
-		el: $('#sparrow-form'),
-		data: {
-			foo: {
-			    bar: {
-			        yoo: 'goo'
-          }
+  var sp = new Sparrow({
+    el: $('#sparrow-form'),
+    data: {
+      foo: {
+        bar: {
+          yoo: 'goo'
+        }
       },
       flower: 'sakura',
       yoo: null,
       items: [
-          'a', 'b', {foo: 'yoo'}
+        'a', 'b', 'c'
       ],
       radio: 'option1'
-		},
+    },
     mounted: function () {
       this.model('#inputName', 'foo.bar.yoo');
-      this.bind('#email-desc', 'foo.bar.yoo', ':text');
+      this.bind('#email-desc', 'foo.bar.yoo', function ($ele, v) {
+        $ele[0].textContent = v;
+      });
+
+//      this.$watch('foo.bar.yoo', function (value) {
+//          this.$find('#email-desc').text(value)
+//      });
+
       this.model('input[name=optionsRadios]', 'radio');
-      this.bind('#user-form', 'radio', function ($ele, value) {
+      this.bind('#user-form', 'radio', function ($ele, value, oldValue) {
+        console.log(value, oldValue);
         if (value === 'option2') {
           $ele.slideDown();
         } else {
           $ele.slideUp();
         }
       });
+
+      this.bind('#hello', 'hello', ':text');
+      this.bind('.logs', 'items', function ($ele, value, oldValue, diff) {
+        console.log(value, oldValue, diff);
+      });
     },
     updated: function () {
       console.log('Updated');
     },
-		methods: {
+    methods: {
       changeRadios () {
-          this.radio = this.radio == 'option1' ? 'option2' : 'option1';
+        this.radio = this.radio == 'option1' ? 'option2' : 'option1';
 
       }
-		},
+    },
     watch: {
 //		    radio: function (value) {
 //          if (value === 'option2') {
@@ -113,8 +125,13 @@
 //            this.$find('#user-form').slideUp();
 //          }
 //        }
+    },
+    computed: {
+      hello: function () {
+        return this.flower + ' ' + this.foo.bar.yoo;
+      }
     }
-	});
+  });
 </script>
 
 </body>

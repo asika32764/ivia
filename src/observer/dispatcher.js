@@ -57,8 +57,10 @@ export default class Dispatcher {
 
   /**
    * Notify all watchers to update themselves.
+   *
+   * @param {Object} ctrl
    */
-  notify () {
-    this.watchers.forEach(watcher => watcher.update());
+  notify (ctrl = undefined) {
+    this.watchers.forEach(watcher => watcher.update(ctrl));
   }
 }

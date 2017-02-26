@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -283,350 +283,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _utilities = __webpack_require__(0);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-var _environment = __webpack_require__(8);
-
-var _app = __webpack_require__(3);
-
-var _app2 = _interopRequireDefault(_app);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
-
-var TaskQueue = {
-  pending: false,
-  tasks: [],
-  handler: null,
-  nextTick: function nextTick(callback, target, app) {
-    var handler = this.getHandler();
-
-    var _resolve = void 0;
-    this.tasks.push(function () {
-      if (callback) {
-        callback.call(target);
-      }
-
-      if (_resolve) {
-        _resolve(target);
-      }
-    });
-
-    if (!this.pending) {
-      this.pending = true;
-
-      if (app) {
-        app.hook('beforeUpdate');
-      }
-
-      handler();
-    }
-
-    if (!callback && typeof Promise !== 'undefined') {
-      return _app2.default.Promise(function (resolve) {
-        _resolve = resolve;
-      });
-    }
-  },
-  execute: function execute() {
-    TaskQueue.pending = false;
-    var tasks = TaskQueue.tasks.slice(0);
-    TaskQueue.tasks.length = 0;
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var task = _step.value;
-
-        task();
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-  },
-  /**
-   * This method based on Vue.$nextTick to handle callback asynchronously.
-   */
-  getHandler: function getHandler() {
-    var _this = this;
-
-    if (typeof this.handler !== 'function') {
-      // the nextTick behavior leverages the microtask queue, which can be accessed
-      // via either native Promise.then or MutationObserver.
-      // MutationObserver has wider support, however it is seriously bugged in
-      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
-      // completely stops working after triggering a few times... so, if native
-      // Promise is available, we will use it:
-      /* istanbul ignore if */
-      if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
-        var p = Promise.resolve();
-        this.handler = function () {
-          p.then(_this.execute).catch(function (err) {
-            return console.error(err);
-          });
-
-          // in problematic UIWebViews, Promise.then doesn't completely break, but
-          // it can get stuck in a weird state where callbacks are pushed into the
-          // microtask queue but the queue isn't being flushed, until the browser
-          // needs to do some other work, e.g. handle a timer. Therefore we can
-          // "force" the microtask queue to be flushed by adding an empty timer.
-          if (_environment.isIOS) {
-            setTimeout(_utilities.nullFunction);
-          }
-        };
-      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
-      // PhantomJS and iOS 7.x
-      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
-        // use MutationObserver where native Promise is not available,
-        // e.g. PhantomJS IE11, iOS7, Android 4.4
-        var counter = 1;
-        var observer = new MutationObserver(this.execute);
-        var textNode = document.createTextNode(String(counter));
-        observer.observe(textNode, {
-          characterData: true
-        });
-        this.handler = function () {
-          counter = (counter + 1) % 2;
-          textNode.data = String(counter);
-        };
-      } else {
-        // fallback to setTimeout
-        /* istanbul ignore next */
-        this.handler = function () {
-          setTimeout(_this.execute, 0);
-        };
-      }
-    }
-
-    return this.handler;
-  }
-};
-
-exports.default = TaskQueue;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _utilities = __webpack_require__(0);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var uid = 0;
-
-var defaultOptions = {
-  deep: false,
-  user: false,
-  sync: false,
-  computed: false,
-  deferred: false
-};
-
-var Watcher = function () {
-  function Watcher(app, path, callback) {
-    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-    _classCallCheck(this, Watcher);
-
-    this.options = app.$.extend({}, defaultOptions, options);
-
-    this.id = ++uid;
-    this.path = path;
-    this.callback = callback;
-    this.app = app;
-    this.active = true;
-    this.deep = this.options.deep;
-    this.user = this.options.user;
-    this.sync = this.options.sync;
-    this.computed = this.options.computed;
-    this.deferred = this.options.deferred;
-    this.expression = callback + ''; // TODO: print handler string if DEBUG
-    this.dispatcherIds = [];
-    this.dispatchers = [];
-    this.newDisptacherIds = [];
-    this.newDisptachers = [];
-
-    if (typeof this.path === 'function') {
-      this.getter = this.path;
-    } else {
-      this.getter = function (value) {
-        return _utilities2.default.get(value, path);
-      };
-    }
-
-    //this.value = this.computed ? undefined : this.get();
-  }
-
-  _createClass(Watcher, [{
-    key: 'get',
-    value: function get() {
-      this.app.pushStack(this);
-
-      var value = void 0;
-
-      value = this.getter.call(this.app.instance, this.app.data);
-
-      // TODO: deep
-
-      this.app.popStack();
-
-      this.resetDispatchers();
-
-      return value;
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      if (this.computed) {
-        this.deferred = true;
-      } else if (this.sync) {
-        this.run();
-      } else {
-        this.app.scheduler.enqueueWatcher(this);
-      }
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      if (this.active) {
-        var value = this.get();
-
-        if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
-          var oldValue = this.value;
-          this.value = value;
-
-          this.callback.call(this.app.instance, value, oldValue);
-        }
-      }
-    }
-  }, {
-    key: 'getCachedValue',
-    value: function getCachedValue() {
-      if (this.defer) {
-        this.get();
-        this.defer = false;
-      }
-
-      // Push all dispatchers of this watcher to current active watcher.
-      if (this.app.currentWatcher) {
-        for (var k in this.watcher.dispatchers) {
-          this.app.currentWatcher.addDispatcher(this.dispatchers[k]);
-        }
-      }
-
-      return this.value;
-    }
-  }, {
-    key: 'resetDispatchers',
-    value: function resetDispatchers() {
-      var _this = this;
-
-      this.dispatchers.map(function (dispatcher) {
-        if (_this.newDisptacherIds.indexOf(dispatcher.id) === -1) {
-          dispatcher.detach(_this);
-        }
-      });
-
-      var temp = void 0;
-      temp = this.newDisptachers;
-      this.dispatchers = this.newDisptachers;
-      this.newDisptachers = temp;
-      this.newDisptachers.length = 0;
-
-      temp = this.newDisptacherIds;
-      this.dispatcherIds = this.newDisptacherIds;
-      this.newDisptacherIds = temp;
-      this.newDisptacherIds.length = 0;
-    }
-  }, {
-    key: 'addDispatcher',
-    value: function addDispatcher(dispatcher) {
-      var id = dispatcher.id;
-
-      if (this.newDisptacherIds.indexOf(id) === -1) {
-        this.newDisptacherIds.push(id);
-        this.newDisptachers.push(dispatcher);
-
-        if (this.dispatcherIds.indexOf(id) === -1) {
-          dispatcher.attach(this);
-        }
-      }
-    }
-  }, {
-    key: 'removeDispatcher',
-    value: function removeDispatcher(dispatcher) {
-      _utilities2.default.removeElement(this.dispatchers, dispatcher);
-      dispatcher.detach(this);
-    }
-  }, {
-    key: 'teardown',
-    value: function teardown() {
-      var _this2 = this;
-
-      this.dispatchers.map(function (dispatcher) {
-        _this2.removeDispatcher(dispatcher);
-        _utilities2.default.removeElement(_this2.watchers, _this2);
-      });
-    }
-  }]);
-
-  return Watcher;
-}();
-
-exports.default = Watcher;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
@@ -639,25 +295,25 @@ var _createClass = function () { function defineProperties(target, props) { for 
 exports.proxy = proxy;
 exports.proxyMethod = proxyMethod;
 
-var _observer = __webpack_require__(6);
+var _observer = __webpack_require__(8);
 
-var _watcher = __webpack_require__(2);
+var _watcher = __webpack_require__(4);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
-var _registry = __webpack_require__(9);
+var _registry = __webpack_require__(11);
 
 var _registry2 = _interopRequireDefault(_registry);
 
-var _scheduler = __webpack_require__(7);
+var _scheduler = __webpack_require__(9);
 
 var _scheduler2 = _interopRequireDefault(_scheduler);
 
-var _queue = __webpack_require__(1);
+var _queue = __webpack_require__(3);
 
 var _queue2 = _interopRequireDefault(_queue);
 
-var _error = __webpack_require__(4);
+var _error = __webpack_require__(5);
 
 var _error2 = _interopRequireDefault(_error);
 
@@ -665,11 +321,11 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _promise = __webpack_require__(11);
+var _promise = __webpack_require__(2);
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _event = __webpack_require__(12);
+var _event = __webpack_require__(6);
 
 var _event2 = _interopRequireDefault(_event);
 
@@ -722,15 +378,19 @@ var Application = function () {
       // Push properties back to instance
       instance.$ = this.$;
       instance.$data = this.options.data;
+      instance.$options = this.options;
       proxyMethod(instance, this, 'find');
       proxyMethod(instance, this, 'async');
       proxyMethod(instance, this, 'mount');
       proxyMethod(instance, this, 'watch');
       proxyMethod(instance, this, 'nextTick');
-      proxyMethod(instance, this.event, 'on', true);
+      proxyMethod(instance, this, 'forceUpdate');
+      proxyMethod(instance, this.event, 'listen', true);
       proxyMethod(instance, this.event, 'off', true);
       proxyMethod(instance, this.event, 'once', true);
       proxyMethod(instance, this.event, 'emit', true);
+      proxyMethod(instance, this.observerFactory, 'set', true);
+      proxyMethod(instance, this.observerFactory, 'delete', true);
 
       this.hook('beforeCreate');
 
@@ -746,7 +406,10 @@ var Application = function () {
   }, {
     key: "mount",
     value: function mount(el) {
-      var _this = this;
+      if (this._isMounted) {
+        this.error.warn('This app has been already mounted.');
+        return;
+      }
 
       this.hook('beforeMount');
 
@@ -762,13 +425,6 @@ var Application = function () {
           return watcher.update();
         });
       }, _utilities.nullFunction);
-
-      // Manually add all watchers to root watcher
-      this.currentWatcher = this.watcher;
-      this.watchers.map(function (watcher) {
-        return _utilities2.default.get(_this.data, watcher.path);
-      });
-      this.currentWatcher = null;
 
       this.forceUpdate();
     }
@@ -789,8 +445,14 @@ var Application = function () {
   }, {
     key: "watch",
     value: function watch(path, callback) {
-      var watcher = new _watcher2.default(this, path, callback);
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var watcher = new _watcher2.default(this, path, callback, options);
       this.watchers.push(watcher);
+
+      if (options.immediate) {
+        callback.call(this.instance, watcher.get());
+      }
 
       return function unwatch() {
         watcher.teardown();
@@ -960,18 +622,474 @@ function proxyMethod(target, source, key) {
   target[methodName] = function () {
     var r = source[key].apply(source, arguments);
 
-    if (chain) {
-      return target;
-    }
-
-    return r;
+    return chain ? target : r;
   };
 }
 
 Application.Promise = _promise2.default;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = window.jQuery;
+
+var PromiseAdapter = function () {
+  function PromiseAdapter(callback) {
+    _classCallCheck(this, PromiseAdapter);
+
+    var deferred = $.Deferred();
+    var resolve = deferred.resolve;
+    var reject = deferred.reject;
+
+    callback(resolve, reject);
+
+    this.defer = $.when(deferred);
+  }
+
+  _createClass(PromiseAdapter, [{
+    key: "then",
+    value: function then(onFulfilled, onRejected) {
+      return this.defer.then(onFulfilled, onRejected);
+    }
+  }, {
+    key: "catch",
+    value: function _catch(onRejected) {
+      return this.defer.catch(onRejected);
+    }
+  }], [{
+    key: "all",
+    value: function all(promises) {
+      return $.when.apply($, _toConsumableArray(promises));
+    }
+  }, {
+    key: "race",
+    value: function race(promises) {
+      var _resolve = void 0;
+
+      return new PromiseAdapter(function (resolve) {
+        _resolve = resolve;
+
+        promises.map(function (promise) {
+          promise.then(function (v) {
+            if (_resolve) {
+              resolve(v);
+            }
+          });
+        });
+      });
+    }
+  }, {
+    key: "resolve",
+    value: function resolve(object) {
+      if (object instanceof PromiseAdapter) {
+        object.defer.resolve();
+
+        return object;
+      }
+
+      var promise = new PromiseAdapter(function (resolve) {
+        return resolve(object);
+      });
+
+      if (_utilities2.default.isObject(object) && object.hasOwnProperty('then')) {
+        return promise.then(object.then);
+      }
+
+      return promise;
+    }
+  }, {
+    key: "reject",
+    value: function reject(reason) {
+      return new PromiseAdapter(function (resolve, reject) {
+        return reject(reason);
+      });
+    }
+  }]);
+
+  return PromiseAdapter;
+}();
+
+exports.default = PromiseAdapter;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+var _environment = __webpack_require__(10);
+
+var _app = __webpack_require__(1);
+
+var _app2 = _interopRequireDefault(_app);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var TaskQueue = {
+  pending: false,
+  tasks: [],
+  handler: null,
+  nextTick: function nextTick(callback, target, app) {
+    var handler = this.getHandler();
+
+    var _resolve = void 0;
+    this.tasks.push(function () {
+      if (callback) {
+        callback.call(target);
+      }
+
+      if (_resolve) {
+        _resolve(target);
+      }
+    });
+
+    if (!this.pending) {
+      this.pending = true;
+
+      if (app) {
+        app.hook('beforeUpdate');
+      }
+
+      handler();
+    }
+
+    if (!callback && typeof Promise !== 'undefined') {
+      return _app2.default.Promise(function (resolve) {
+        _resolve = resolve;
+      });
+    }
+  },
+  execute: function execute() {
+    TaskQueue.pending = false;
+    var tasks = TaskQueue.tasks.slice(0);
+    TaskQueue.tasks.length = 0;
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var task = _step.value;
+
+        task();
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  },
+  /**
+   * This method based listen Vue.$nextTick to handle callback asynchronously.
+   */
+  getHandler: function getHandler() {
+    var _this = this;
+
+    if (typeof this.handler !== 'function') {
+      // the nextTick behavior leverages the microtask queue, which can be accessed
+      // via either native Promise.then or MutationObserver.
+      // MutationObserver has wider support, however it is seriously bugged in
+      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
+      // completely stops working after triggering a few times... so, if native
+      // Promise is available, we will use it:
+      /* istanbul ignore if */
+      if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
+        var p = Promise.resolve();
+        this.handler = function () {
+          p.then(_this.execute).catch(function (err) {
+            return console.error(err);
+          });
+
+          // in problematic UIWebViews, Promise.then doesn't completely break, but
+          // it can get stuck in a weird state where callbacks are pushed into the
+          // microtask queue but the queue isn't being flushed, until the browser
+          // needs to do some other work, e.g. handle a timer. Therefore we can
+          // "force" the microtask queue to be flushed by adding an empty timer.
+          if (_environment.isIOS) {
+            setTimeout(_utilities.nullFunction);
+          }
+        };
+      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
+      // PhantomJS and iOS 7.x
+      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
+        // use MutationObserver where native Promise is not available,
+        // e.g. PhantomJS IE11, iOS7, Android 4.4
+        var counter = 1;
+        var observer = new MutationObserver(this.execute);
+        var textNode = document.createTextNode(String(counter));
+        observer.observe(textNode, {
+          characterData: true
+        });
+        this.handler = function () {
+          counter = (counter + 1) % 2;
+          textNode.data = String(counter);
+        };
+      } else {
+        // fallback to setTimeout
+        /* istanbul ignore next */
+        this.handler = function () {
+          setTimeout(_this.execute, 0);
+        };
+      }
+    }
+
+    return this.handler;
+  }
+};
+
+exports.default = TaskQueue;
+
+/***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _utilities = __webpack_require__(0);
+
+var _utilities2 = _interopRequireDefault(_utilities);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var uid = 0;
+
+var defaultOptions = {
+  deep: false,
+  user: false,
+  sync: false,
+  computed: false,
+  deferred: false
+};
+
+var Watcher = function () {
+  function Watcher(app, path, callback) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+    _classCallCheck(this, Watcher);
+
+    this.options = app.$.extend({}, defaultOptions, options);
+
+    this.id = ++uid;
+    this.path = path;
+    this.callback = callback;
+    this.app = app;
+    this.active = true;
+    this.ctrl = null;
+    this.deep = this.options.deep;
+    this.user = this.options.user;
+    this.sync = this.options.sync;
+    this.computed = this.options.computed;
+    this.deferred = this.options.deferred;
+    this.expression = callback + ''; // TODO: print handler string if DEBUG
+    this.dispatcherIds = [];
+    this.dispatchers = [];
+    this.newDisptacherIds = [];
+    this.newDisptachers = [];
+
+    if (typeof this.path === 'function') {
+      this.getter = this.path;
+    } else {
+      this.getter = function (value) {
+        return _utilities2.default.get(value, path);
+      };
+    }
+
+    //this.value = this.computed ? undefined : this.get();
+  }
+
+  _createClass(Watcher, [{
+    key: 'get',
+    value: function get() {
+      this.app.pushStack(this);
+
+      var value = void 0;
+
+      value = this.getter.call(this.app.instance, this.app.data);
+
+      // TODO: deep
+
+      this.app.popStack();
+
+      this.resetDispatchers();
+
+      return value;
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+      this.ctrl = ctrl;
+
+      if (this.computed) {
+        this.deferred = true;
+      } else if (this.sync) {
+        this.run();
+      } else {
+        this.app.scheduler.enqueueWatcher(this);
+      }
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      if (this.active) {
+        var value = this.get();
+
+        if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
+          var oldValue = this.value;
+          this.value = value;
+
+          this.callback.call(this.app.instance, value, oldValue, this.ctrl);
+        }
+      }
+
+      this.ctrl = null;
+    }
+  }, {
+    key: 'getCachedValue',
+    value: function getCachedValue() {
+      if (this.defer) {
+        this.get();
+        this.defer = false;
+      }
+
+      // Push all dispatchers of this watcher to current active watcher.
+      if (this.app.currentWatcher) {
+        for (var k in this.watcher.dispatchers) {
+          this.app.currentWatcher.addDispatcher(this.dispatchers[k]);
+        }
+      }
+
+      return this.value;
+    }
+  }, {
+    key: 'resetDispatchers',
+    value: function resetDispatchers() {
+      var _this = this;
+
+      this.dispatchers.map(function (dispatcher) {
+        if (_this.newDisptacherIds.indexOf(dispatcher.id) === -1) {
+          dispatcher.detach(_this);
+        }
+      });
+
+      var temp = void 0;
+      temp = this.newDisptachers;
+      this.dispatchers = this.newDisptachers;
+      this.newDisptachers = temp;
+      this.newDisptachers.length = 0;
+
+      temp = this.newDisptacherIds;
+      this.dispatcherIds = this.newDisptacherIds;
+      this.newDisptacherIds = temp;
+      this.newDisptacherIds.length = 0;
+    }
+  }, {
+    key: 'addDispatcher',
+    value: function addDispatcher(dispatcher) {
+      var id = dispatcher.id;
+
+      if (this.newDisptacherIds.indexOf(id) === -1) {
+        this.newDisptacherIds.push(id);
+        this.newDisptachers.push(dispatcher);
+
+        if (this.dispatcherIds.indexOf(id) === -1) {
+          dispatcher.attach(this);
+        }
+      }
+    }
+  }, {
+    key: 'removeDispatcher',
+    value: function removeDispatcher(dispatcher) {
+      _utilities2.default.removeElement(this.dispatchers, dispatcher);
+      dispatcher.detach(this);
+    }
+  }, {
+    key: 'teardown',
+    value: function teardown() {
+      var _this2 = this;
+
+      this.dispatchers.map(function (dispatcher) {
+        _this2.removeDispatcher(dispatcher);
+        _utilities2.default.removeElement(_this2.watchers, _this2);
+      });
+    }
+  }]);
+
+  return Watcher;
+}();
+
+exports.default = Watcher;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1017,7 +1135,137 @@ var ErrorHandler = function () {
 exports.default = ErrorHandler;
 
 /***/ }),
-/* 5 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
+ * @license    __LICENSE__
+ */
+
+var EventHandler = function () {
+  function EventHandler(app) {
+    _classCallCheck(this, EventHandler);
+
+    this.app = app;
+    this.events = {};
+  }
+
+  _createClass(EventHandler, [{
+    key: 'listen',
+    value: function listen(name, callback) {
+      var _this = this;
+
+      if (Array.isArray(name)) {
+        name.map(function (n) {
+          return _this.listen(n, callback);
+        });
+        return this;
+      }
+
+      if (!this.events.hasOwnProperty(name)) {
+        this.events[name] = [];
+      }
+
+      this.events[name].push(callback);
+
+      return this;
+    }
+  }, {
+    key: 'once',
+    value: function once(name, callback) {
+      var _this2 = this,
+          _arguments = arguments;
+
+      var fn = function fn() {
+        var r = callback.apply(_this2.app.instance, _arguments);
+
+        _this2.off(name);
+
+        return r;
+      };
+
+      return this.listen(name, fn);
+    }
+  }, {
+    key: 'off',
+    value: function off() {
+      var _this3 = this;
+
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (name === null) {
+        this.events = {};
+      } else if (Array.isArray(name)) {
+        name.map(function (n) {
+          return _this3.listen(n, callback);
+        });
+        return this;
+      }
+
+      if (!this.events.hasOwnProperty(name)) {
+        return this;
+      }
+
+      if (callback === null) {
+        this.events[name] = [];
+      } else if (typeof callback === 'function' && Array.isArray(this.events[name])) {
+        for (var k in this.events[name]) {
+          var fn = this.events[name][k];
+
+          if (fn === callback) {
+            this.events[name].splice(k, 1);
+          }
+        }
+      }
+
+      return this;
+    }
+  }, {
+    key: 'emit',
+    value: function emit(name) {
+      if (!this.events.hasOwnProperty(name)) {
+        return this;
+      }
+
+      if (!Array.isArray(this.events[name])) {
+        return this;
+      }
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      for (var k in this.events[name]) {
+        var callback = this.events[name][k];
+        callback.call.apply(callback, [this.app.instance].concat(args));
+      }
+
+      return this;
+    }
+  }]);
+
+  return EventHandler;
+}();
+
+exports.default = EventHandler;
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1034,7 +1282,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    __LICENSE__
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _watcher = __webpack_require__(2);
+var _watcher = __webpack_require__(4);
 
 var _watcher2 = _interopRequireDefault(_watcher);
 
@@ -1110,13 +1358,17 @@ var Dispatcher = function () {
 
     /**
      * Notify all watchers to update themselves.
+     *
+     * @param {Object} ctrl
      */
 
   }, {
     key: "notify",
     value: function notify() {
+      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
       this.watchers.forEach(function (watcher) {
-        return watcher.update();
+        return watcher.update(ctrl);
       });
     }
   }]);
@@ -1127,7 +1379,7 @@ var Dispatcher = function () {
 exports.default = Dispatcher;
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1144,7 +1396,7 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _dispatcher = __webpack_require__(5);
+var _dispatcher = __webpack_require__(7);
 
 var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
@@ -1177,6 +1429,11 @@ function Observer(value, dispatcher) {
 };
 
 exports.default = Observer;
+
+
+var hasProto = '__proto__' in {};
+var arrayProto = Array.prototype;
+var replaceMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
 
 var ObserverFactory = exports.ObserverFactory = function () {
   /**
@@ -1213,7 +1470,9 @@ var ObserverFactory = exports.ObserverFactory = function () {
       if (!value.hasOwnProperty('__observer__') && value.__observer__ instanceof Observer) {
         observer = value.__observer__;
       } else if (Array.isArray(value)) {
-        //observer = new Observer(value);
+        observer = new Observer(value, new _dispatcher2.default(this.app));
+
+        this.replaceArrayMethods(value);
 
         value.forEach(function (val) {
           return _this.create(val);
@@ -1251,6 +1510,71 @@ var ObserverFactory = exports.ObserverFactory = function () {
     }
 
     /**
+     * Set a value to reactive object or array.
+     *
+     * @param {Object} object
+     * @param {string} key
+     * @param {*}      value
+     *
+     * @returns {*}
+     */
+
+  }, {
+    key: 'set',
+    value: function set(object, key, value) {
+      if (Array.isArray(object)) {
+        object.length = Math.max(object.length, key);
+        object.splice(key, 1, value);
+        return value;
+      }
+
+      if (_utilities2.default.has(object, key)) {
+        object[key] = value;
+        return value;
+      }
+
+      var ob = object.__observer__;
+      if (!ob) {
+        ob[key] = value;
+        return value;
+      }
+
+      this.reactive(object, key, value);
+      ob.dispatcher.notify();
+      return value;
+    }
+
+    /**
+     * Delete property.
+     *
+     * @param {Object} object
+     * @param {string} key
+     */
+
+  }, {
+    key: 'delete',
+    value: function _delete(object, key) {
+      if (Array.isArray(object)) {
+        object.splice(key, 1);
+        return;
+      }
+
+      var ob = object.__observer__;
+
+      if (!_utilities2.default.has(object, key)) {
+        return;
+      }
+
+      delete object[key];
+
+      if (!ob) {
+        return;
+      }
+
+      ob.dispatcher.notify();
+    }
+
+    /**
      * Make a value reactive.
      *
      * This method will add getter and setter to a value and inject Dispatcher to setter,
@@ -1282,7 +1606,7 @@ var ObserverFactory = exports.ObserverFactory = function () {
           value = getter ? getter.call(object) : value;
 
           /*
-           * If there is an active Watcher working, means this watcher depends on current value,
+           * If there is an active Watcher working, means this watcher depends listen current value,
            * Let's push it into current Dispatcher instance.
            */
           if (self.app.currentWatcher) {
@@ -1358,13 +1682,79 @@ var ObserverFactory = exports.ObserverFactory = function () {
         }
       }
     }
+
+    /**
+     * Replace array methods with our mutator.
+     * @param {Array} value
+     * @returns {Array}
+     */
+
+  }, {
+    key: 'replaceArrayMethods',
+    value: function replaceArrayMethods(value) {
+      var self = this;
+      var arrayMethods = Object.create(arrayProto);
+
+      replaceMethods.forEach(function (method) {
+        // cache original method
+        var original = arrayProto[method];
+
+        _utilities2.default.define(arrayMethods, method, function mutator() {
+          var i = arguments.length;
+          var args = new Array(i);
+
+          while (i--) {
+            args[i] = arguments[i];
+          }
+
+          var result = original.apply(this, args);
+          var ob = this.__observer__;
+
+          var inserted = void 0;
+
+          switch (method) {
+            case 'push':
+              inserted = args;
+              break;
+            case 'unshift':
+              inserted = args;
+              break;
+            case 'splice':
+              inserted = args.slice(2);
+              break;
+          }
+
+          if (inserted) {
+            self.create(inserted);
+          }
+
+          // notify change
+          ob.dispatcher.notify({
+            method: method,
+            args: args
+          });
+
+          return result;
+        });
+      });
+
+      if (hasProto) {
+        value.__proto__ = arrayMethods;
+        return value;
+      }
+
+      arrayMethods.forEach(function (method, key) {
+        return _utilities2.default.define(value, key, method);
+      });
+      return value;
+    }
   }]);
 
   return ObserverFactory;
 }();
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1382,7 +1772,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _queue = __webpack_require__(1);
+var _queue = __webpack_require__(3);
 
 var _queue2 = _interopRequireDefault(_queue);
 
@@ -1436,7 +1826,7 @@ var Scheduler = function () {
             break;
 
           case State.RUNNING:
-            // if already flushing, splice the watcher based on its id
+            // if already flushing, splice the watcher based listen its id
             // if already past its id, it will be run next immediately.
             var i = this.queue.length - 1;
 
@@ -1451,16 +1841,6 @@ var Scheduler = function () {
   }, {
     key: 'execute',
     value: function execute() {
-      var watcher = void 0;
-      var i = void 0;
-      for (i in this.queue) {
-        watcher = this.queue[i];
-
-        if (watcher.app === watcher.app.watcher && watcher.app._isMounted) {
-          watcher.app.hook('beforeUpdate');
-        }
-      }
-
       // Sort queue before flush.
       // This ensures that:
       // 1. Components are updated from parent to child. (because parent is always
@@ -1481,14 +1861,14 @@ var Scheduler = function () {
 
       try {
         for (var _iterator = this.queue[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _watcher = _step.value;
+          var watcher = _step.value;
 
           this.index++;
-          this.watchers[_watcher.id] = null;
-          _watcher.run();
+          this.watchers[watcher.id] = null;
+          watcher.run();
 
           // in dev build, check and stop circular updates.
-          if (this.watchers[_watcher.id] != null) {
+          if (this.watchers[watcher.id] != null) {
             this.circular[id] = (this.circular[id] || 0) + 1;
             if (this.circular[id] > maxCircularNumber) {
               // TODO: More debug info
@@ -1512,14 +1892,6 @@ var Scheduler = function () {
         }
       }
 
-      for (i in this.queue) {
-        watcher = this.queue[i];
-
-        if (watcher === watcher.app.watcher && watcher.app._isMounted) {
-          watcher.app.hook('updated');
-        }
-      }
-
       this.reset();
     }
   }, {
@@ -1538,7 +1910,7 @@ var Scheduler = function () {
 exports.default = Scheduler;
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1564,7 +1936,7 @@ var isAndroid = exports.isAndroid = UA && UA.indexOf('android') > 0;
 var isIOS = exports.isIOS = UA && /iphone|ipad|ipod|ios/.test(UA);
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1627,7 +1999,7 @@ var Registry = function () {
 exports.default = Registry;
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1640,7 +2012,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @license    GNU General Public License version 2 or later.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _app = __webpack_require__(3);
+var _app = __webpack_require__(1);
 
 var _app2 = _interopRequireDefault(_app);
 
@@ -1648,7 +2020,7 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _promise = __webpack_require__(11);
+var _promise = __webpack_require__(2);
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -1677,8 +2049,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(Sparrow, [{
       key: "bind",
       value: function bind(selector, key, callback) {
-        var conditions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
         var $element = this.app.find(selector);
 
         // Default callback
@@ -1712,9 +2082,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           };
         }
 
-        this.app.watch(key, function biding(value, oldValue) {
-          callback.call(this, $element, value, oldValue);
-        });
+        this.app.watch(key, function biding(value, oldValue, ctrl) {
+          callback.call(this, $element, value, oldValue, ctrl);
+        }, { dom: true });
 
         return this;
       }
@@ -1784,257 +2154,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   window.Sparrow = Sparrow;
 })(jQuery);
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _utilities = __webpack_require__(0);
-
-var _utilities2 = _interopRequireDefault(_utilities);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var $ = window.jQuery;
-
-var uid = 0;
-var events = {};
-
-var PromiseAdapter = function () {
-  function PromiseAdapter(callback) {
-    _classCallCheck(this, PromiseAdapter);
-
-    var deferred = $.Deferred();
-    var resolve = deferred.resolve;
-    var reject = deferred.reject;
-
-    callback(resolve, reject);
-
-    this.defer = $.when(deferred);
-  }
-
-  _createClass(PromiseAdapter, [{
-    key: 'then',
-    value: function then(onFulfilled, onRejected) {
-      return this.defer.then(onFulfilled, onRejected);
-    }
-  }, {
-    key: 'catch',
-    value: function _catch(handler) {
-      return this.defer.catch(onRejected);
-    }
-  }], [{
-    key: 'all',
-    value: function all(promises) {
-      return $.when.apply($, _toConsumableArray(promises));
-    }
-  }, {
-    key: 'race',
-    value: function race(promises) {
-      var id = ++uid;
-      var eventName = 'sparrow.promise.race.' + id;
-
-      return new PromiseAdapter(function (resolve) {
-        events[eventName] = function (v) {
-          resolve(v);
-          delete events[eventName];
-        };
-
-        promises.map(function (promise) {
-          promise.then(function (v) {
-            if (events.hasOwnProperty(eventName)) {
-              events[eventName](v);
-            }
-          });
-        });
-      });
-    }
-  }, {
-    key: 'resolve',
-    value: function resolve(object) {
-      if (object instanceof PromiseAdapter) {
-        object.defer.resolve();
-
-        return object;
-      }
-
-      var promise = new PromiseAdapter(function (resolve) {
-        return resolve(object);
-      });
-
-      if (_utilities2.default.isObject(object) && object.hasOwnProperty('then')) {
-        return promise.then(object.then);
-      }
-
-      return promise;
-    }
-  }, {
-    key: 'reject',
-    value: function reject(reason) {
-      return new PromiseAdapter(function (resolve, reject) {
-        return reject(reason);
-      });
-    }
-  }]);
-
-  return PromiseAdapter;
-}();
-
-exports.default = PromiseAdapter;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
-
-var EventHandler = function () {
-  function EventHandler(app) {
-    _classCallCheck(this, EventHandler);
-
-    this.app = app;
-    this.events = {};
-  }
-
-  _createClass(EventHandler, [{
-    key: 'on',
-    value: function on(name, callback) {
-      var _this = this;
-
-      if (Array.isArray(name)) {
-        name.map(function (n) {
-          return _this.on(n, callback);
-        });
-        return this;
-      }
-
-      add(this.events, name, callback);
-
-      return this;
-    }
-  }, {
-    key: 'once',
-    value: function once(name, callback) {
-      var _this2 = this,
-          _arguments = arguments;
-
-      var fn = function fn() {
-        var r = callback.apply(_this2.app.instance, _arguments);
-
-        _this2.off(name);
-
-        return r;
-      };
-
-      return this.on(name, callback);
-    }
-  }, {
-    key: 'off',
-    value: function off() {
-      var _this3 = this;
-
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      if (name === null) {
-        this.events = {};
-      } else if (Array.isArray(name)) {
-        name.map(function (n) {
-          return _this3.on(n, callback);
-        });
-        return this;
-      }
-
-      if (!this.events.hasOwnProperty(name)) {
-        return this;
-      }
-
-      if (callback === null) {
-        this.events[name] = [];
-      } else if (typeof callback === 'function' && Array.isArray(this.events[name])) {
-        for (var k in this.events[name]) {
-          var fn = this.events[name][k];
-
-          if (fn === callback) {
-            this.events[name].splice(k, 1);
-          }
-        }
-      }
-
-      return this;
-    }
-  }, {
-    key: 'emit',
-    value: function emit(name) {
-      if (!this.events.hasOwnProperty(name)) {
-        return this;
-      }
-
-      if (!Array.isArray(this.events[name])) {
-        return this;
-      }
-
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      for (var k in this.events[name]) {
-        var callback = this.events[name][k];
-        callback.call.apply(callback, [this.app.instance].concat(args));
-      }
-
-      return this;
-    }
-  }]);
-
-  return EventHandler;
-}();
-
-exports.default = EventHandler;
-
-
-function add(queue, name, value) {
-  if (!queue.hasOwnProperty(name)) {
-    queue[name] = [];
-  }
-
-  queue[name].push(value);
-}
 
 /***/ })
 /******/ ]);

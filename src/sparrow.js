@@ -23,7 +23,7 @@ import SPromise from "./promise/promise";
       this.app.init(this, options);
     }
 
-    bind (selector, key, callback, conditions = {}) {
+    bind (selector, key, callback) {
       const $element = this.app.find(selector);
 
       // Default callback
@@ -57,9 +57,9 @@ import SPromise from "./promise/promise";
         };
       }
 
-      this.app.watch(key, function biding (value, oldValue) {
-        callback.call(this, $element, value, oldValue);
-      });
+      this.app.watch(key, function biding (value, oldValue, ctrl) {
+        callback.call(this, $element, value, oldValue, ctrl);
+      }, {dom: true});
 
       return this;
     }
