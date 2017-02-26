@@ -21,6 +21,7 @@
         },
         flower: 'sakura',
         yoo: null,
+        list: '0',
         items: [
           'a', 'b', 'c'
         ],
@@ -46,9 +47,8 @@
         });
 
         this.$bind('#hello', 'hello', ':text');
-        this.$bind('.logs', 'items', function ($ele, value, oldValue, diff) {
-
-        });
+        this.$model('#list', 'list');
+        this.$show('#list-show', 'list', e => e.slideDown(), 'fadeOut');
       },
       methods: {
         changeRadios () {
@@ -125,6 +125,27 @@
         </div>
       </div>
     </fieldset>
+
+    <fieldset>
+      <select name="" id="list" class="form-control">
+        <option value="0">Zero</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="-1">-1</option>
+      </select>
+
+      <div id="list-show">
+        <ul>
+          <li>A</li>
+          <li>B</li>
+          <li>C</li>
+          <li>D</li>
+          <li>E</li>
+        </ul>
+      </div>
+
+    </fieldset>
+
     <ul class="logs"></ul>
     <ul class="logs2"></ul>
     <ul class="logs3"></ul>

@@ -62,6 +62,7 @@ export default class Application {
     proxyMethod(instance, this, 'bind');
     proxyMethod(instance, this, 'on');
     proxyMethod(instance, this, 'model');
+    proxyMethod(instance, this, 'show');
     proxyMethod(instance, this, 'watch');
     proxyMethod(instance, this, 'nextTick');
     proxyMethod(instance, this, 'forceUpdate');
@@ -82,6 +83,8 @@ export default class Application {
     if (options.el) {
       this.mount(options.el);
     }
+
+    // TODO: Implement destroy methods and hooks
   }
 
   mount (el) {
@@ -213,6 +216,34 @@ export default class Application {
     if ($element[0].tagName !== 'SELECT') {
       this.on(selector, 'input', handler, delegate);
     }
+
+    return this;
+  }
+
+  show (selector, key, onShow = 'show', onHide = 'hide') {
+    const $element = this.find(selector);
+
+    const toggleHandler = ((handler) => {
+      return (() => {
+        if (typeof handler === 'string') {
+          return () => $element[handler]();
+        } else if (typeof handler === 'function') {
+          return (value, oldValue, ctrl) => handler.call(this.instance, $element, value, oldValue, ctrl);
+        }
+      })();
+    });
+
+    const handler = function (value, oldValue, ctrl) {
+      if (value !== oldValue) {
+        if (value == true || value != 0) {
+          toggleHandler(onShow)(value, oldValue, ctrl);
+        } else {
+          toggleHandler(onHide)(value, oldValue, ctrl);
+        }
+      }
+    };
+
+    this.watch(key, handler);
 
     return this;
   }

@@ -389,6 +389,7 @@ var Application = function () {
       proxyMethod(instance, this, 'bind');
       proxyMethod(instance, this, 'on');
       proxyMethod(instance, this, 'model');
+      proxyMethod(instance, this, 'show');
       proxyMethod(instance, this, 'watch');
       proxyMethod(instance, this, 'nextTick');
       proxyMethod(instance, this, 'forceUpdate');
@@ -409,6 +410,8 @@ var Application = function () {
       if (options.el) {
         this.mount(options.el);
       }
+
+      // TODO: Implement destroy methods and hooks
     }
   }, {
     key: "mount",
@@ -549,6 +552,44 @@ var Application = function () {
       if ($element[0].tagName !== 'SELECT') {
         this.on(selector, 'input', handler, delegate);
       }
+
+      return this;
+    }
+  }, {
+    key: "show",
+    value: function show(selector, key) {
+      var _this = this;
+
+      var onShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'show';
+      var onHide = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hide';
+
+      var $element = this.find(selector);
+
+      var toggleHandler = function toggleHandler(handler) {
+        return function () {
+          if (typeof handler === 'string') {
+            return function () {
+              return $element[handler]();
+            };
+          } else if (typeof handler === 'function') {
+            return function (value, oldValue, ctrl) {
+              return handler.call(_this.instance, $element, value, oldValue, ctrl);
+            };
+          }
+        }();
+      };
+
+      var handler = function handler(value, oldValue, ctrl) {
+        if (value !== oldValue) {
+          if (value == true || value != 0) {
+            toggleHandler(onShow)(value, oldValue, ctrl);
+          } else {
+            toggleHandler(onHide)(value, oldValue, ctrl);
+          }
+        }
+      };
+
+      this.watch(key, handler);
 
       return this;
     }
@@ -1113,7 +1154,6 @@ var Watcher = function () {
     value: function run() {
       if (this.active) {
         var value = this.get();
-        console.log(value, this.value);
 
         if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
           var oldValue = this.value;

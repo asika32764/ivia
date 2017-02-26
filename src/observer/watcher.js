@@ -79,7 +79,6 @@ export default class Watcher {
   run () {
     if (this.active) {
       const value = this.get();
-      console.log(value, this.value);
 
       if (value !== this.value || this.deep || Utilities.isObject(value)) {
         const oldValue = this.value;
