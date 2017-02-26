@@ -58,6 +58,9 @@ export default class Application {
     proxyMethod(instance, this, 'find');
     proxyMethod(instance, this, 'async');
     proxyMethod(instance, this, 'mount');
+    proxyMethod(instance, this, 'bind');
+    proxyMethod(instance, this, 'on');
+    proxyMethod(instance, this, 'model');
     proxyMethod(instance, this, 'watch');
     proxyMethod(instance, this, 'nextTick');
     proxyMethod(instance, this, 'forceUpdate');
@@ -88,7 +91,17 @@ export default class Application {
 
     this.hook('beforeMount');
 
-    this.$el = el instanceof this.$ ? el : this.$(el);
+    const $el = el instanceof this.$ ? el : this.$(el);
+
+    if ($el.length === 0) {
+      if (process.env.NODE_ENV === 'development') {
+        const str = $el.selector ? $el.selector : $el[0] + '';
+        this.error.warn(`Can not mount ${str}, element not found. Consider change selector or call after "domready".`);
+      }
+
+      return;
+    }
+
     this.instance.$el = this.$el;
 
     this._isMounted = true;
@@ -114,7 +127,101 @@ export default class Application {
     }
   }
 
+  bind (selector, key, callback) {
+    const $element = this.find(selector);
+
+    // Default callback
+    if (typeof callback === 'string') {
+      const name = callback;
+      callback = ($element, value) => {
+        switch (name) {
+          case ':html':
+            $element.html(value);
+            break;
+
+          case ':text':
+            $element.text(value);
+            break;
+
+          case 'value':
+            if ($element[0].tagName === 'INPUT') {
+              switch ($element.attr('type')) {
+                case 'radio':
+                case 'checkbox':
+                  $element.filter(`[value=${value}]`).prop('checked', true);
+                  break;
+                default:
+                  $element.val(value);
+              }
+              break;
+            }
+          default:
+            $element.attr(name, value);
+        }
+      };
+    }
+
+    this.watch(key, function biding (value, oldValue, ctrl) {
+      callback.call(this, $element, value, oldValue, ctrl);
+    }, {dom: true});
+
+    return this;
+  }
+
+  on (selector, eventName, callback, delegate = false) {
+    const $element = this.find(selector);
+    let self = this;
+
+    const handler = function (event) {
+      callback.call(self, self.$(this), event);
+    };
+
+    if (delegate) {
+      this.$el.on(eventName, selector, handler);
+    } else {
+      $element.on(eventName, handler);
+    }
+
+    return this;
+  }
+
+  model (selector, key, delegate = false) {
+    const handler = function ($element, event) {
+      let value;
+      switch ($element.attr('type')) {
+        case 'radio':
+          value = $element[0].value;
+          break;
+        default:
+          value = $element.val();
+      }
+
+      return Utilities.set(this.data, key, value);
+    };
+
+    const $element = this.find(selector);
+
+    if (process.env.NODE_ENV === 'development' && ['INPUT', 'TEXTAREA', 'SELECT'].indexOf($element[0].tagName) === -1) {
+      this.error.warn(
+        'Please only use two-way-binding on input, select or textarea elements. The element you selected: ' +
+        $element[0].outerHTML.substr(0, 50) + '...'
+      );
+    }
+
+    this
+      .bind(selector, key, 'value')
+      .on(selector, 'change', handler, delegate);
+
+    if ($element[0].tagName !== 'SELECT') {
+      this.on(selector, 'keyup', handler, delegate);
+    }
+
+    return this;
+  }
+
   watch (path, callback, options = {}) {
+    options.user = true;
+
     const watcher = new Watcher(this, path, callback, options);
     this.watchers.push(watcher);
 

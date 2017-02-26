@@ -8,6 +8,74 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="../dist/sparrow.js"></script>
+
+  <script>
+    var opt = {
+//      el: '#sparrow-form',
+//      domready: true,
+      data: {
+        foo: {
+          bar: {
+            yoo: 'goo'
+          }
+        },
+        flower: 'sakura',
+        yoo: null,
+        items: [
+          'a', 'b', 'c'
+        ],
+        radio: 'option1'
+      },
+      mounted: function () {
+        this.$model('#inputName', 'foo.bar.yoo');
+        this.$bind('#email-desc', 'foo.bar.yoo', function ($ele, v) {
+          $ele[0].textContent = v;
+        });
+
+//      this.$watch('foo.bar.yoo', function (value) {
+//          this.$find('#email-desc').text(value)
+//      });
+
+        this.$model('input[name=optionsRadios]', 'radio');
+        this.$bind('#user-form', 'radio', function ($ele, value, oldValue) {
+          if (value === 'option2') {
+            $ele.slideDown();
+          } else {
+            $ele.slideUp();
+          }
+        });
+
+        this.$bind('#hello', 'hello', ':text');
+        this.$bind('.logs', 'items', function ($ele, value, oldValue, diff) {
+
+        });
+      },
+      methods: {
+        changeRadios () {
+          this.radio = this.radio == 'option1' ? 'option2' : 'option1';
+
+        }
+      },
+      watch: {
+//		    radio: function (value) {
+//          if (value === 'option2') {
+//            this.$find('#user-form').slideDown();
+//          } else {
+//            this.$find('#user-form').slideUp();
+//          }
+//        }
+      },
+      computed: {
+        hello: function () {
+          return this.flower + ' ' + this.foo.bar.yoo;
+        }
+      }
+    };
+
+    $(function () {
+      $('#sparrow-form').sparrow(opt);
+    })
+  </script>
 </head>
 <body>
 
@@ -66,73 +134,6 @@
     <ul class="logs3"></ul>
   </form>
 </div>
-
-<script>
-  var sp = new Sparrow({
-    el: $('#sparrow-form'),
-    data: {
-      foo: {
-        bar: {
-          yoo: 'goo'
-        }
-      },
-      flower: 'sakura',
-      yoo: null,
-      items: [
-        'a', 'b', 'c'
-      ],
-      radio: 'option1'
-    },
-    mounted: function () {
-      this.model('#inputName', 'foo.bar.yoo');
-      this.bind('#email-desc', 'foo.bar.yoo', function ($ele, v) {
-        $ele[0].textContent = v;
-      });
-
-//      this.$watch('foo.bar.yoo', function (value) {
-//          this.$find('#email-desc').text(value)
-//      });
-
-      this.model('input[name=optionsRadios]', 'radio');
-      this.bind('#user-form', 'radio', function ($ele, value, oldValue) {
-        console.log(value, oldValue);
-        if (value === 'option2') {
-          $ele.slideDown();
-        } else {
-          $ele.slideUp();
-        }
-      });
-
-      this.bind('#hello', 'hello', ':text');
-      this.bind('.logs', 'items', function ($ele, value, oldValue, diff) {
-        console.log(value, oldValue, diff);
-      });
-    },
-    updated: function () {
-      console.log('Updated');
-    },
-    methods: {
-      changeRadios () {
-        this.radio = this.radio == 'option1' ? 'option2' : 'option1';
-
-      }
-    },
-    watch: {
-//		    radio: function (value) {
-//          if (value === 'option2') {
-//            this.$find('#user-form').slideDown();
-//          } else {
-//            this.$find('#user-form').slideUp();
-//          }
-//        }
-    },
-    computed: {
-      hello: function () {
-        return this.flower + ' ' + this.foo.bar.yoo;
-      }
-    }
-  });
-</script>
 
 </body>
 </html>

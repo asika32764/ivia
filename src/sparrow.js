@@ -6,10 +6,9 @@
  */
 
 import Application from './app';
-import Utilities from "./util/utilities";
-import SPromise from "./promise/promise";
+import createElement from './dom/element';
 
-;(function ($) {
+(function ($) {
   /**
    * Plugin Name.
    *
@@ -18,108 +17,46 @@ import SPromise from "./promise/promise";
   const plugin = "sparrow";
 
   class Sparrow {
-    constructor (options = {}) {
+    constructor (options = {}, $ = null) {
+      let el = null;
+      $ = $ || Sparrow.$;
+
+      if (options.domready) {
+        el = options.el;
+        options.el = null;
+
+        $(document).ready($ => {
+          this.$options.el = el;
+          this.$mount(el);
+        });
+      }
+
       this.app = new Application($);
       this.app.init(this, options);
     }
 
-    bind (selector, key, callback) {
-      const $element = this.app.find(selector);
+    static plugin (name, options = {}) {
+      const $ = Sparrow.$;
 
-      // Default callback
-      if (typeof callback === 'string') {
-        const name = callback;
-        callback = ($element, value) => {
-          switch (name) {
-            case ':html':
-              $element.html(value);
-              break;
+      $.fn[name] = function (customOptions) {
+        const $this = $(this[0]);
 
-            case ':text':
-              $element.text(value);
-              break;
+        if (!$this.data(name)) {
+          options = $.extend(true, {}, options, customOptions);
+          options.el = $this;
 
-            case 'value':
-              if ($element[0].tagName === 'INPUT') {
-                switch ($element.attr('type')) {
-                  case 'radio':
-                  case 'checkbox':
-                    $element.filter(`[value=${value}]`).prop('checked', true);
-                    break;
-                  default:
-                    $element.val(value);
-                }
-                break;
-              }
-            default:
-              $element.attr(name, value);
-          }
-        };
-      }
-
-      this.app.watch(key, function biding (value, oldValue, ctrl) {
-        callback.call(this, $element, value, oldValue, ctrl);
-      }, {dom: true});
-
-      return this;
-    }
-
-    on (selector, eventName, callback, delegate = false) {
-      const $element = this.app.find(selector);
-      let self = this;
-
-      const handler = function (event) {
-        callback.call(self, self.$(this), event);
-      };
-
-      if (delegate) {
-        this.app.$el.on(eventName, selector, handler);
-      } else {
-        $element.on(eventName, handler);
-      }
-
-      return this;
-    }
-
-    model (selector, key, delegate = false) {
-      const handler = function ($element, event) {
-        let value;
-        switch ($element.attr('type')) {
-          case 'radio':
-            value = $element[0].value;
-            break;
-          default:
-            value = $element.val();
+          $this.data(name, new Sparrow(options));
         }
 
-        return Utilities.set(this.app.data, key, value);
+        return $this.data(name);
       };
-
-      this
-        .bind(selector, key, 'value')
-        .on(selector, 'change', handler, delegate)
-        .on(selector, 'keyup', handler, delegate);
     }
   }
 
+  Sparrow.prototype.$createElement = Sparrow.createElement = createElement;
   Sparrow.Promise = Application.Promise;
-
-  /**
-   * Push plugins.
-   *
-   * @param {Object} options
-   *
-   * @returns {*}
-   */
-  $.fn[plugin] = function (options) {
-    if (!$.data(this, plugin)) {
-      options.el = this;
-
-      $.data(this, plugin, new Sparrow(options));
-    }
-
-    return $.data(this, plugin);
-  };
+  Sparrow.$ = $;
+  Sparrow.plugin(plugin);
 
   window.Sparrow = Sparrow;
 

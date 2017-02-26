@@ -11,10 +11,14 @@ export default class ErrorHandler {
   }
 
   warn (message) {
-    console.warn(message);
+    console.warn(this.format(message));
   }
 
   log (message) {
     console.log(message);
+  }
+
+  format (message) {
+    return `[Sparrow]: ${message}`;
   }
 }

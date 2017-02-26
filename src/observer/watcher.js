@@ -31,7 +31,7 @@ export default class Watcher {
     this.sync = this.options.sync;
     this.computed = this.options.computed;
     this.deferred = this.options.deferred;
-    this.expression = callback + ''; // TODO: print handler string if DEBUG
+    this.expression = process.env.NODE_ENV === 'development' ? callback + '' : '';
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];

@@ -78,11 +78,13 @@ export default class Scheduler {
       watcher.run();
 
       // in dev build, check and stop circular updates.
-      if (this.watchers[watcher.id] != null) {
+      if (process.env.NODE_ENV === 'development' && this.watchers[watcher.id] != null) {
         this.circular[id] = (this.circular[id] || 0) + 1;
         if (this.circular[id] > maxCircularNumber) {
-          // TODO: More debug info
-          console.log('Infinite loop for max 1000 times');
+          this.app.error.warn(
+            `Infinite loop for max 1000 times for key: ${watcher.path} ` +
+            `and expression: ${watcher.expression}`
+          );
           break;
         }
       }

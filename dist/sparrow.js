@@ -382,6 +382,9 @@ var Application = function () {
       proxyMethod(instance, this, 'find');
       proxyMethod(instance, this, 'async');
       proxyMethod(instance, this, 'mount');
+      proxyMethod(instance, this, 'bind');
+      proxyMethod(instance, this, 'on');
+      proxyMethod(instance, this, 'model');
       proxyMethod(instance, this, 'watch');
       proxyMethod(instance, this, 'nextTick');
       proxyMethod(instance, this, 'forceUpdate');
@@ -413,7 +416,17 @@ var Application = function () {
 
       this.hook('beforeMount');
 
-      this.$el = el instanceof this.$ ? el : this.$(el);
+      var $el = el instanceof this.$ ? el : this.$(el);
+
+      if ($el.length === 0) {
+        if (true) {
+          var str = $el.selector ? $el.selector : $el[0] + '';
+          this.error.warn("Can not mount " + str + ", element not found. Consider change selector or call after \"domready\".");
+        }
+
+        return;
+      }
+
       this.instance.$el = this.$el;
 
       this._isMounted = true;
@@ -443,9 +456,105 @@ var Application = function () {
       }
     }
   }, {
+    key: "bind",
+    value: function bind(selector, key, callback) {
+      var $element = this.find(selector);
+
+      // Default callback
+      if (typeof callback === 'string') {
+        var name = callback;
+        callback = function callback($element, value) {
+          switch (name) {
+            case ':html':
+              $element.html(value);
+              break;
+
+            case ':text':
+              $element.text(value);
+              break;
+
+            case 'value':
+              if ($element[0].tagName === 'INPUT') {
+                switch ($element.attr('type')) {
+                  case 'radio':
+                  case 'checkbox':
+                    $element.filter("[value=" + value + "]").prop('checked', true);
+                    break;
+                  default:
+                    $element.val(value);
+                }
+                break;
+              }
+            default:
+              $element.attr(name, value);
+          }
+        };
+      }
+
+      this.watch(key, function biding(value, oldValue, ctrl) {
+        callback.call(this, $element, value, oldValue, ctrl);
+      }, { dom: true });
+
+      return this;
+    }
+  }, {
+    key: "on",
+    value: function on(selector, eventName, callback) {
+      var delegate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      var $element = this.find(selector);
+      var self = this;
+
+      var handler = function handler(event) {
+        callback.call(self, self.$(this), event);
+      };
+
+      if (delegate) {
+        this.$el.on(eventName, selector, handler);
+      } else {
+        $element.on(eventName, handler);
+      }
+
+      return this;
+    }
+  }, {
+    key: "model",
+    value: function model(selector, key) {
+      var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      var handler = function handler($element, event) {
+        var value = void 0;
+        switch ($element.attr('type')) {
+          case 'radio':
+            value = $element[0].value;
+            break;
+          default:
+            value = $element.val();
+        }
+
+        return _utilities2.default.set(this.data, key, value);
+      };
+
+      var $element = this.find(selector);
+
+      if ("development" === 'development' && ['INPUT', 'TEXTAREA', 'SELECT'].indexOf($element[0].tagName) === -1) {
+        this.error.warn('Please only use two-way-binding on input, select or textarea elements. The element you selected: ' + $element[0].outerHTML.substr(0, 50) + '...');
+      }
+
+      this.bind(selector, key, 'value').on(selector, 'change', handler, delegate);
+
+      if ($element[0].tagName !== 'SELECT') {
+        this.on(selector, 'keyup', handler, delegate);
+      }
+
+      return this;
+    }
+  }, {
     key: "watch",
     value: function watch(path, callback) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      options.user = true;
 
       var watcher = new _watcher2.default(this, path, callback, options);
       this.watchers.push(watcher);
@@ -947,7 +1056,7 @@ var Watcher = function () {
     this.sync = this.options.sync;
     this.computed = this.options.computed;
     this.deferred = this.options.deferred;
-    this.expression = callback + ''; // TODO: print handler string if DEBUG
+    this.expression =  true ? callback + '' : '';
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
@@ -1120,12 +1229,17 @@ var ErrorHandler = function () {
   _createClass(ErrorHandler, [{
     key: "warn",
     value: function warn(message) {
-      console.warn(message);
+      console.warn(this.format(message));
     }
   }, {
     key: "log",
     value: function log(message) {
       console.log(message);
+    }
+  }, {
+    key: "format",
+    value: function format(message) {
+      return "[Sparrow]: " + message;
     }
   }]);
 
@@ -1868,11 +1982,10 @@ var Scheduler = function () {
           watcher.run();
 
           // in dev build, check and stop circular updates.
-          if (this.watchers[watcher.id] != null) {
+          if ("development" === 'development' && this.watchers[watcher.id] != null) {
             this.circular[id] = (this.circular[id] || 0) + 1;
             if (this.circular[id] > maxCircularNumber) {
-              // TODO: More debug info
-              console.log('Infinite loop for max 1000 times');
+              this.app.error.warn('Infinite loop for max 1000 times for key: ' + watcher.path + ' ' + ('and expression: ' + watcher.expression));
               break;
             }
           }
@@ -2016,19 +2129,15 @@ var _app = __webpack_require__(1);
 
 var _app2 = _interopRequireDefault(_app);
 
-var _utilities = __webpack_require__(0);
+var _element = __webpack_require__(13);
 
-var _utilities2 = _interopRequireDefault(_utilities);
-
-var _promise = __webpack_require__(2);
-
-var _promise2 = _interopRequireDefault(_promise);
+var _element2 = _interopRequireDefault(_element);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-;(function ($) {
+(function ($) {
   /**
    * Plugin Name.
    *
@@ -2038,122 +2147,118 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var Sparrow = function () {
     function Sparrow() {
+      var _this = this;
+
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       _classCallCheck(this, Sparrow);
+
+      var el = null;
+      $ = $ || Sparrow.$;
+
+      if (options.domready) {
+        el = options.el;
+        options.el = null;
+
+        $(document).ready(function ($) {
+          _this.$options.el = el;
+          _this.$mount(el);
+        });
+      }
 
       this.app = new _app2.default($);
       this.app.init(this, options);
     }
 
-    _createClass(Sparrow, [{
-      key: "bind",
-      value: function bind(selector, key, callback) {
-        var $element = this.app.find(selector);
+    _createClass(Sparrow, null, [{
+      key: 'plugin',
+      value: function plugin(name) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        // Default callback
-        if (typeof callback === 'string') {
-          var name = callback;
-          callback = function callback($element, value) {
-            switch (name) {
-              case ':html':
-                $element.html(value);
-                break;
+        var $ = Sparrow.$;
 
-              case ':text':
-                $element.text(value);
-                break;
+        $.fn[name] = function (customOptions) {
+          var $this = $(this[0]);
 
-              case 'value':
-                if ($element[0].tagName === 'INPUT') {
-                  switch ($element.attr('type')) {
-                    case 'radio':
-                    case 'checkbox':
-                      $element.filter("[value=" + value + "]").prop('checked', true);
-                      break;
-                    default:
-                      $element.val(value);
-                  }
-                  break;
-                }
-              default:
-                $element.attr(name, value);
-            }
-          };
-        }
+          if (!$this.data(name)) {
+            options = $.extend(true, {}, options, customOptions);
+            options.el = $this;
 
-        this.app.watch(key, function biding(value, oldValue, ctrl) {
-          callback.call(this, $element, value, oldValue, ctrl);
-        }, { dom: true });
-
-        return this;
-      }
-    }, {
-      key: "on",
-      value: function on(selector, eventName, callback) {
-        var delegate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-        var $element = this.app.find(selector);
-        var self = this;
-
-        var handler = function handler(event) {
-          callback.call(self, self.$(this), event);
-        };
-
-        if (delegate) {
-          this.app.$el.on(eventName, selector, handler);
-        } else {
-          $element.on(eventName, handler);
-        }
-
-        return this;
-      }
-    }, {
-      key: "model",
-      value: function model(selector, key) {
-        var delegate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-        var handler = function handler($element, event) {
-          var value = void 0;
-          switch ($element.attr('type')) {
-            case 'radio':
-              value = $element[0].value;
-              break;
-            default:
-              value = $element.val();
+            $this.data(name, new Sparrow(options));
           }
 
-          return _utilities2.default.set(this.app.data, key, value);
+          return $this.data(name);
         };
-
-        this.bind(selector, key, 'value').on(selector, 'change', handler, delegate).on(selector, 'keyup', handler, delegate);
       }
     }]);
 
     return Sparrow;
   }();
 
+  Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
   Sparrow.Promise = _app2.default.Promise;
-
-  /**
-   * Push plugins.
-   *
-   * @param {Object} options
-   *
-   * @returns {*}
-   */
-  $.fn[plugin] = function (options) {
-    if (!$.data(this, plugin)) {
-      options.el = this;
-
-      $.data(this, plugin, new Sparrow(options));
-    }
-
-    return $.data(this, plugin);
-  };
+  Sparrow.$ = $;
+  Sparrow.plugin(plugin);
 
   window.Sparrow = Sparrow;
 })(jQuery);
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.default = createElement;
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
+ */
+
+function createElement(name) {
+  var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var content = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+  var ele = document.createElement(name);
+
+  for (var key in attrs) {
+    var value = attrs[key];
+
+    ele.setAttribute(key, value);
+  }
+
+  addContent(ele, content);
+
+  return ele;
+}
+
+function addContent(ele, content) {
+  if (content !== null) {
+    if (typeof content === 'string' || typeof content === 'number') {
+      ele.append(content);
+    } else if (content instanceof Element) {
+      ele.appendChild(content);
+    } else if (content instanceof window.jQuery || 'jquery' in content) {
+      content.each(function () {
+        ele.appendChild(this);
+      });
+    } else if (Array.isArray(content) || (typeof content === 'undefined' ? 'undefined' : _typeof(content)) === 'object') {
+      for (var k in content) {
+        addContent(ele, content[k]);
+      }
+    }
+  }
+}
 
 /***/ })
 /******/ ]);
