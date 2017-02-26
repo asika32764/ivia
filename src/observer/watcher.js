@@ -31,7 +31,7 @@ export default class Watcher {
     this.sync = this.options.sync;
     this.computed = this.options.computed;
     this.deferred = this.options.deferred;
-    this.expression = process.env.NODE_ENV === 'development' ? callback + '' : '';
+    this.expression = process.env.NODE_ENV === 'development' ? path + '' : '';
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
@@ -79,6 +79,7 @@ export default class Watcher {
   run () {
     if (this.active) {
       const value = this.get();
+      console.log(value, this.value);
 
       if (value !== this.value || this.deep || Utilities.isObject(value)) {
         const oldValue = this.value;

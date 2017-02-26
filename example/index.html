@@ -10,9 +10,9 @@
   <script src="../dist/sparrow.js"></script>
 
   <script>
-    var opt = {
-//      el: '#sparrow-form',
-//      domready: true,
+    var sp = new Sparrow({
+      el: '#sparrow-form',
+      domready: true,
       data: {
         foo: {
           bar: {
@@ -24,7 +24,7 @@
         items: [
           'a', 'b', 'c'
         ],
-        radio: 'option1'
+        radio: 'option2'
       },
       mounted: function () {
         this.$model('#inputName', 'foo.bar.yoo');
@@ -66,15 +66,11 @@
 //        }
       },
       computed: {
-        hello: function () {
-          return this.flower + ' ' + this.foo.bar.yoo;
-        }
+//        hello: function () {
+//          return this.flower + ' ' + this.foo.bar.yoo;
+//        }
       }
-    };
-
-    $(function () {
-      $('#sparrow-form').sparrow(opt);
-    })
+    });
   </script>
 </head>
 <body>

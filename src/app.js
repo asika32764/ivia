@@ -14,6 +14,7 @@ import ErrorHandler from "./error/error";
 import Utilities, { nullFunction } from "./util/utilities";
 import PromiseAdapter from "./promise/promise";
 import EventHandler from "./event";
+import FormHelper from "./dom/form";
 
 /**
  * Default options.
@@ -143,18 +144,11 @@ export default class Application {
             $element.text(value);
             break;
 
-          case 'value':
-            if ($element[0].tagName === 'INPUT') {
-              switch ($element.attr('type')) {
-                case 'radio':
-                case 'checkbox':
-                  $element.filter(`[value=${value}]`).prop('checked', true);
-                  break;
-                default:
-                  $element.val(value);
-              }
-              break;
+          case ':value':
+            if (FormHelper.isFormElement($element)) {
+              FormHelper.update($element);
             }
+            break;
           default:
             $element.attr(name, value);
         }
@@ -162,8 +156,8 @@ export default class Application {
     }
 
     this.watch(key, function biding (value, oldValue, ctrl) {
-      callback.call(this, $element, value, oldValue, ctrl);
-    }, {dom: true});
+      callback.call(this.instance, $element, value, oldValue, ctrl);
+    });
 
     return this;
   }
@@ -173,7 +167,7 @@ export default class Application {
     let self = this;
 
     const handler = function (event) {
-      callback.call(self, self.$(this), event);
+      callback.call(self.instance, self.$(this), event);
     };
 
     if (delegate) {
@@ -196,24 +190,28 @@ export default class Application {
           value = $element.val();
       }
 
-      return Utilities.set(this.data, key, value);
+      return Utilities.set(this.$data, key, value);
     };
 
     const $element = this.find(selector);
 
-    if (process.env.NODE_ENV === 'development' && ['INPUT', 'TEXTAREA', 'SELECT'].indexOf($element[0].tagName) === -1) {
+    if (process.env.NODE_ENV === 'development' && !FormHelper.isFormElement($element)) {
       this.error.warn(
         'Please only use two-way-binding on input, select or textarea elements. The element you selected: ' +
         $element[0].outerHTML.substr(0, 50) + '...'
       );
     }
 
-    this
-      .bind(selector, key, 'value')
-      .on(selector, 'change', handler, delegate);
+    this.watch(key, function (value) {
+      if ($element.val() !== value) {
+        FormHelper.update($element, value);
+      }
+    });
+
+    this.on(selector, 'change', handler, delegate);
 
     if ($element[0].tagName !== 'SELECT') {
-      this.on(selector, 'keyup', handler, delegate);
+      this.on(selector, 'input', handler, delegate);
     }
 
     return this;

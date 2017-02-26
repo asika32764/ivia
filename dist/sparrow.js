@@ -329,6 +329,10 @@ var _event = __webpack_require__(6);
 
 var _event2 = _interopRequireDefault(_event);
 
+var _form = __webpack_require__(14);
+
+var _form2 = _interopRequireDefault(_form);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -473,18 +477,11 @@ var Application = function () {
               $element.text(value);
               break;
 
-            case 'value':
-              if ($element[0].tagName === 'INPUT') {
-                switch ($element.attr('type')) {
-                  case 'radio':
-                  case 'checkbox':
-                    $element.filter("[value=" + value + "]").prop('checked', true);
-                    break;
-                  default:
-                    $element.val(value);
-                }
-                break;
+            case ':value':
+              if (_form2.default.isFormElement($element)) {
+                _form2.default.update($element);
               }
+              break;
             default:
               $element.attr(name, value);
           }
@@ -492,8 +489,8 @@ var Application = function () {
       }
 
       this.watch(key, function biding(value, oldValue, ctrl) {
-        callback.call(this, $element, value, oldValue, ctrl);
-      }, { dom: true });
+        callback.call(this.instance, $element, value, oldValue, ctrl);
+      });
 
       return this;
     }
@@ -506,7 +503,7 @@ var Application = function () {
       var self = this;
 
       var handler = function handler(event) {
-        callback.call(self, self.$(this), event);
+        callback.call(self.instance, self.$(this), event);
       };
 
       if (delegate) {
@@ -532,19 +529,25 @@ var Application = function () {
             value = $element.val();
         }
 
-        return _utilities2.default.set(this.data, key, value);
+        return _utilities2.default.set(this.$data, key, value);
       };
 
       var $element = this.find(selector);
 
-      if ("development" === 'development' && ['INPUT', 'TEXTAREA', 'SELECT'].indexOf($element[0].tagName) === -1) {
+      if ("development" === 'development' && !_form2.default.isFormElement($element)) {
         this.error.warn('Please only use two-way-binding on input, select or textarea elements. The element you selected: ' + $element[0].outerHTML.substr(0, 50) + '...');
       }
 
-      this.bind(selector, key, 'value').on(selector, 'change', handler, delegate);
+      this.watch(key, function (value) {
+        if ($element.val() !== value) {
+          _form2.default.update($element, value);
+        }
+      });
+
+      this.on(selector, 'change', handler, delegate);
 
       if ($element[0].tagName !== 'SELECT') {
-        this.on(selector, 'keyup', handler, delegate);
+        this.on(selector, 'input', handler, delegate);
       }
 
       return this;
@@ -1056,7 +1059,7 @@ var Watcher = function () {
     this.sync = this.options.sync;
     this.computed = this.options.computed;
     this.deferred = this.options.deferred;
-    this.expression =  true ? callback + '' : '';
+    this.expression =  true ? path + '' : '';
     this.dispatcherIds = [];
     this.dispatchers = [];
     this.newDisptacherIds = [];
@@ -1110,6 +1113,7 @@ var Watcher = function () {
     value: function run() {
       if (this.active) {
         var value = this.get();
+        console.log(value, this.value);
 
         if (value !== this.value || this.deep || _utilities2.default.isObject(value)) {
           var oldValue = this.value;
@@ -2259,6 +2263,81 @@ function addContent(ele, content) {
     }
   }
 }
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Part of sparrow project.
+ *
+ * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
+ */
+
+var FormHelper = function () {
+  function FormHelper() {
+    _classCallCheck(this, FormHelper);
+  }
+
+  _createClass(FormHelper, null, [{
+    key: 'isFormElement',
+    value: function isFormElement($element) {
+      var tag = 'jquery' in $element ? $element[0].tagName : $element.tagName;
+
+      return [FormHelper.INPUT, FormHelper.SELECT, FormHelper.TEXTAREA].indexOf(tag) !== -1;
+    }
+  }, {
+    key: 'update',
+    value: function update($element, value) {
+      var method = 'update' + $element[0].tagName;
+
+      FormHelper[method]($element, value);
+    }
+  }, {
+    key: 'updateINPUT',
+    value: function updateINPUT($element, value) {
+      switch ($element.attr('type')) {
+        case 'radio':
+        case 'checkbox':
+          $element.filter('[value=' + value + ']').prop('checked', true);
+          break;
+        default:
+          $element.val(value);
+      }
+    }
+  }, {
+    key: 'updateTEXTAREA',
+    value: function updateTEXTAREA($element, value) {
+      $element.val(value);
+    }
+  }, {
+    key: 'updateSELECT',
+    value: function updateSELECT($element, value) {
+      $element.val(value);
+    }
+  }]);
+
+  return FormHelper;
+}();
+
+exports.default = FormHelper;
+
+
+FormHelper.INPUT = 'INPUT';
+FormHelper.SELECT = 'SELECT';
+FormHelper.TEXTAREA = 'TEXTAREA';
 
 /***/ })
 /******/ ]);
