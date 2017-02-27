@@ -27,10 +27,10 @@ Download single file for browser.
 <script src="js/sparrow.min.js"></script>
 ```
 
-CDN
+CDN (Replace `/0.1.1/` to latest version)
 
 ```html
-<script src="//cdn.rawgit.com/asika32764/sparrow/c0ad18d9/dist/sparrow.min.js"></script>
+<script src="//cdn.rawgit.com/asika32764/sparrow/0.1.1/dist/sparrow.min.js"></script>
 ```
 
 If you are not in browser environment, you must inject jQuery or Zepto first.
