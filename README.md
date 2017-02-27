@@ -1,6 +1,6 @@
 # Sparrow.js
 
-A reactive MVVM framework for jQuery Vue-like interface.
+A reactivity MVVM framework for jQuery with Vue-like interface.
 
 ## Getting Started
 
@@ -9,7 +9,7 @@ A reactive MVVM framework for jQuery Vue-like interface.
 Install by npm or yarn.
 
 ``` bash
-npm install sparrow --save
+npm install sparrow-js --save
 
 yarn add sparrow
 ```
@@ -241,7 +241,7 @@ var sp = new Sparrow({
 </script>
 ```
 
-See [example](https://jsfiddle.net/asika32764/6wgzyw0q/)
+See [example](https://jsfiddle.net/asika32764/my6u31j7/)
 
 If your elements are not always on page, your JS will add or remove them, you can add `true` to forth argument to use 
 jQuery delegate event binding, then jQuery will help you watch your element.
@@ -355,7 +355,7 @@ this.$show('#list-show li', 'list', function ($ele, v, old, ctrl) {
 this.$show('#list-show li', 'list', $ele => $ele.slideDown(), $ele => $ele.slideUp());
 ```
 
-See [Example](https://jsfiddle.net/asika32764/mjh2n63s/1/)
+See [Example](https://jsfiddle.net/asika32764/mjh2n63s/2/)
 
 ## Wrap
 

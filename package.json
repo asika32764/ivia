@@ -1,5 +1,5 @@
 {
-  "name": "sparrow",
+  "name": "sparrow-js",
   "description": "A reactive MVVM framework for jQuery Vue-like interface.",
   "version": "0.1.0",
   "main": "src/sparrow.min.js",
