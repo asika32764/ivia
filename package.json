@@ -1,23 +1,45 @@
 {
+  "name": "sparrow",
+  "description": "A reactive MVVM framework for jQuery Vue-like interface.",
+  "version": "0.1.0",
+  "main": "src/sparrow.min.js",
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asika32764/sparrow.git"
+  },
+  "keywords": [
+    "mvvm",
+    "vue",
+    "jquery",
+    "reactive"
+  ],
+  "author": "Simon Asika",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asika32764/sparrow/issues"
+  },
+  "homepage": "https://github.com/asika32764/sparrow",
   "scripts": {
     "build:prod": "NODE_ENV='production' webpack",
     "build": "NODE_ENV='development' webpack",
     "watch": "NODE_ENV='development' webpack --watch"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-loader": "^6.3.2",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.22.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-minify": "0.0.15",
+    "jquery": "^3.1.1",
     "webpack": "^2.2.1",
     "webpack-comment-remover-loader": "^0.0.3",
     "webpack-uglify-js-plugin": "^1.1.9"
-  },
-  "devDependencies": {
-    "babel-loader": "^6.3.2",
-    "babel-preset-es2015": "^6.22.0",
-    "gulp-babel": "^6.1.2",
-    "gulp-minify": "0.0.15"
   }
 }
