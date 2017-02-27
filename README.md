@@ -91,7 +91,7 @@ $(document).ready(function () {
 
 ### Create Custom Plugin
 
-Sometimes you may need to handle a big project will many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
+Sometimes you may need to handle a big project with many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
  
 ```js
 // Do not pass `el` option
@@ -103,7 +103,7 @@ Sparrow.plugin('flower', {
 });
 ```
 
-Now you can use this plugin everywhere:
+Now, use this plugin everywhere:
 
 ```js
 $('.flower-widget').flower({
