@@ -49,9 +49,7 @@ const TaskQueue = {
     const tasks = TaskQueue.tasks.slice(0);
     TaskQueue.tasks.length = 0;
 
-    for (let task of tasks) {
-      task();
-    }
+    tasks.forEach(task => task());
   },
   /**
    * This method based listen Vue.$nextTick to handle callback asynchronously.

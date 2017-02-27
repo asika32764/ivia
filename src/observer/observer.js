@@ -73,9 +73,7 @@ export class ObserverFactory {
     } else if (Utilities.isPlainObject(value) && Object.isExtensible(value)) {
       observer = new Observer(value, new Dispatcher(this.app));
 
-      for (let key of Object.keys(value)) {
-        this.reactive(value, key, value[key]);
-      }
+      Object.keys(value).forEach((key) => this.reactive(value, key, value[key]));
     }
 
     return observer;
@@ -212,7 +210,8 @@ export class ObserverFactory {
    * @param {Array} value
    */
   attachArray (value = []) {
-    for (let ele of value) {
+    for (let key in value) {
+      const ele = value[key];
       ele && ele.__observer__ && this.app.currentWatcher.addDispatcher(ele.__observer__.dispatcher);
 
       if (Array.isArray(ele)) {

@@ -72,7 +72,8 @@ export default class Scheduler {
 
     // do not cache length because more watchers might be pushed
     // as we run existing watchers
-    for (let watcher of this.queue) {
+    for (let k in this.queue) {
+      const watcher = this.queue[k];
       this.index++;
       this.watchers[watcher.id] = null;
       watcher.run();

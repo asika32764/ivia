@@ -983,30 +983,9 @@ var TaskQueue = {
     var tasks = TaskQueue.tasks.slice(0);
     TaskQueue.tasks.length = 0;
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = tasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var task = _step.value;
-
-        task();
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
+    tasks.forEach(function (task) {
+      return task();
+    });
   },
 
   getHandler: function getHandler() {
@@ -1698,30 +1677,9 @@ var ObserverFactory = exports.ObserverFactory = function () {
       } else if (_utilities2.default.isPlainObject(value) && Object.isExtensible(value)) {
         observer = new Observer(value, new _dispatcher2.default(this.app));
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = Object.keys(value)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var key = _step.value;
-
-            this.reactive(value, key, value[key]);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        Object.keys(value).forEach(function (key) {
+          return _this.reactive(value, key, value[key]);
+        });
       }
 
       return observer;
@@ -1829,32 +1787,13 @@ var ObserverFactory = exports.ObserverFactory = function () {
     key: 'attachArray',
     value: function attachArray() {
       var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
 
-      try {
-        for (var _iterator2 = value[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var ele = _step2.value;
+      for (var key in value) {
+        var ele = value[key];
+        ele && ele.__observer__ && this.app.currentWatcher.addDispatcher(ele.__observer__.dispatcher);
 
-          ele && ele.__observer__ && this.app.currentWatcher.addDispatcher(ele.__observer__.dispatcher);
-
-          if (Array.isArray(ele)) {
-            this.attachArray(ele);
-          }
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
+        if (Array.isArray(ele)) {
+          this.attachArray(ele);
         }
       }
     }
@@ -2007,37 +1946,17 @@ var Scheduler = function () {
         return a.id - b.id;
       });
 
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      for (var k in this.queue) {
+        var watcher = this.queue[k];
+        this.index++;
+        this.watchers[watcher.id] = null;
+        watcher.run();
 
-      try {
-        for (var _iterator = this.queue[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var watcher = _step.value;
-
-          this.index++;
-          this.watchers[watcher.id] = null;
-          watcher.run();
-
-          if ("development" === 'development' && this.watchers[watcher.id] != null) {
-            this.circular[id] = (this.circular[id] || 0) + 1;
-            if (this.circular[id] > maxCircularNumber) {
-              this.app.error.warn('Infinite loop for max 1000 times for key: ' + watcher.path + ' ' + ('and expression: ' + watcher.expression));
-              break;
-            }
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+        if ("development" === 'development' && this.watchers[watcher.id] != null) {
+          this.circular[id] = (this.circular[id] || 0) + 1;
+          if (this.circular[id] > maxCircularNumber) {
+            this.app.error.warn('Infinite loop for max 1000 times for key: ' + watcher.path + ' ' + ('and expression: ' + watcher.expression));
+            break;
           }
         }
       }
