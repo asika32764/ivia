@@ -1946,9 +1946,8 @@ var Scheduler = function () {
         return a.id - b.id;
       });
 
-      for (var k in this.queue) {
-        var watcher = this.queue[k];
-        this.index++;
+      for (this.index = 0; this.index < this.queue.length; this.index++) {
+        var watcher = this.queue[this.index];
         this.watchers[watcher.id] = null;
         watcher.run();
 
