@@ -84,14 +84,14 @@ Sometimes you may need to put your code before HTML `<body>`, you can add `domre
 Or use jQuery plugin pattern.
 
 ```js
-$(function () {
+$(document).ready(function () {
   var sp = $('#app').sparrow({ ... });
 });
 ```
 
 ### Create Custom Plugin
 
-Sometimes you may need to handle a bug project will many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
+Sometimes you may need to handle a big project will many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
  
 ```js
 // Do not pass `el` option
