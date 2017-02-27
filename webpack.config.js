@@ -16,11 +16,13 @@ const config = {
     library: ['Sparrow']
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'babel-loader'
-    }]
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loaders: ['babel-loader', 'webpack-comment-remover-loader']
+      }
+    ]
   },
   plugins: [
     new webpack.DefinePlugin({

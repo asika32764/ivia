@@ -3014,7 +3014,7 @@ strip-indent@^1.0.1:
   dependencies:
     get-stdin "^4.0.1"
 
-strip-json-comments@~2.0.1:
+strip-json-comments@^2.0.1, strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
@@ -3282,6 +3282,12 @@ webpack:
     watchpack "^1.2.0"
     webpack-sources "^0.1.4"
     yargs "^6.0.0"
+
+webpack-comment-remover-loader:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/webpack-comment-remover-loader/-/webpack-comment-remover-loader-0.0.3.tgz#7e49451b7a6fc09e19dafe26464e9751d7f1193d"
+  dependencies:
+    strip-json-comments "^2.0.1"
 
 webpack-core@^0.6.8:
   version "0.6.9"

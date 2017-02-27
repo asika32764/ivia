@@ -80,12 +80,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.nullFunction = nullFunction;
 
@@ -297,12 +292,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of Sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _app = __webpack_require__(2);
 
@@ -408,12 +398,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.proxy = proxy;
 exports.proxyMethod = proxyMethod;
@@ -460,11 +445,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * Default options.
- *
- * @type {Object}
- */
 var defaultOptions = {
   data: {}
 };
@@ -502,7 +482,6 @@ var Application = function () {
       this.data = options.data;
       this.instance = instance;
 
-      // Push properties back to instance
       instance.$ = this.$;
       instance.$data = this.options.data;
       instance.$options = this.options;
@@ -527,14 +506,11 @@ var Application = function () {
 
       initState(this);
 
-      // Lifecycle
       this.hook('created');
 
       if (options.el) {
         this.mount(options.el);
       }
-
-      // TODO: Implement destroy methods and hooks
     }
   }, {
     key: "mount",
@@ -592,7 +568,6 @@ var Application = function () {
     value: function bind(selector, key, callback) {
       var $element = this.find(selector);
 
-      // Default callback
       if (typeof callback === 'string') {
         var name = callback;
         callback = function callback($element, value) {
@@ -806,7 +781,7 @@ exports.default = Application;
 
 
 function initState(app) {
-  // TODO: Init Props
+
   initData(app, app.options.data);
 
   if (app.options.methods) {
@@ -823,7 +798,7 @@ function initState(app) {
 }
 
 function initData(app, data) {
-  // TODO: Check no props conflict
+
   for (var key in data) {
     if (!_utilities2.default.isReserved(key)) {
       proxy(app.instance, data, key);
@@ -837,7 +812,7 @@ function initMethods(app, methods) {
   for (var key in methods) {
     var method = methods[key];
     if (!app.options.data[key] && typeof method === 'function') {
-      // Faster binding function
+
       app.instance[key] = _utilities2.default.bind(method, app.instance);
     }
   }
@@ -943,13 +918,6 @@ var _app2 = _interopRequireDefault(_app);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
-
 var TaskQueue = {
   pending: false,
   tasks: [],
@@ -1014,20 +982,12 @@ var TaskQueue = {
       }
     }
   },
-  /**
-   * This method based listen Vue.$nextTick to handle callback asynchronously.
-   */
+
   getHandler: function getHandler() {
     var _this = this;
 
     if (typeof this.handler !== 'function') {
-      // the nextTick behavior leverages the microtask queue, which can be accessed
-      // via either native Promise.then or MutationObserver.
-      // MutationObserver has wider support, however it is seriously bugged in
-      // UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
-      // completely stops working after triggering a few times... so, if native
-      // Promise is available, we will use it:
-      /* istanbul ignore if */
+
       if (typeof Promise !== 'undefined' && _utilities2.default.isNative(Promise)) {
         var p = Promise.resolve();
         this.handler = function () {
@@ -1035,20 +995,12 @@ var TaskQueue = {
             return console.error(err);
           });
 
-          // in problematic UIWebViews, Promise.then doesn't completely break, but
-          // it can get stuck in a weird state where callbacks are pushed into the
-          // microtask queue but the queue isn't being flushed, until the browser
-          // needs to do some other work, e.g. handle a timer. Therefore we can
-          // "force" the microtask queue to be flushed by adding an empty timer.
           if (_environment.isIOS) {
             setTimeout(_utilities.nullFunction);
           }
         };
-      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) ||
-      // PhantomJS and iOS 7.x
-      MutationObserver.toString() === '[object MutationObserverConstructor]')) {
-        // use MutationObserver where native Promise is not available,
-        // e.g. PhantomJS IE11, iOS7, Android 4.4
+      } else if (typeof MutationObserver !== 'undefined' && (_utilities2.default.isNative(MutationObserver) || MutationObserver.toString() === '[object MutationObserverConstructor]')) {
+
         var counter = 1;
         var observer = new MutationObserver(this.execute);
         var textNode = document.createTextNode(String(counter));
@@ -1060,8 +1012,7 @@ var TaskQueue = {
           textNode.data = String(counter);
         };
       } else {
-        // fallback to setTimeout
-        /* istanbul ignore next */
+
         this.handler = function () {
           setTimeout(_this.execute, 0);
         };
@@ -1086,13 +1037,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _utilities = __webpack_require__(0);
 
@@ -1144,8 +1089,6 @@ var Watcher = function () {
         return _utilities2.default.get(value, path);
       };
     }
-
-    //this.value = this.computed ? undefined : this.get();
   }
 
   _createClass(Watcher, [{
@@ -1156,8 +1099,6 @@ var Watcher = function () {
       var value = void 0;
 
       value = this.getter.call(this.app.instance, this.app.data);
-
-      // TODO: deep
 
       this.app.popStack();
 
@@ -1204,7 +1145,6 @@ var Watcher = function () {
         this.defer = false;
       }
 
-      // Push all dispatchers of this watcher to current active watcher.
       if (this.app.currentWatcher) {
         for (var k in this.watcher.dispatchers) {
           this.app.currentWatcher.addDispatcher(this.dispatchers[k]);
@@ -1284,12 +1224,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /**
-                                                                                                                                                                                                                                                                               * Part of sparrow project.
-                                                                                                                                                                                                                                                                               *
-                                                                                                                                                                                                                                                                               * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                               * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                               */
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.default = createElement;
 
@@ -1350,13 +1285,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    GNU General Public License version 2 or later.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _utilities = __webpack_require__(0);
 
@@ -1435,13 +1364,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
-
 var ErrorHandler = function () {
   function ErrorHandler(app) {
     _classCallCheck(this, ErrorHandler);
@@ -1491,13 +1413,6 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
 
 var EventHandler = function () {
   function EventHandler(app) {
@@ -1616,15 +1531,10 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _watcher = __webpack_require__(4);
 
@@ -1640,84 +1550,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var uid = 0;
 
-/**
- * Dispatcher object.
- */
-
 var Dispatcher = function () {
-  /**
-   * Class init.
-   * @param {Application} app
-   * @param {Watcher[]}   watchers
-   */
-  function Dispatcher(app) {
-    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+   function Dispatcher(app) {
+      var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-    _classCallCheck(this, Dispatcher);
+      _classCallCheck(this, Dispatcher);
 
-    this.id = ++uid;
-    this.watchers = watchers;
-    this.app = app;
-  }
+      this.id = ++uid;
+      this.watchers = watchers;
+      this.app = app;
+   }
 
-  /**
-   * Add Watcher.
-   * @param {Watcher} watcher
-   */
-
-
-  _createClass(Dispatcher, [{
-    key: "attach",
-    value: function attach(watcher) {
-      this.watchers.push(watcher);
-    }
-
-    /**
-     * Remove Watcher.
-     * @param {Watcher} watcher
-     * @returns {Dispatcher}
-     */
-
-  }, {
-    key: "detach",
-    value: function detach(watcher) {
-      _utilities2.default.removeElement(this.watchers, watcher);
-
-      watcher.removeDispatcher();
-
-      return this;
-    }
-
-    /**
-     * Attach current watcher to self.
-     */
-
-  }, {
-    key: "attachCurrent",
-    value: function attachCurrent() {
-      if (this.app.currentWatcher) {
-        this.app.currentWatcher.addDispatcher(this);
+   _createClass(Dispatcher, [{
+      key: "attach",
+      value: function attach(watcher) {
+         this.watchers.push(watcher);
       }
-    }
+   }, {
+      key: "detach",
+      value: function detach(watcher) {
+         _utilities2.default.removeElement(this.watchers, watcher);
 
-    /**
-     * Notify all watchers to update themselves.
-     *
-     * @param {Object} ctrl
-     */
+         watcher.removeDispatcher();
 
-  }, {
-    key: "notify",
-    value: function notify() {
-      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+         return this;
+      }
+   }, {
+      key: "attachCurrent",
+      value: function attachCurrent() {
+         if (this.app.currentWatcher) {
+            this.app.currentWatcher.addDispatcher(this);
+         }
+      }
+   }, {
+      key: "notify",
+      value: function notify() {
+         var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
 
-      this.watchers.forEach(function (watcher) {
-        return watcher.update(ctrl);
-      });
-    }
-  }]);
+         this.watchers.forEach(function (watcher) {
+            return watcher.update(ctrl);
+         });
+      }
+   }]);
 
-  return Dispatcher;
+   return Dispatcher;
 }();
 
 exports.default = Dispatcher;
@@ -1747,24 +1623,9 @@ var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
-                                                                                                                                                           * Part of sparrow project.
-                                                                                                                                                           *
-                                                                                                                                                           * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                           * @license    __LICENSE__
-                                                                                                                                                           */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * Observer object.
- */
-var Observer =
-/**
- * Class init.
- *
- * @param {*}         value
- * @param {Dispatcher} dispatcher
- */
-function Observer(value, dispatcher) {
+var Observer = function Observer(value, dispatcher) {
   _classCallCheck(this, Observer);
 
   this.value = value;
@@ -1781,25 +1642,11 @@ var arrayProto = Array.prototype;
 var replaceMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
 
 var ObserverFactory = exports.ObserverFactory = function () {
-  /**
-   * Class init.
-   *
-   * @param {Application} app
-   */
   function ObserverFactory(app) {
     _classCallCheck(this, ObserverFactory);
 
     this.app = app;
   }
-
-  /**
-   * Create observer object.
-   *
-   * @param {*} value
-   *
-   * @returns Observer|null
-   */
-
 
   _createClass(ObserverFactory, [{
     key: 'create',
@@ -1853,17 +1700,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
 
       return observer;
     }
-
-    /**
-     * Set a value to reactive object or array.
-     *
-     * @param {Object} object
-     * @param {string} key
-     * @param {*}      value
-     *
-     * @returns {*}
-     */
-
   }, {
     key: 'set',
     value: function set(object, key, value) {
@@ -1888,14 +1724,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
       ob.dispatcher.notify();
       return value;
     }
-
-    /**
-     * Delete property.
-     *
-     * @param {Object} object
-     * @param {string} key
-     */
-
   }, {
     key: 'delete',
     value: function _delete(object, key) {
@@ -1918,18 +1746,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
 
       ob.dispatcher.notify();
     }
-
-    /**
-     * Make a value reactive.
-     *
-     * This method will add getter and setter to a value and inject Dispatcher to setter,
-     * So we can notify Watchers if value has been set a new value.
-     *
-     * @param {Object} object
-     * @param {string} key
-     * @param {*}      value
-     */
-
   }, {
     key: 'reactive',
     value: function reactive(object, key, value) {
@@ -1950,14 +1766,9 @@ var ObserverFactory = exports.ObserverFactory = function () {
         get: function get() {
           value = getter ? getter.call(object) : value;
 
-          /*
-           * If there is an active Watcher working, means this watcher depends listen current value,
-           * Let's push it into current Dispatcher instance.
-           */
           if (self.app.currentWatcher) {
             self.app.currentWatcher.addDispatcher(dispatcher);
 
-            // If child value is object, also inject active Watcher to their dispatcher.
             if (childObserver) {
               self.app.currentWatcher.addDispatcher(childObserver.dispatcher);
             }
@@ -1988,12 +1799,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
         }
       });
     }
-
-    /**
-     * Attach observer to array
-     * @param {Array} value
-     */
-
   }, {
     key: 'attachArray',
     value: function attachArray() {
@@ -2027,13 +1832,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
         }
       }
     }
-
-    /**
-     * Replace array methods with our mutator.
-     * @param {Array} value
-     * @returns {Array}
-     */
-
   }, {
     key: 'replaceArrayMethods',
     value: function replaceArrayMethods(value) {
@@ -2041,7 +1839,7 @@ var ObserverFactory = exports.ObserverFactory = function () {
       var arrayMethods = Object.create(arrayProto);
 
       replaceMethods.forEach(function (method) {
-        // cache original method
+
         var original = arrayProto[method];
 
         _utilities2.default.define(arrayMethods, method, function mutator() {
@@ -2073,7 +1871,6 @@ var ObserverFactory = exports.ObserverFactory = function () {
             self.create(inserted);
           }
 
-          // notify change
           ob.dispatcher.notify({
             method: method,
             args: args
@@ -2109,13 +1906,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _queue = __webpack_require__(3);
 
@@ -2157,7 +1948,7 @@ var Scheduler = function () {
   }, {
     key: 'enqueueWatcher',
     value: function enqueueWatcher(watcher) {
-      // Make sure watcher is already in queue
+
       if (!this.watchers[watcher.id]) {
         this.watchers[watcher.id] = true;
 
@@ -2171,8 +1962,7 @@ var Scheduler = function () {
             break;
 
           case State.RUNNING:
-            // if already flushing, splice the watcher based listen its id
-            // if already past its id, it will be run next immediately.
+
             var i = this.queue.length - 1;
 
             while (i >= 0 && this.queue[i].id > watcher.id) {
@@ -2186,20 +1976,11 @@ var Scheduler = function () {
   }, {
     key: 'execute',
     value: function execute() {
-      // Sort queue before flush.
-      // This ensures that:
-      // 1. Components are updated from parent to child. (because parent is always
-      //    created before the child)
-      // 2. A component's user watchers are run before its render watcher (because
-      //    user watchers are created before the render watcher)
-      // 3. If a component is destroyed during a parent component's watcher run,
-      //    its watchers can be skipped.
+
       this.queue.sort(function (a, b) {
         return a.id - b.id;
       });
 
-      // do not cache length because more watchers might be pushed
-      // as we run existing watchers
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -2212,7 +1993,6 @@ var Scheduler = function () {
           this.watchers[watcher.id] = null;
           watcher.run();
 
-          // in dev build, check and stop circular updates.
           if ("development" === 'development' && this.watchers[watcher.id] != null) {
             this.circular[id] = (this.circular[id] || 0) + 1;
             if (this.circular[id] > maxCircularNumber) {
@@ -2265,13 +2045,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Part of sparrow project.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @license    __LICENSE__
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _utilities = __webpack_require__(0);
 
@@ -2372,16 +2146,8 @@ module.exports = exports["default"];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+                        value: true
 });
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
-
-// Browser environment sniffing
 var inBrowser = exports.inBrowser = typeof window !== 'undefined';
 var UA = exports.UA = inBrowser && window.navigator.userAgent.toLowerCase();
 var isIE = exports.isIE = UA && /msie|trident/.test(UA);
@@ -2404,13 +2170,6 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Part of sparrow project.
- *
- * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
- * @license    __LICENSE__
- */
 
 var Registry = function () {
   function Registry(app) {
@@ -2471,12 +2230,7 @@ var _sparrow2 = _interopRequireDefault(_sparrow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $ = window.jQuery || window.Zepto || window.$ || null; /**
-                                                            * Part of Sparrow project.
-                                                            *
-                                                            * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
-                                                            * @license    GNU General Public License version 2 or later.
-                                                            */
+var $ = window.jQuery || window.Zepto || window.$ || null;
 
 if ($) {
   _sparrow2.default.$ = $;
