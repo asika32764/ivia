@@ -11,7 +11,7 @@ Install by npm or yarn.
 ``` bash
 npm install jquery.sparrow --save
 
-yarn add sparrow
+yarn add jquery.sparrow
 ```
 
 Install by bower
