@@ -9,7 +9,7 @@ A reactivity MVVM framework for jQuery with Vue-like interface.
 Install by npm or yarn.
 
 ``` bash
-npm install sparrow-js --save
+npm install jquery.sparrow --save
 
 yarn add sparrow
 ```
