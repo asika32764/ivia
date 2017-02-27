@@ -560,6 +560,12 @@ Sparrow.createElement('div', {class: 'foo'}, 'Text');
 Sparrow.$('<div class="foo">Text</div>');
 ```
 
+## TODO
+
+- Component system
+- Props
+- State control
+
 ## Credit
 
 This project is inspired by [Evan You](https://github.com/yyx990803)'s [Vue.js](https://github.com/vuejs/vue) and the 
