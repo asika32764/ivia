@@ -15,7 +15,6 @@ import Utilities, { nullFunction } from "./util/utilities";
 import PromiseAdapter from "./promise/promise";
 import EventHandler from "./event";
 import FormHelper from "./dom/form";
-import Wrapper from "./util/wrapper";
 
 /**
  * Default options.
@@ -59,15 +58,15 @@ export default class Application {
     instance.$options = this.options;
     proxyMethod(instance, this, 'find');
     proxyMethod(instance, this, 'async');
-    proxyMethod(instance, this, 'mount');
-    proxyMethod(instance, this, 'bind');
-    proxyMethod(instance, this, 'on');
-    proxyMethod(instance, this, 'model');
-    proxyMethod(instance, this, 'show');
-    proxyMethod(instance, this, 'wrap');
-    proxyMethod(instance, this, 'watch');
+    proxyMethod(instance, this, 'mount', true);
+    proxyMethod(instance, this, 'bind', true);
+    proxyMethod(instance, this, 'on', true);
+    proxyMethod(instance, this, 'model', true);
+    proxyMethod(instance, this, 'show', true);
+    proxyMethod(instance, this, 'wrap', true);
+    proxyMethod(instance, this, 'watch', true);
     proxyMethod(instance, this, 'nextTick');
-    proxyMethod(instance, this, 'forceUpdate');
+    proxyMethod(instance, this, 'forceUpdate', true);
     proxyMethod(instance, this.event, 'listen', true);
     proxyMethod(instance, this.event, 'off', true);
     proxyMethod(instance, this.event, 'once', true);

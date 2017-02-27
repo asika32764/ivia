@@ -441,10 +441,6 @@ var _form = __webpack_require__(6);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _wrapper = __webpack_require__(16);
-
-var _wrapper2 = _interopRequireDefault(_wrapper);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -473,8 +469,7 @@ var Application = function () {
       'observerFactory': new _observer.ObserverFactory(this),
       'scheduler': new _scheduler2.default(this),
       'error': new _error2.default(),
-      'event': new _event2.default(this),
-      'wrapper': new _wrapper2.default(this)
+      'event': new _event2.default(this)
     });
   }
 
@@ -492,15 +487,15 @@ var Application = function () {
       instance.$options = this.options;
       proxyMethod(instance, this, 'find');
       proxyMethod(instance, this, 'async');
-      proxyMethod(instance, this, 'mount');
-      proxyMethod(instance, this, 'bind');
-      proxyMethod(instance, this, 'on');
-      proxyMethod(instance, this, 'model');
-      proxyMethod(instance, this, 'show');
-      proxyMethod(instance, this, 'wrap');
-      proxyMethod(instance, this, 'watch');
+      proxyMethod(instance, this, 'mount', true);
+      proxyMethod(instance, this, 'bind', true);
+      proxyMethod(instance, this, 'on', true);
+      proxyMethod(instance, this, 'model', true);
+      proxyMethod(instance, this, 'show', true);
+      proxyMethod(instance, this, 'wrap', true);
+      proxyMethod(instance, this, 'watch', true);
       proxyMethod(instance, this, 'nextTick');
-      proxyMethod(instance, this, 'forceUpdate');
+      proxyMethod(instance, this, 'forceUpdate', true);
       proxyMethod(instance, this.event, 'listen', true);
       proxyMethod(instance, this.event, 'off', true);
       proxyMethod(instance, this.event, 'once', true);
@@ -2266,51 +2261,6 @@ if ($) {
 
 exports.default = _sparrow2.default;
 module.exports = exports["default"];
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Wrapper = function () {
-  function Wrapper(app) {
-    _classCallCheck(this, Wrapper);
-
-    this.app = app;
-  }
-
-  _createClass(Wrapper, [{
-    key: 'execute',
-    value: function execute($element, handler) {
-      handler.call(this, $element, this);
-    }
-  }]);
-
-  return Wrapper;
-}();
-
-exports.default = Wrapper;
-
-
-['bind', 'on', 'model', 'show'].forEach(function (method) {
-  Wrapper.prototype['$' + method] = function ($element) {
-    var _app;
-
-    (_app = this.app)[method].apply(_app, [$element].concat(Array.prototype.slice.call(arguments)));
-    return this;
-  };
-});
-module.exports = exports['default'];
 
 /***/ })
 /******/ ]);
