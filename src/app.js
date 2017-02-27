@@ -406,6 +406,7 @@ function initComputed (app, computed) {
     let cache;
 
     getter = typeof handler === 'function' ? handler : handler.get;
+    getter = Utilities.bind(getter, app.instance);
 
     const watcher = new Watcher(app, key, getter, {lazy: true});
 
@@ -418,6 +419,8 @@ function initComputed (app, computed) {
           return watcher.getCachedValue();
         };
       }
+
+      setter = Utilities.bind(setter, app.instance);
 
       Object.defineProperty(app.data, key, {
         enumerable: true,

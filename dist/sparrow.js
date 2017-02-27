@@ -867,6 +867,7 @@ function initComputed(app, computed) {
     var cache = void 0;
 
     getter = typeof handler === 'function' ? handler : handler.get;
+    getter = _utilities2.default.bind(getter, app.instance);
 
     var watcher = new _watcher2.default(app, key, getter, { lazy: true });
 
@@ -879,6 +880,8 @@ function initComputed(app, computed) {
           return watcher.getCachedValue();
         };
       }
+
+      setter = _utilities2.default.bind(setter, app.instance);
 
       Object.defineProperty(app.data, key, {
         enumerable: true,

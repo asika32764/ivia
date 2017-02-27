@@ -93,8 +93,8 @@ $(function () {
 
 ### Simple Binding
 
-- API: `this.$bind(selector, dataPath, handler)`
-- Handler: `function ($element, value, oldValue, arrayControl)`
+- API: `this.$bind(selector: string, dataPath: string, handler: string|Function)`
+- Handler: `function ($element: jQuery, value: mixed, oldValue: mixed, arrayControl: Object = null)`
 
 Sparrow has a reactive data structure, you can bind an HTML element to a data value then if this data changed, Sparrow
 will notice your handler to change DOM.
@@ -162,6 +162,13 @@ this.$bind('#flower', 'flower.name', function ($ele, value, oldValue) {
     // You can still use $(`<li>...</li>`) to create element.
     Sparrow.createElement('li', {'data-number': this.flower.number}, value)  
   );
+  
+  // Show/hide
+  if (value) {
+    $ele.slideDown();
+  } else {
+    $ele.slideUp();
+  }
 });
 ```
 
@@ -206,7 +213,7 @@ sp.items.push('d');
 
 ## DOM Events
 
-- API: `this.$on(selector, eventName, handler, delegate = false)`
+- API: `this.$on(selector: string, eventName: string, handler: Function, delegate: boolean = false)`
 - Handler: `function ($ele, event)`
 
 Use `$on()` to bind DOM events to your data.
@@ -245,7 +252,7 @@ this.$on('#flower-input', 'input', $ele => this.flower = $ele.val(), true);
 
 ## Two-Way Binding
 
-- API: `this.$model(selector, dataPath, delegate = false)`
+- API: `this.$model(selector: string|Element, dataPath: string, delegate: boolean = false)`
  
 Two-way binding can only works for `input`, `textarea` and `select` now.
 
@@ -259,7 +266,7 @@ Two-way binding can only works for `input`, `textarea` and `select` now.
 var sp = new Sparrow({
   el: '#app',
   data: {
-    flower: ''
+    flower: 'initial data'
   },
   configure: function () {
     this.$model('#flower-input', 'flower')
@@ -268,3 +275,261 @@ var sp = new Sparrow({
 });
 </script>
 ```
+
+See [Example](https://jsfiddle.net/asika32764/y4z4j8Lu/) 
+
+## Show/Hide
+
+- API: `this.$show(selector: string|Element, dataPath: string, onShow: string|Function, onHide: string|Function)`
+
+Use `$show()` to control an element show/hide depend on data.
+
+```html
+<div id="app">
+  <select name="" id="list">
+    <option value="0">Zero</option>
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="-1">Negative One</option>
+  </select>
+  
+  <div id="list-show">
+    <ul>
+      <li>A</li>
+      <li>B</li>
+      <li>C</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+var sp = new Sparrow({
+  el: '#app',
+  data: {
+    list: '1'
+  },
+  configure: function () {
+    this.$show('#list-show li', 'list');
+    
+    this.$model('#list', 'list');
+  }
+});
+</script>
+```
+
+See [Example](https://jsfiddle.net/asika32764/15ysvu2k/1/)
+
+### Custom Show/Hide Handler
+
+Use `string` as jQuery method.
+
+```js
+// Same as $ele.show()
+this.$show('#list-show li', 'list', 'show', 'hide');
+
+// Same as $ele.fadeIn()
+this.$show('#list-show li', 'list', 'fadeIn', 'fadeOut');
+
+// Samse as $ele.slideDown()
+this.$show('#list-show li', 'list', 'slideDown', 'slideUp');
+```
+
+If you only provide first handler, is will use as toggle handler.
+
+```js
+this.$show('#list-show li', 'list', 'toggle'); // toggle show/hide
+
+this.$show('#list-show li', 'list', 'fadeToggle'); // toggle fadeIn/fadeOut
+```
+
+Use callback:
+
+```js
+this.$show('#list-show li', 'list', function ($ele, v, old, ctrl) {
+  $ele.slideDown();
+}, function ($ele, v, old, ctrl){
+  $ele.slideUp();  
+});
+
+// Use ES6 arrow function
+this.$show('#list-show li', 'list', $ele => $ele.slideDown(), $ele => $ele.slideUp());
+```
+
+See [Example](https://jsfiddle.net/asika32764/mjh2n63s/1/)
+
+## Wrap
+
+Simply use `$wrap` so you don't need always type same selector:
+
+```js
+this.$wrap('#flower-selector', function ($ele, wrapper) {
+  this.$bind('flower.name', ':text');
+  this.$model('flower.name');
+  
+  // wrapper is same as this, useful for arrow function
+  wrapper.$show('flower.show', 'fadeToggle');
+});
+```
+
+Only supports `$bind`, `$show`, `$model`, `$on` methods.
+
+## Methods / Watchers and Computed
+
+methods, watches and computed is same as Vue.
+
+```js
+var sp = new Sparrow({
+  el: '#app',
+  data: {
+    firstName: 'john',
+    lastName: 'williams'
+  },
+  configure: function () {
+    this.$model('#first', 'firstName');
+    this.$model('#last', 'lastName');
+    
+    this.$bind('#full-name', 'fullName', ':text');
+  },
+  methods: {
+    capitalize: function (text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+  },
+  computed: {
+    fullName: function () {
+      return this.capitalize(this.firstName) + ' ' + this.capitalize(this.lastName);
+    }
+  },
+  watch: {
+    foo: function (value, oldValue, ctrl) {
+      // Do some manually update
+    }
+  }
+});
+```
+
+Also support `$watch()` method:
+
+```js
+this.$watch('foo.bar', function (value, oldValue, ctrl) {
+    // Do some manually update
+});
+```
+
+See [Example](https://jsfiddle.net/asika32764/1bfw6h99/1/) and [Vue: Computed amd Watchers](https://vuejs.org/v2/guide/computed.html)
+
+## Events
+
+Sparrow events is also similar to Vue, the only different is that we change `$on()` method to `$listen`:
+ 
+```js
+this.$listen('event-name', (arg) => {
+    console.log(arg); // Hello
+});
+
+this.$emit('event-name', 'Hello');
+
+this.$off('event-name');
+```
+
+Supported methods: `$listen()`, `$emit()`, `$off()`, `$once()`.
+
+## Setters
+
+You must also use `$set()` and `$delete()` to operate some object in data that Sparrow can add reactive observer.
+ 
+```js
+this.$set(this.$data.foo, 'bar', 'value');
+this.$delete(this.$data.foo, 'bar', 'value');
+```
+
+See [Vue doc: reavtivity](https://vuejs.org/v2/guide/reactivity.html#Change-Detection-Caveats)
+
+## Async/Sync
+
+### nextTick
+
+Sparrow also supports `$nextTick()` after all watchers updated the DOM:
+
+```js
+this.foo = 'new data';
+
+this.$nextTick(function () {
+  // Do something after DOM updated.
+});
+```
+
+See [Vue nextTick](https://vuejs.org/v2/guide/reactivity.html#Async-Update-Queue)
+
+### Async DOM Operation
+
+DOM operation is synchronous, Sparrow provides an `$async()` method to help us do something asynchronous and return Promise/A+ object.
+
+```js
+this.$async(function () {
+  for (...) {
+    $element.append(...); // Run 1000 times, here will not block your process
+  }
+}).then(function () {
+  // Do something after DOM appended
+});
+
+// The below code will continue execute
+
+this.$async(function () {
+  for (...) {
+    $element.append(...); // Run 1000 times, here will not block your process
+  }
+}).then(function () {
+  // Do something after DOM appended
+});
+
+// These 2 tasks will not block each other.
+```
+
+Also will can use `Promise.all()` or `Promise.race()`, this example we convert jQuery ajax deferred object to Promise:
+
+```js
+Sparrow.Promise.all([
+  this.$async(() => this.$.get(url1)),
+  this.$async(() => this.$.post(url2, data)),
+  this.$async(() => this.$.get(url3)),
+]).then(() => {
+    // will wait 3 ajax completed
+});
+```
+
+### Promise A/+
+
+Sparrow provides a Promise object in `Sparrow.Promise`, if browser supports native Promise, this object will be reference of native Promise.
+If browser not support, Sparrow will wrap `jQuery.Deferred` and adapt it to fit Promise A/+ interface.
+ 
+```js
+new Sparrow.Promise(resolce => {
+    // Do something
+    
+    resolve(...);
+});
+```
+
+## Element Create
+
+Sparrow has `createElement` method to help you generate DOM element:
+
+```js
+Sparrow.createElement('div', {class: 'foo'}, 'Text');
+
+// Also can use jQuery
+Sparrow.$('<div class="foo">Text</div>');
+```
+
+## Credit
+
+This project is inspired by [Evan You](https://github.com/yyx990803)'s [Vue.js](https://github.com/vuejs/vue) and the 
+reactive structure is heavily referenced of Vue.
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2013-present, Simon Asika

@@ -49,10 +49,8 @@
 
         this.$bind('#hello', 'hello', ':text');
         this.$model('#list', 'list');
-        this.$wrap('#list-show li', function () {
-          this.$bind('foo.bar.yoo', ':text');
-          this.$show('list', 'fadeToggle');
-        });
+        this.$bind('#list-show li', 'foo.bar.yoo', ':text');
+        this.$show('#list-show li', 'list', 'fadeToggle');
       },
       methods: {
         changeRadios () {
@@ -154,6 +152,40 @@
     <ul class="logs2"></ul>
     <ul class="logs3"></ul>
   </form>
+
+  <div id="app">
+    <input id="first" type="text" placeholder="First Name">
+    <input id="last" type="text" placeholder="Last Name">
+
+    <p id="full-name"></p>
+  </div>
+
+  <script>
+    var sp = new Sparrow({
+      el: '#app',
+      data: {
+        firstName: 'john',
+        lastName: 'williams'
+      },
+      configure: function () {
+        this.$model('#first', 'firstName');
+        this.$model('#last', 'lastName');
+
+        this.$bind('#full-name', 'fullName', ':text');
+      },
+      methods: {
+        capitalize: function (text) {
+          return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+      },
+      computed: {
+        fullName: function () {
+            console.log(this);
+          return this.capitalize(this.firstName) + ' ' + this.capitalize(this.lastName);
+        }
+      }
+    });
+  </script>
 </div>
 
 </body>
