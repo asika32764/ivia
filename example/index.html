@@ -48,9 +48,11 @@
         });
 
         this.$bind('#hello', 'hello', ':text');
-        this.$bind('#list-show li', 'foo.bar.yoo', ':text');
         this.$model('#list', 'list');
-        this.$show('#list-show li', 'list', 'fadeToggle');
+        this.$wrap('#list-show li', function () {
+          this.$bind('foo.bar.yoo', ':text');
+          this.$show('list', 'fadeToggle');
+        });
       },
       methods: {
         changeRadios () {

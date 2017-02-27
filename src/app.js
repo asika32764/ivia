@@ -15,6 +15,7 @@ import Utilities, { nullFunction } from "./util/utilities";
 import PromiseAdapter from "./promise/promise";
 import EventHandler from "./event";
 import FormHelper from "./dom/form";
+import Wrapper from "./util/wrapper";
 
 /**
  * Default options.
@@ -63,6 +64,7 @@ export default class Application {
     proxyMethod(instance, this, 'on');
     proxyMethod(instance, this, 'model');
     proxyMethod(instance, this, 'show');
+    proxyMethod(instance, this, 'wrap');
     proxyMethod(instance, this, 'watch');
     proxyMethod(instance, this, 'nextTick');
     proxyMethod(instance, this, 'forceUpdate');
@@ -260,6 +262,27 @@ export default class Application {
     };
 
     this.watch(key, handler);
+
+    return this;
+  }
+
+  wrap (selector, handler) {
+    const $element = this.find(selector);
+    const self = this;
+    const wrapper = {
+      execute: function () {
+        handler.call(this, $element, this);
+      }
+    };
+
+    ['bind', 'on', 'model', 'show'].forEach(function (method) {
+      wrapper['$' + method] = function () {
+        self[method]($element, ...arguments);
+        return this;
+      };
+    });
+
+    wrapper.execute($element);
 
     return this;
   }
