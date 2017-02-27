@@ -89,6 +89,43 @@ $(function () {
 });
 ```
 
+### Create Custom Plugin
+
+Sometimes you may need to handle a bug project will many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
+ 
+```js
+// Do not pass `el` option
+// This options will be default options.
+
+Sparrow.plugin('flower', {
+  data: { ... },
+  methods: { ... }
+});
+```
+
+Now you can use this plugin everywhere:
+
+```js
+$('.flower-widget').flower({
+  data: {
+    foo: 'bar'
+  },
+  method: {
+    extraMethod: function () {}
+  },
+  extraOptions: {
+    foo: 'bar',
+    ajaxUrl: '/post'
+  }
+});
+```
+
+The new options will recursively merge with original one, so you can override any data. Use `$options` later in Sparrow instance to get your extra options.
+
+```js
+this.$options.extraOptions.ajaxUrl; // /post
+```
+
 ## Binding Data (One-way-binding)
 
 ### Simple Binding
