@@ -2,7 +2,7 @@
   "name": "jquery.sparrow",
   "description": "A reactive MVVM framework for jQuery with Vue-like interface.",
   "version": "0.1.2",
-  "main": "src/sparrow.min.js",
+  "main": "dist/sparrow.common.js",
   "directories": {
     "example": "example"
   },
@@ -23,8 +23,9 @@
   },
   "homepage": "https://github.com/asika32764/sparrow",
   "scripts": {
-    "build:prod": "NODE_ENV='production' webpack",
-    "build": "NODE_ENV='development' webpack",
+    "build:prod": "NODE_ENV='production' webpack ; npm run build:common ; npm run build",
+    "build:common": "NODE_ENV='production' LIB_TARGET='commonjs2' webpack",
+    "build": "NODE_ENV='development' webpack ; NODE_ENV='development' LIB_TARGET='commonjs2' webpack",
     "watch": "NODE_ENV='development' webpack --watch"
   },
   "dependencies": {},

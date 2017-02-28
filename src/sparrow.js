@@ -16,7 +16,7 @@ export default class Sparrow {
     $ = $ || Sparrow.$;
 
     if (!$) {
-      console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
     }
 
     if (options.domready) {
@@ -47,7 +47,12 @@ export default class Sparrow {
     const $ = Sparrow.$;
 
     if (!$) {
-      console.error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+    }
+
+    if (typeof $.fn === 'undefined') {
+      $('body'); // Test document
+      throw new Error('Sparrow.$.fn not exists, are you sure you inject a jQuery / Zepto object?');
     }
 
     $.fn[name] = function (customOptions) {

@@ -6,11 +6,14 @@
  */
 
 import Sparrow from "./sparrow";
+import { inBrowser } from "./util/environment";
 
-let $ = window.jQuery || window.Zepto || window.$ || null;
+if (inBrowser) {
+  let $ = window.jQuery || window.Zepto || window.$ || null;
 
-if ($) {
-  Sparrow.$ = $;
+  if ($) {
+    Sparrow.$ = $;
+  }
 }
 
 export default Sparrow;

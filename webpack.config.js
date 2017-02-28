@@ -7,12 +7,29 @@
 
 const webpack = require('webpack');
 
+const target = process.env.LIB_TARGET || 'var';
+let output = 'sparrow.js';
+
+if (process.env.NODE_ENV === 'production') {
+  if (target === 'var') {
+    output = 'sparrow.min.js';
+  } else {
+    output = 'sparrow.common.js';
+  }
+} else {
+  if (target === 'var') {
+    output = 'sparrow.js';
+  } else {
+    output = 'sparrow.common.js';
+  }
+}
+
 const config = {
   entry: "./src/index.js",
   output: {
     path: 'dist',
-    filename: process.env.NODE_ENV === 'production' ? "sparrow.min.js" : "sparrow.js",
-    libraryTarget: "var",
+    filename: output,
+    libraryTarget: target,
     library: ['Sparrow']
   },
   module: {
@@ -33,7 +50,7 @@ const config = {
   ]
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && target === 'var') {
   config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     cacheFolder: './cache',
     debug: true,

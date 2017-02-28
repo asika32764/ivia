@@ -5,18 +5,17 @@
  * @license    __LICENSE__
  */
 import Utilities from "../util/utilities";
-
-const $ = window.jQuery;
+import Sparrow from "../sparrow";
 
 export default class PromiseAdapter {
   constructor (callback) {
-    const deferred = $.Deferred();
+    const deferred = Sparrow.$.Deferred();
     const resolve = deferred.resolve;
     const reject = deferred.reject;
 
     callback(resolve, reject);
 
-    this.defer = $.when(deferred);
+    this.defer = Sparrow.$.when(deferred);
   }
 
   then (onFulfilled, onRejected) {
@@ -28,7 +27,7 @@ export default class PromiseAdapter {
   }
 
   static all (promises) {
-    return $.when(...promises);
+    return Sparrow.$.when(...promises);
   }
 
   static race (promises) {
