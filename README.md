@@ -33,7 +33,7 @@ CDN (Replace `/0.1.1/` to latest version)
 <script src="//cdn.rawgit.com/asika32764/sparrow/0.1.1/dist/sparrow.min.js"></script>
 ```
 
-If you are not in browser environment, you must inject jQuery or Zepto first.
+If you are using ES6 syntax to import module, you must inject jQuery or Zepto first.
 
 ```js
 import jQuery from 'jquery';
