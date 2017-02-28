@@ -37,6 +37,7 @@ If you are not in browser environment, you must inject jQuery or Zepto first.
 
 ```js
 import jQuery from 'jquery';
+import Sparrow from 'jquery.sparrow';
 
 Sparrow.$ = jQuery;
 
@@ -46,6 +47,8 @@ Sparrow.$ = Zepto;
 // Use _name to know which is in Sparrow later
 Sparrow.$._name; // `jquery` or `zepto`
 ```
+
+Make sure your environment has `window` and `document` object, Sparrow does not support server environment now.
 
 ### Create Sparrow Instance
 
@@ -106,6 +109,9 @@ Sparrow.plugin('flower', {
 Now, use this plugin everywhere:
 
 ```js
+$('.flower-widget').flower();
+
+// Or add custom options
 $('.flower-widget').flower({
   data: {
     foo: 'bar'
@@ -524,7 +530,7 @@ this.$async(function () {
 // These 2 tasks will not block each other.
 ```
 
-Also will can use `Promise.all()` or `Promise.race()`, this example we convert jQuery ajax deferred object to Promise:
+Also you can use `Promise.all()` or `Promise.race()`, this example we convert jQuery ajax deferred object to Promise:
 
 ```js
 Sparrow.Promise.all([
