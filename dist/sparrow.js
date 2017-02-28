@@ -2,41 +2,41 @@ var Sparrow =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -47,7 +47,7 @@ var Sparrow =
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -56,13 +56,13 @@ var Sparrow =
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
@@ -1559,7 +1559,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-   value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1579,49 +1579,49 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var uid = 0;
 
 var Dispatcher = function () {
-   function Dispatcher(app) {
-      var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  function Dispatcher(app) {
+    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-      _classCallCheck(this, Dispatcher);
+    _classCallCheck(this, Dispatcher);
 
-      this.id = ++uid;
-      this.watchers = watchers;
-      this.app = app;
-   }
+    this.id = ++uid;
+    this.watchers = watchers;
+    this.app = app;
+  }
 
-   _createClass(Dispatcher, [{
-      key: "attach",
-      value: function attach(watcher) {
-         this.watchers.push(watcher);
+  _createClass(Dispatcher, [{
+    key: "attach",
+    value: function attach(watcher) {
+      this.watchers.push(watcher);
+    }
+  }, {
+    key: "detach",
+    value: function detach(watcher) {
+      _utilities2.default.removeElement(this.watchers, watcher);
+
+      watcher.removeDispatcher();
+
+      return this;
+    }
+  }, {
+    key: "attachCurrent",
+    value: function attachCurrent() {
+      if (this.app.currentWatcher) {
+        this.app.currentWatcher.addDispatcher(this);
       }
-   }, {
-      key: "detach",
-      value: function detach(watcher) {
-         _utilities2.default.removeElement(this.watchers, watcher);
+    }
+  }, {
+    key: "notify",
+    value: function notify() {
+      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
 
-         watcher.removeDispatcher();
+      this.watchers.forEach(function (watcher) {
+        return watcher.update(ctrl);
+      });
+    }
+  }]);
 
-         return this;
-      }
-   }, {
-      key: "attachCurrent",
-      value: function attachCurrent() {
-         if (this.app.currentWatcher) {
-            this.app.currentWatcher.addDispatcher(this);
-         }
-      }
-   }, {
-      key: "notify",
-      value: function notify() {
-         var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-         this.watchers.forEach(function (watcher) {
-            return watcher.update(ctrl);
-         });
-      }
-   }]);
-
-   return Dispatcher;
+  return Dispatcher;
 }();
 
 exports.default = Dispatcher;
@@ -2198,3 +2198,4 @@ module.exports = exports["default"];
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=sparrow.js.map

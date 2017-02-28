@@ -30,8 +30,10 @@ const config = {
     path: 'dist',
     filename: output,
     libraryTarget: target,
-    library: ['Sparrow']
+    library: ['Sparrow'],
+    sourceMapFilename: "sparrow.js.map"
   },
+  devtool: 'source-map',
   module: {
     loaders: [
       {

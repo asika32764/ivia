@@ -23,12 +23,14 @@
   },
   "homepage": "https://github.com/asika32764/sparrow",
   "scripts": {
-    "build:prod": "NODE_ENV='production' webpack ; npm run build:common ; npm run build",
-    "build:common": "NODE_ENV='production' LIB_TARGET='commonjs2' webpack",
-    "build": "NODE_ENV='development' webpack ; NODE_ENV='development' LIB_TARGET='commonjs2' webpack",
-    "watch": "NODE_ENV='development' webpack --watch"
+    "build:prod": "cross-env NODE_ENV='production' webpack && npm run build:common && npm run build",
+    "build:common": "cross-env NODE_ENV='production' LIB_TARGET='commonjs2' webpack",
+    "build": "cross-env NODE_ENV='development' webpack && cross-env NODE_ENV='development' LIB_TARGET='commonjs2' webpack",
+    "watch": "cross-env NODE_ENV='development' webpack --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cross-env": "^3.1.4"
+  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-loader": "^6.3.2",
