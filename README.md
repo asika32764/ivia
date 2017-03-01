@@ -170,10 +170,6 @@ the third argument tells Sparrow to bind the attribute to this data. This is sim
 An attribute name start with `:` is a special control, currently we supports `:text`, `:html` and `:value`, which will
 auto use jquery `.text()`, `html()` or `val()` to bind data, otherwise will use `attr()`.
 
-> NOTE: All selector must under the root element which you set in `el:` option, Sparrow will use `this.$find()` to find
-> elements only contains in root element, if you have to control outside element, inject a custom element object.
-> `this.$bind(this.$('.my-outside-item'), 'flower')`
-
 The rendered result will be:
 
 ```html
@@ -187,6 +183,10 @@ sp.flower.name = 'rose';
 ```
 
 the text in `<p>` will change to `rose`, try this in [playground](https://jsfiddle.net/asika32764/jvyzv1uc/)
+
+> NOTE: All selector must under the root element which you set in `el:` option, Sparrow will use `this.$find()` to find
+> elements only contains in root element, if you have to control outside element, inject a custom element object.
+> `this.$bind(this.$('.my-outside-item'), 'flower')`
 
 ### Custom Handler
 
@@ -400,6 +400,14 @@ this.$show('#list-show li', 'list', $ele => $ele.slideDown(), $ele => $ele.slide
 
 See [Example](https://jsfiddle.net/asika32764/mjh2n63s/2/)
 
+## Find Element
+
+Use `$find(selector)` to find all children element in the root element. Sparrow will cache selector so you won't have multiple
+select, if you want to refresh this select, add `true` at second argument.
+
+The `$bind()`, `$model` and `$show()` method will cache target elements too, if you add some elements matches their selector,
+you must call `$find(selector, true)` to refresh cache. `$on()` method can simply add `true` at last argument to enable delegation.
+
 ## Wrap
 
 Simply use `$wrap` so you don't need always type same selector:
@@ -555,16 +563,42 @@ new Sparrow.Promise(resolce => {
 });
 ```
 
-## Element Create
+## Element Creation
 
-Sparrow has `createElement` method to help you generate DOM element:
+In the original way, we use `$` to create element:
+
+```js
+Sparrow.$('<div class="foo">Text</div>');
+```
+
+Sparrow has a `createElement()` method to help you generate DOM element:
 
 ```js
 Sparrow.createElement('div', {class: 'foo'}, 'Text');
-
-// Also can use jQuery
-Sparrow.$('<div class="foo">Text</div>');
 ```
+
+We can add more children in the third argument.
+
+```js
+Sparrow.createElement('ul', {class: 'nav'}, [
+    {nodeName: 'li', attributes: {class: 'nav-item active'}, children: 'Text'},
+    {nodeName: 'li', attributes: {class: 'nav-item'}, children: 'Text'},
+    {nodeName: 'li', attributes: {class: 'nav-item'}, children: 'Text'},
+]);
+```
+
+Result:
+
+```html
+<ul class="nav">
+  <li class="nav-item active">Text</li>
+  <li class="nav-item">Text</li>
+  <li class="nav-item">Text</li>
+</ul>
+```
+
+This is useful if we return Ajax JSON data to generate HTML.
+
 
 ## TODO
 

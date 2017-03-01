@@ -147,7 +147,15 @@ export default class Utilities {
       return false;
     }
 
-    return object instanceof Sparrow.$ || 'jquery' in object || Sparrow.$.zepto.isZ(object);
+    if (object instanceof Sparrow.$ || 'jquery' in object) {
+      return true;
+    }
+
+    if ('zepto' in Sparrow.$) {
+      return Sparrow.$.zepto.isZ(object);
+    }
+
+    return false;
   }
 }
 
