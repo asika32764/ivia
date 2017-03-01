@@ -253,7 +253,15 @@ var Utilities = function () {
         return false;
       }
 
-      return object instanceof _sparrow2.default.$ || 'jquery' in object || _sparrow2.default.$.zepto.isZ(object);
+      if (object instanceof _sparrow2.default.$ || 'jquery' in object) {
+        return true;
+      }
+
+      if ('zepto' in _sparrow2.default.$) {
+        return _sparrow2.default.$.zepto.isZ(object);
+      }
+
+      return false;
     }
   }]);
 
@@ -1251,9 +1259,6 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 exports.default = createElement;
 
 var _utilities = __webpack_require__(0);
@@ -1268,7 +1273,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function createElement(name) {
   var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var content = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
   var ele = document.createElement(name);
 
@@ -1278,24 +1283,30 @@ function createElement(name) {
     ele.setAttribute(key, value);
   }
 
-  addContent(ele, content);
+  addChildren(ele, children);
 
   return ele;
 }
 
-function addContent(ele, content) {
-  if (content !== null) {
-    if (typeof content === 'string' || typeof content === 'number') {
-      ele.append(content);
-    } else if (content instanceof Element) {
-      ele.appendChild(content);
-    } else if (content instanceof _sparrow2.default.$ || _utilities2.default.isJquery(content)) {
-      content.each(function () {
+function addChildren(ele, children) {
+  if (children !== null) {
+    if (typeof children === 'string' || typeof children === 'number') {
+      ele.append(children);
+    } else if (children instanceof Element) {
+      ele.appendChild(children);
+    } else if (children instanceof _sparrow2.default.$ || _utilities2.default.isJquery(children)) {
+      children.each(function () {
         ele.appendChild(this);
       });
-    } else if (Array.isArray(content) || (typeof content === "undefined" ? "undefined" : _typeof(content)) === 'object') {
-      for (var k in content) {
-        addContent(ele, content[k]);
+    } else if (Array.isArray(children) || _utilities2.default.isObject(children)) {
+      for (var k in children) {
+        var child = children[k];
+        if (child.hasOwnProperty('nodeName')) {
+          child = createElement(child.nodeName, child.attributes, child.children);
+          ele.appendChild(child);
+        } else {
+          addChildren(ele, child);
+        }
       }
     }
   }
