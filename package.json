@@ -1,7 +1,7 @@
 {
   "name": "jquery.sparrow",
   "description": "A reactive MVVM framework for jQuery with Vue-like interface.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/sparrow.common.js",
   "directories": {
     "example": "example"
