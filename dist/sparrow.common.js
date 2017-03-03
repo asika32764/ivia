@@ -523,6 +523,7 @@ var Application = function () {
       proxyMethod(instance, this, 'on', true);
       proxyMethod(instance, this, 'model', true);
       proxyMethod(instance, this, 'show', true);
+      proxyMethod(instance, this, 'hide', true);
       proxyMethod(instance, this, 'wrap', true);
       proxyMethod(instance, this, 'watch', true);
       proxyMethod(instance, this, 'nextTick');
@@ -702,9 +703,6 @@ var Application = function () {
         onHide = onHide || onShow;
       }
 
-      onShow = onShow || 'show';
-      onHide = onHide || 'hide';
-
       var toggleHandler = function toggleHandler(handler) {
         return function () {
           if (typeof handler === 'string') {
@@ -723,14 +721,17 @@ var Application = function () {
         }();
       };
 
+      onShow = toggleHandler(onShow || 'show');
+      onHide = toggleHandler(onHide || 'hide');
+
       var handler = function handler(value, oldValue, ctrl) {
         var valueBool = value == true || value != 0;
 
         if (valueBool != (oldValue == true || oldValue != 0)) {
           if (valueBool) {
-            toggleHandler(onShow)(value, oldValue, ctrl);
+            onShow(value, oldValue, ctrl);
           } else {
-            toggleHandler(onHide)(value, oldValue, ctrl);
+            onHide(value, oldValue, ctrl);
           }
         }
       };
@@ -738,6 +739,31 @@ var Application = function () {
       this.watch(key, handler);
 
       return this;
+    }
+  }, {
+    key: "hide",
+    value: function hide(selector, key) {
+      var onShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var onHide = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+      var getter = function () {
+        if (typeof key === 'function') {
+          return function () {
+            return key.call(this);
+          };
+        } else {
+          return function () {
+            return this[key];
+          };
+        }
+      }.call(this);
+
+      var shouldHide = function shouldHide() {
+        var value = getter.call(this);
+        return value != true && value == 0;
+      };
+
+      this.show(selector, shouldHide, onShow, onHide);
     }
   }, {
     key: "wrap",
