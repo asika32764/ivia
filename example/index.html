@@ -51,6 +51,9 @@
         this.$model('#list', 'list');
         this.$bind('#list-show li', 'foo.bar.yoo', ':text');
         this.$show('#list-show li', 'list', 'fadeToggle');
+        this.$show('#list-hide li', function () {
+          return this.list != true && this.list == 0;
+        }, 'fadeToggle');
       },
       methods: {
         changeRadios () {
@@ -143,6 +146,14 @@
           <li>C</li>
           <li>D</li>
           <li>E</li>
+        </ul>
+      </div>
+
+      <div id="list-hide">
+        <ul>
+          <li>F</li>
+          <li>G</li>
+          <li>H</li>
         </ul>
       </div>
 

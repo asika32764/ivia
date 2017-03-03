@@ -325,7 +325,8 @@ See [Example](https://jsfiddle.net/asika32764/y4z4j8Lu/)
 
 - API: `this.$show(selector: string|Element, dataPath: string, onShow: string|Function, onHide: string|Function)`
 
-Use `$show()` to control an element show/hide depend on data.
+Use `$show()` to control an element show/hide depend on data, if value is `true`, not empty string or bigger then `0`,
+this element will be visible on page.
 
 ```html
 <div id="app">
@@ -361,6 +362,10 @@ var sp = new Sparrow({
 ```
 
 See [Example](https://jsfiddle.net/asika32764/15ysvu2k/1/)
+
+### Hide element
+
+Use `$hide()`, the show/hide value will be reversed from `$show()`.
 
 ### Custom Show/Hide Handler
 

@@ -63,6 +63,7 @@ export default class Application {
     proxyMethod(instance, this, 'on', true);
     proxyMethod(instance, this, 'model', true);
     proxyMethod(instance, this, 'show', true);
+    proxyMethod(instance, this, 'hide', true);
     proxyMethod(instance, this, 'wrap', true);
     proxyMethod(instance, this, 'watch', true);
     proxyMethod(instance, this, 'nextTick');
@@ -231,9 +232,6 @@ export default class Application {
       onHide = onHide || onShow;
     }
 
-    onShow = onShow || 'show';
-    onHide = onHide || 'hide';
-
     const toggleHandler = ((handler) => {
       return (() => {
         if (typeof handler === 'string') {
@@ -248,14 +246,17 @@ export default class Application {
       })();
     });
 
+    onShow = toggleHandler(onShow || 'show');
+    onHide = toggleHandler(onHide || 'hide');
+
     const handler = function (value, oldValue, ctrl) {
       const valueBool = (value == true || value != 0);
 
       if (valueBool != (oldValue == true || oldValue != 0)) {
         if (valueBool) {
-          toggleHandler(onShow)(value, oldValue, ctrl);
+          onShow(value, oldValue, ctrl);
         } else {
-          toggleHandler(onHide)(value, oldValue, ctrl);
+          onHide(value, oldValue, ctrl);
         }
       }
     };
@@ -263,6 +264,27 @@ export default class Application {
     this.watch(key, handler);
 
     return this;
+  }
+
+  hide (selector, key, onShow = null, onHide = null) {
+    const getter = (function () {
+      if (typeof key === 'function') {
+        return function () {
+          return key.call(this);
+        };
+      } else {
+        return function () {
+          return this[key];
+        };
+      }
+    }).call(this);
+
+    const shouldHide = function () {
+      const value = getter.call(this);
+      return value != true && value == 0;
+    };
+
+    this.show(selector, shouldHide, onShow, onHide);
   }
 
   wrap (selector, handler) {
