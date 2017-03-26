@@ -1,0 +1,52 @@
+
+@main-color: #3498db;
+
+body {
+    background-color: @main-color;
+    color: white;
+}
+
+a {
+    color: lighten(@main-color, 50%);
+}
+
+.logo-font {
+    font-family: 'Pacifico', cursive;
+}
+
+#logo {
+    font-size: 96px;
+}
+
+// Btn
+.btn.btn-default {
+    border: none;
+    color: @main-color;
+
+    &:hover {
+        background-color: lighten(@main-color, 35%);
+    }
+}
+
+// Navs
+ul.nav.nav-pills {
+    display: inline-block;
+
+    li {
+        a:hover {
+            background-color: lighten(@main-color, 5%);
+            color: white;
+        }
+    }
+}
+
+// Bottom
+#bottom {
+    background-color: white;
+    color: @main-color;
+
+    a {
+        color: darken(@main-color, 10%);
+    }
+}
+

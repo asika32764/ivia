@@ -1,0 +1,34 @@
+body {
+  background-color: #3498db;
+  color: white;
+}
+a {
+  color: #ffffff;
+}
+.logo-font {
+  font-family: 'Pacifico', cursive;
+}
+#logo {
+  font-size: 96px;
+}
+.btn.btn-default {
+  border: none;
+  color: #3498db;
+}
+.btn.btn-default:hover {
+  background-color: #cce5f6;
+}
+ul.nav.nav-pills {
+  display: inline-block;
+}
+ul.nav.nav-pills li a:hover {
+  background-color: #4aa3df;
+  color: white;
+}
+#bottom {
+  background-color: white;
+  color: #3498db;
+}
+#bottom a {
+  color: #217dbb;
+}

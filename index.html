@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sparrow.js - jQuery MVVM framework with Vue-like interface.</title>
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Pacifico">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/silicone.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+
+    <meta property="og:image" content="http://i.imgur.com/Oqz0yfP.jpg">
+    <meta property="og:title" content="Sparrow.js - jQuery MVVM framework with Vue-like interface.">
+    <meta property="og:site_name" content="Sparrow.js">
+    <meta property="og:description" content="A reactivity MVVM framework for jQuery with Vue-like interface.">
+
+    <style>
+        #JSFEMB_17251 {
+            min-height: 250px !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper" class="xs-mb-100">
+        <section id="header" class="container">
+            <div class="text-center xs-mt-75">
+                <h1 id="logo" class="logo-font xs-mb-100">sparrow.js</h1>
+                <p id="sub-title" class="lead">A reactivity MVVM framework for jQuery with Vue-like interface.</p>
+            </div>
+        </section>
+        <nav id="main-nav">
+            <div class="container text-center">
+                <ul class="nav  nav-pills">
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow#sparrowjs" target="_blank">
+                            <span class="fa fa-book"></span>
+                            Documentation
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow" target="_blank">
+                            <span class="fa fa-github"></span>
+                            GitHub
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow/releases" target="_blank">
+                            <span class="fa fa-download"></span>
+                            Download
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="xs-mt-30">
+                    <!-- Place this tag where you want the button to render. -->
+                    <a class="github-button" href="https://github.com/asika32764/sparrow" data-style="mega" data-count-href="/asika32764/sparrow/stargazers" data-count-api="/repos/asika32764/sparrow#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star asika32764/sparrow on GitHub">Star</a>
+
+                    &nbsp;
+
+                    <iframe src="https://carlo.github.io/patreon-buttons/patreon-btn.html?creator=asika32764&amp;size=large"
+                        allowtransparency="true"
+                        frameborder="0"
+                        scrolling="0"
+                        width="110"
+                        height="30">
+                    </iframe>
+                </p>
+            </div>
+        </nav>
+
+        <section id="example" class="xs-mt-50">
+
+            <div class="container">
+
+                <div class="heading text-center xs-mb-50">
+                    <h2 class="logo-font">Examples</h2>
+                </div>
+
+                <!-- Example 1: Two way binding -->
+                <div id="example-1" class="text-center xs-mb-75">
+                    <div class="heading xs-mb-30">
+                        <h3 class="xs-mb-20 logo-font">Two-way Binding</h3>
+
+                        <p>
+                            Sparrow.js supports two-way binding like Vue and Angular.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/y4z4j8Lu/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/y4z4j8Lu/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="link-to-doc xs-mt-40">
+                        <a target="_blank" class="btn btn-default" href="https://github.com/asika32764/sparrow#two-way-binding">See DOC</a>
+                    </div>
+                </div>
+
+                <!-- Example 2: Show/Hide -->
+                <div id="example-2" class="text-center xs-mb-75">
+                    <div class="heading xs-mb-30">
+                        <h3 class="xs-mb-20 logo-font">Show/Hide</h3>
+
+                        <p>
+                            Simple method to help you show/hide elements based on state.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/15ysvu2k/1/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/15ysvu2k/1/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="heading xs-mb-30 xs-mt-30">
+                        <p>
+                            You can show/hide elements with slide effect or custom handler.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/mjh2n63s/2/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/mjh2n63s/2/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="link-to-doc xs-mt-40">
+                        <a target="_blank" class="btn btn-default" href="https://github.com/asika32764/sparrow#showhide">See DOC</a>
+                    </div>
+                </div>
+
+                <!-- Example 3: Computed -->
+                <div id="example-3" class="text-center xs-mb-75">
+                    <div class="heading xs-mb-30">
+                        <h3 class="xs-mb-20 logo-font">Computed and Watchers</h3>
+
+                        <p>
+                            Sparrow.js also supports computed properties and watchers like Vue can do.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/1bfw6h99/1/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/1bfw6h99/1/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="link-to-doc xs-mt-40">
+                        <a target="_blank" class="btn btn-default" href="https://github.com/asika32764/sparrow#methods--watchers-and-computed">See DOC</a>
+                    </div>
+                </div>
+
+                <!-- Example 4: DOM Events -->
+                <div id="example-4" class="text-center xs-mb-75">
+                    <div class="heading xs-mb-30">
+                        <h3 class="xs-mb-20 logo-font">DOM Events</h3>
+
+                        <p>
+                            Binding DOM events with jQuery like API.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/4trn6ra9/2/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/4trn6ra9/2/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="link-to-doc xs-mt-40">
+                        <a target="_blank" class="btn btn-default" href="https://github.com/asika32764/sparrow#dom-events">See DOC</a>
+                    </div>
+                </div>
+
+                <!-- Example 5: Create Elements -->
+                <div id="example-5" class="text-center xs-mb-75">
+                    <div class="heading xs-mb-30">
+                        <h3 class="xs-mb-20 logo-font">Create Elements</h3>
+
+                        <p>
+                            Powerful create element method to help you build HTML.
+                        </p>
+                    </div>
+
+                    <div class="embedded-code row">
+                        <div class="code-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/fofh6yxj/2/embed/js,html/"></script>
+                        </div>
+
+                        <div class="result-frame col-md-6">
+                            <script async src="//jsfiddle.net/asika32764/fofh6yxj/2/embed/result/"></script>
+                        </div>
+                    </div>
+
+                    <div class="link-to-doc xs-mt-40">
+                        <a target="_blank" class="btn btn-default" href="https://github.com/asika32764/sparrow#element-creation">See DOC</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <nav id="bottom-nav">
+            <div class="container text-center">
+                <ul class="nav  nav-pills">
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow#sparrowjs" target="_blank">
+                            <span class="fa fa-book"></span>
+                            Documentation
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow" target="_blank">
+                            <span class="fa fa-github"></span>
+                            GitHub
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://github.com/asika32764/sparrow/releases" target="_blank">
+                            <span class="fa fa-download"></span>
+                            Download
+                        </a>
+                    </li>
+                </ul>
+
+                <p class="xs-mt-30">
+                    <a target="_blank" href="https://www.patreon.com/asika32764">
+                        Donate me on Patreon
+                        <span class="fa fa-external-link-square"></span>
+                    </a>
+                </p>
+            </div>
+        </nav>
+
+        <div class="container text-center xs-mt-30">
+            <div class="back-to-top-wrapper">
+                <a style="font-size: 24px" href="#" class="logo-font">Back to Top</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottom">
+        <section id="comments" class="container">
+            <div class="heading text-center xs-pt-50">
+                <h2 class="logo-font">Comments</h2>
+
+                <p class="xs-mt-30">
+                    Leave your feedback or comments here, <br>bug reports or technology supports
+                    please to go <a target="_blank" href="https://github.com/asika32764/sparrow/issues">GitHub issues</a>.
+                </p>
+            </div>
+
+            <div class="row xs-mt-75">
+                <div id="disqus" class="col-md-6 col-md-offset-3">
+                    <div id="disqus_thread"></div>
+                    <script>
+
+                        /**
+                         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+                        /*
+                         var disqus_config = function () {
+                         this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                         this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                         };
+                         */
+                        (function() { // DON'T EDIT BELOW THIS LINE
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://phptools.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+                </div>
+            </div>
+        </section>
+
+        <footer class="xs-pt-50 xs-pb-30 container text-center">
+            Copyright 2017 &copy; Sparrow.js
+        </footer>
+    </div>
+
+    <script id="dsq-count-scr" src="//phptools.disqus.com/count.js" async></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-96204294-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
