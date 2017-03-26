@@ -566,7 +566,7 @@ var Application = function () {
         return;
       }
 
-      this.instance.$el = this.$el;
+      this.instance.$el = this.$el = $el;
 
       this._isMounted = true;
 
@@ -1596,7 +1596,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1616,49 +1616,49 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var uid = 0;
 
 var Dispatcher = function () {
-  function Dispatcher(app) {
-    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+   function Dispatcher(app) {
+      var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-    _classCallCheck(this, Dispatcher);
+      _classCallCheck(this, Dispatcher);
 
-    this.id = ++uid;
-    this.watchers = watchers;
-    this.app = app;
-  }
+      this.id = ++uid;
+      this.watchers = watchers;
+      this.app = app;
+   }
 
-  _createClass(Dispatcher, [{
-    key: "attach",
-    value: function attach(watcher) {
-      this.watchers.push(watcher);
-    }
-  }, {
-    key: "detach",
-    value: function detach(watcher) {
-      _utilities2.default.removeElement(this.watchers, watcher);
-
-      watcher.removeDispatcher();
-
-      return this;
-    }
-  }, {
-    key: "attachCurrent",
-    value: function attachCurrent() {
-      if (this.app.currentWatcher) {
-        this.app.currentWatcher.addDispatcher(this);
+   _createClass(Dispatcher, [{
+      key: "attach",
+      value: function attach(watcher) {
+         this.watchers.push(watcher);
       }
-    }
-  }, {
-    key: "notify",
-    value: function notify() {
-      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+   }, {
+      key: "detach",
+      value: function detach(watcher) {
+         _utilities2.default.removeElement(this.watchers, watcher);
 
-      this.watchers.forEach(function (watcher) {
-        return watcher.update(ctrl);
-      });
-    }
-  }]);
+         watcher.removeDispatcher();
 
-  return Dispatcher;
+         return this;
+      }
+   }, {
+      key: "attachCurrent",
+      value: function attachCurrent() {
+         if (this.app.currentWatcher) {
+            this.app.currentWatcher.addDispatcher(this);
+         }
+      }
+   }, {
+      key: "notify",
+      value: function notify() {
+         var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+         this.watchers.forEach(function (watcher) {
+            return watcher.update(ctrl);
+         });
+      }
+   }]);
+
+   return Dispatcher;
 }();
 
 exports.default = Dispatcher;
