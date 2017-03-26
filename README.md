@@ -2,6 +2,32 @@
 
 A reactivity MVVM framework for jQuery with Vue-like interface.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Create Sparrow Instance](#create-sparrow-instance)
+  - [Create Custom Plugin](#create-custom-plugin)
+- [Binding Data (One-way-binding)](#binding-data-one-way-binding)
+  - [Simple Binding](#simple-binding)
+  - [Custom Handler](#custom-handler)
+  - [Array Operation](#array-operation)
+- [DOM Events](#dom-events)
+- [Two-Way Binding](#two-way-binding)
+- [Show/Hide](#showhide)
+  - [Hide element](#hide-element)
+  - [Custom Show/Hide Handler](#custom-showhide-handler)
+- [Find Element](#find-element)
+- [Wrap](#wrap)
+- [Methods / Watchers and Computed](#methods--watchers-and-computed)
+- [Events](#events)
+- [Setters](#setters)
+- [Async/Sync](#asyncsync)
+  - [nextTick](#nexttick)
+  - [Async DOM Operation](#async-dom-operation)
+  - [Promise A/+](#promise-a)
+- [Element Creation](#element-creation)
+
 ## Getting Started
 
 ### Installation
@@ -620,4 +646,4 @@ reactive structure is heavily referenced of Vue.
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2013-present, Simon Asika
+Copyright (c) 2017, Simon Asika
