@@ -1,5 +1,5 @@
 {
-  "name": "ivia.js",
+  "name": "ivia",
   "description": "A reactive MVVM framework for jQuery with Vue-like interface.",
   "version": "0.1.6",
   "main": "dist/ivia.common.js",
