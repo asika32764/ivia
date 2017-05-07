@@ -1,7 +1,7 @@
 {
-  "name": "sparrow",
+  "name": "ivia",
   "description": "A reactive MVVM framework for jQuery Vue-like interface.",
-  "main": "dist/sparrow.min.js",
+  "main": "dist/ivia.min.js",
   "authors": [
     "Simon Asika <asika32764@gmail.com>"
   ],
@@ -12,7 +12,7 @@
     "jquery",
     "reactive"
   ],
-  "homepage": "https://github.com/asika32764/sparrow",
+  "homepage": "https://github.com/asika32764/ivia",
   "moduleType": [
     "es6",
     "globals"

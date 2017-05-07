@@ -3,7 +3,7 @@ const babel = require('gulp-babel');
 const minify = require('gulp-minify');
 
 gulp.task('compile', () =>
-  gulp.src('src/sparrow.js')
+  gulp.src('src/ivia.js')
     .pipe(babel({
       presets: ['es2015']
     }))

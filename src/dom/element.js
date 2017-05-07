@@ -1,12 +1,12 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
  * @license    The MIT License (MIT)
  */
 
 import Utilities from "../util/utilities";
-import Sparrow from "../sparrow";
+import Ivia from "../ivia";
 
 export default function createElement (name, attrs = {}, children = null) {
   const ele = document.createElement(name);
@@ -28,7 +28,7 @@ function addChildren (ele, children) {
       ele.append(children);
     } else if (children instanceof Element) {
       ele.appendChild(children);
-    } else if (children instanceof Sparrow.$ || Utilities.isJquery(children)) {
+    } else if (children instanceof Ivia.$ || Utilities.isJquery(children)) {
       children.each(function () {
         ele.appendChild(this);
       });

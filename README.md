@@ -1,4 +1,4 @@
-# Sparrow.js
+# Ivia.js
 
 A reactivity MVVM framework for jQuery with Vue-like interface.
 
@@ -9,56 +9,56 @@ A reactivity MVVM framework for jQuery with Vue-like interface.
 Install by npm or yarn.
 
 ``` bash
-npm install jquery.sparrow --save
+npm install jquery.ivia --save
 
-yarn add jquery.sparrow
+yarn add jquery.ivia
 ```
 
 Install by bower
 
 ```bash
-bower install sparrow --save
+bower install ivia --save
 ```
 
 Download single file for browser.
 
 ```html
 <script src="js/jquery.min.js"></script>
-<script src="js/sparrow.min.js"></script>
+<script src="js/ivia.min.js"></script>
 ```
 
 CDN (Replace `/0.1.1/` to latest version)
 
 ```html
-<script src="//cdn.rawgit.com/asika32764/sparrow/0.1.1/dist/sparrow.min.js"></script>
+<script src="//cdn.rawgit.com/asika32764/ivia/0.1.1/dist/ivia.min.js"></script>
 ```
 
 If you are using ES6 syntax to import module, you must inject jQuery or Zepto first.
 
 ```js
 import jQuery from 'jquery';
-import Sparrow from 'jquery.sparrow';
+import Ivia from 'jquery.ivia';
 
-Sparrow.$ = jQuery;
+Ivia.$ = jQuery;
 
 // Or Zepto
-Sparrow.$ = Zepto;
+Ivia.$ = Zepto;
 
-// Use _name to know which is in Sparrow later
-Sparrow.$._name; // `jquery` or `zepto`
+// Use _name to know which is in Ivia later
+Ivia.$._name; // `jquery` or `zepto`
 ```
 
-Make sure your environment has `window` and `document` object, Sparrow does not support server environment now.
+Make sure your environment has `window` and `document` object, Ivia does not support server environment now.
 
-### Create Sparrow Instance
+### Create Ivia Instance
 
-Sparrow's interface is very similar to Vue, we can create an instance and add `el`in option to select element.
+Ivia's interface is very similar to Vue, we can create an instance and add `el`in option to select element.
 
 ```html
 <div id="app"></div>
 
 <script>
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app', // You can also use $('#app')
   data: { ... },
   methods: {
@@ -73,7 +73,7 @@ Sometimes you may need to put your code before HTML `<body>`, you can add `domre
 ```html
 <head>
   <script>
-  var sp = new Sparrow({
+  var sp = new Ivia({
     el: '#app',
     domready: true
   });
@@ -88,19 +88,19 @@ Or use jQuery plugin pattern.
 
 ```js
 $(document).ready(function () {
-  var sp = $('#app').sparrow({ ... });
+  var sp = $('#app').ivia({ ... });
 });
 ```
 
 ### Create Custom Plugin
 
-Sometimes you may need to handle a big project with many re-usable widgets, you can use Sparrow to help you create jQuery plugins.
+Sometimes you may need to handle a big project with many re-usable widgets, you can use Ivia to help you create jQuery plugins.
  
 ```js
 // Do not pass `el` option
 // This options will be default options.
 
-Sparrow.plugin('flower', {
+Ivia.plugin('flower', {
   data: { ... },
   methods: { ... }
 });
@@ -126,7 +126,7 @@ $('.flower-widget').flower({
 });
 ```
 
-The new options will recursively merge with original one, so you can override any data. Use `$options` later in Sparrow instance to get your extra options.
+The new options will recursively merge with original one, so you can override any data. Use `$options` later in Ivia instance to get your extra options.
 
 ```js
 this.$options.extraOptions.ajaxUrl; // /post
@@ -139,7 +139,7 @@ this.$options.extraOptions.ajaxUrl; // /post
 - API: `this.$bind(selector: string, dataPath: string, handler: string|Function)`
 - Handler: `function ($element: jQuery, value: mixed, oldValue: mixed, arrayControl: Object = null)`
 
-Sparrow has a reactive data structure, you can bind an HTML element to a data value then if this data changed, Sparrow
+Ivia has a reactive data structure, you can bind an HTML element to a data value then if this data changed, Ivia
 will notice your handler to change DOM.
 
 ```html
@@ -148,7 +148,7 @@ will notice your handler to change DOM.
 </div>
 
 <script>
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     flower: {
@@ -164,8 +164,8 @@ var sp = new Sparrow({
 </script>
 ```
 
-`$bind()` method help us bin a value to element we selected, don't worry to double selected, Sparrow will cache it.
-the third argument tells Sparrow to bind the attribute to this data. This is similar to Vue `v-bind:data-number` directive. 
+`$bind()` method help us bin a value to element we selected, don't worry to double selected, Ivia will cache it.
+the third argument tells Ivia to bind the attribute to this data. This is similar to Vue `v-bind:data-number` directive. 
 
 An attribute name start with `:` is a special control, currently we supports `:text`, `:html` and `:value`, which will
 auto use jquery `.text()`, `html()` or `val()` to bind data, otherwise will use `attr()`.
@@ -184,7 +184,7 @@ sp.flower.name = 'rose';
 
 the text in `<p>` will change to `rose`, try this in [playground](https://jsfiddle.net/asika32764/jvyzv1uc/)
 
-> NOTE: All selector must under the root element which you set in `el:` option, Sparrow will use `this.$find()` to find
+> NOTE: All selector must under the root element which you set in `el:` option, Ivia will use `this.$find()` to find
 > elements only contains in root element, if you have to control outside element, inject a custom element object.
 > `this.$bind(this.$('.my-outside-item'), 'flower')`
 
@@ -201,9 +201,9 @@ this.$bind('#flower', 'flower.name', function ($ele, value, oldValue) {
   
   // Add new child to other element
   this.$find('.logs').append(
-    // Sparrow provides createElement() method
+    // Ivia provides createElement() method
     // You can still use $(`<li>...</li>`) to create element.
-    Sparrow.createElement('li', {'data-number': this.flower.number}, value)  
+    Ivia.createElement('li', {'data-number': this.flower.number}, value)  
   );
   
   // Show/hide
@@ -221,7 +221,7 @@ If data is an array and changed by `push`, `unshift` and `splice`, there will be
 it includes `method` and `args` to help you know what has been inserted.
 
 ```js
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     items: ['a', 'b', 'c']
@@ -268,7 +268,7 @@ Use `$on()` to bind DOM events to your data.
 </div>
 
 <script>
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     flower: ''
@@ -306,7 +306,7 @@ Two-way binding can only works for `input`, `textarea` and `select` now.
 </div>
 
 <script>
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     flower: 'initial data'
@@ -347,7 +347,7 @@ this element will be visible on page.
 </div>
 
 <script>
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     list: '1'
@@ -407,7 +407,7 @@ See [Example](https://jsfiddle.net/asika32764/mjh2n63s/2/)
 
 ## Find Element
 
-Use `$find(selector)` to find all children element in the root element. Sparrow will cache selector so you won't have multiple
+Use `$find(selector)` to find all children element in the root element. Ivia will cache selector so you won't have multiple
 select, if you want to refresh this select, add `true` at second argument.
 
 The `$bind()`, `$model` and `$show()` method will cache target elements too, if you add some elements matches their selector,
@@ -434,7 +434,7 @@ Only supports `$bind`, `$show`, `$model`, `$on` methods.
 methods, watches and computed is same as Vue.
 
 ```js
-var sp = new Sparrow({
+var sp = new Ivia({
   el: '#app',
   data: {
     firstName: 'john',
@@ -476,7 +476,7 @@ See [Example](https://jsfiddle.net/asika32764/1bfw6h99/1/) and [Vue: Computed am
 
 ## Events
 
-Sparrow events is also similar to Vue, the only different is that we change `$on()` method to `$listen`:
+Ivia events is also similar to Vue, the only different is that we change `$on()` method to `$listen`:
  
 ```js
 this.$listen('event-name', (arg) => {
@@ -492,7 +492,7 @@ Supported methods: `$listen()`, `$emit()`, `$off()`, `$once()`.
 
 ## Setters
 
-You must also use `$set()` and `$delete()` to operate some object in data that Sparrow can add reactive observer.
+You must also use `$set()` and `$delete()` to operate some object in data that Ivia can add reactive observer.
  
 ```js
 this.$set(this.$data.foo, 'bar', 'value');
@@ -505,7 +505,7 @@ See [Vue doc: reavtivity](https://vuejs.org/v2/guide/reactivity.html#Change-Dete
 
 ### nextTick
 
-Sparrow also supports `$nextTick()` after all watchers updated the DOM:
+Ivia also supports `$nextTick()` after all watchers updated the DOM:
 
 ```js
 this.foo = 'new data';
@@ -519,7 +519,7 @@ See [Vue nextTick](https://vuejs.org/v2/guide/reactivity.html#Async-Update-Queue
 
 ### Async DOM Operation
 
-DOM operation is synchronous, Sparrow provides an `$async()` method to help us do something asynchronous and return Promise/A+ object.
+DOM operation is synchronous, Ivia provides an `$async()` method to help us do something asynchronous and return Promise/A+ object.
 
 ```js
 this.$async(function () {
@@ -546,7 +546,7 @@ this.$async(function () {
 Also you can use `Promise.all()` or `Promise.race()`, this example we convert jQuery ajax deferred object to Promise:
 
 ```js
-Sparrow.Promise.all([
+Ivia.Promise.all([
   this.$async(() => this.$.get(url1)),
   this.$async(() => this.$.post(url2, data)),
   this.$async(() => this.$.get(url3)),
@@ -557,11 +557,11 @@ Sparrow.Promise.all([
 
 ### Promise A/+
 
-Sparrow provides a Promise object in `Sparrow.Promise`, if browser supports native Promise, this object will be reference of native Promise.
-If browser not support, Sparrow will wrap `jQuery.Deferred` and adapt it to fit Promise A/+ interface.
+Ivia provides a Promise object in `Ivia.Promise`, if browser supports native Promise, this object will be reference of native Promise.
+If browser not support, Ivia will wrap `jQuery.Deferred` and adapt it to fit Promise A/+ interface.
  
 ```js
-new Sparrow.Promise(resolce => {
+new Ivia.Promise(resolce => {
     // Do something
     
     resolve(...);
@@ -573,19 +573,19 @@ new Sparrow.Promise(resolce => {
 In the original way, we use `$` to create element:
 
 ```js
-Sparrow.$('<div class="foo">Text</div>');
+Ivia.$('<div class="foo">Text</div>');
 ```
 
-Sparrow has a `createElement()` method to help you generate DOM element:
+Ivia has a `createElement()` method to help you generate DOM element:
 
 ```js
-Sparrow.createElement('div', {class: 'foo'}, 'Text');
+Ivia.createElement('div', {class: 'foo'}, 'Text');
 ```
 
 We can add more children in the third argument.
 
 ```js
-Sparrow.createElement('ul', {class: 'nav'}, [
+Ivia.createElement('ul', {class: 'nav'}, [
     {nodeName: 'li', attributes: {class: 'nav-item active'}, children: 'Text'},
     {nodeName: 'li', attributes: {class: 'nav-item'}, children: 'Text'},
     {nodeName: 'li', attributes: {class: 'nav-item'}, children: 'Text'},

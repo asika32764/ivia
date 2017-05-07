@@ -1,21 +1,21 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
  * @license    __LICENSE__
  */
 import Utilities from "../util/utilities";
-import Sparrow from "../sparrow";
+import Ivia from "../ivia";
 
 export default class PromiseAdapter {
   constructor (callback) {
-    const deferred = Sparrow.$.Deferred();
+    const deferred = Ivia.$.Deferred();
     const resolve = deferred.resolve;
     const reject = deferred.reject;
 
     callback(resolve, reject);
 
-    this.defer = Sparrow.$.when(deferred);
+    this.defer = Ivia.$.when(deferred);
   }
 
   then (onFulfilled, onRejected) {
@@ -27,7 +27,7 @@ export default class PromiseAdapter {
   }
 
   static all (promises) {
-    return Sparrow.$.when(...promises);
+    return Ivia.$.when(...promises);
   }
 
   static race (promises) {

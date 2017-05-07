@@ -1,14 +1,14 @@
 {
-  "name": "jquery.sparrow",
+  "name": "ivia.js",
   "description": "A reactive MVVM framework for jQuery with Vue-like interface.",
-  "version": "0.1.4",
-  "main": "dist/sparrow.common.js",
+  "version": "0.1.0",
+  "main": "dist/ivia.common.js",
   "directories": {
     "example": "example"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asika32764/sparrow.git"
+    "url": "git+https://github.com/asika32764/ivia.git"
   },
   "keywords": [
     "mvvm",
@@ -19,9 +19,9 @@
   "author": "Simon Asika",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/asika32764/sparrow/issues"
+    "url": "https://github.com/asika32764/ivia/issues"
   },
-  "homepage": "https://github.com/asika32764/sparrow",
+  "homepage": "https://github.com/asika32764/ivia",
   "scripts": {
     "build:prod": "cross-env NODE_ENV='production' webpack && npm run build:common && npm run build",
     "build:common": "cross-env NODE_ENV='production' LIB_TARGET='commonjs2' webpack",

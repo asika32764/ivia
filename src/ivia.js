@@ -1,5 +1,5 @@
 /**
- * Part of Sparrow project.
+ * Part of Ivia project.
  *
  * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
  * @license    The MIT License (MIT)
@@ -8,15 +8,15 @@
 import Application from './app';
 import createElement from './dom/element';
 
-const plugin = "sparrow";
+const plugin = "ivia";
 
-export default class Sparrow {
+export default class Ivia {
   constructor (options = {}, $ = null) {
     let el = null;
-    $ = $ || Sparrow.$;
+    $ = $ || Ivia.$;
 
     if (!$) {
-      throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      throw new Error('Ivia.$ is NULL, please set jQuery or Zepto object into it.');
     }
 
     if (options.domready) {
@@ -34,25 +34,25 @@ export default class Sparrow {
   }
 
   static set $(value) {
-    Object.defineProperty(Sparrow, '$', {
+    Object.defineProperty(Ivia, '$', {
       value: value
     });
 
-    Sparrow.$._name = ('zepto' in Sparrow.$) ? 'Zepto' : 'jQuery';
+    Ivia.$._name = ('zepto' in Ivia.$) ? 'Zepto' : 'jQuery';
 
-    Sparrow.plugin(plugin);
+    Ivia.plugin(plugin);
   }
 
   static plugin (name, options = {}) {
-    const $ = Sparrow.$;
+    const $ = Ivia.$;
 
     if (!$) {
-      throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      throw new Error('Ivia.$ is NULL, please set jQuery or Zepto object into it.');
     }
 
     if (typeof $.fn === 'undefined') {
       $('body'); // Test document
-      throw new Error('Sparrow.$.fn not exists, are you sure you inject a jQuery / Zepto object?');
+      throw new Error('Ivia.$.fn not exists, are you sure you inject a jQuery / Zepto object?');
     }
 
     $.fn[name] = function (customOptions) {
@@ -62,7 +62,7 @@ export default class Sparrow {
         options = $.extend(true, {}, options, customOptions);
         options.el = $this;
 
-        $this.data(name, new Sparrow(options));
+        $this.data(name, new Ivia(options));
       }
 
       return $this.data(name);
@@ -70,5 +70,5 @@ export default class Sparrow {
   }
 }
 
-Sparrow.prototype.$createElement = Sparrow.createElement = createElement;
-Sparrow.Promise = Application.Promise;
+Ivia.prototype.$createElement = Ivia.createElement = createElement;
+Ivia.Promise = Application.Promise;

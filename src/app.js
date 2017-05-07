@@ -1,5 +1,5 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
  * @license    The MIT License (MIT)
@@ -236,7 +236,7 @@ export default class Application {
       return (() => {
         if (typeof handler === 'string') {
           if (process.env.NODE_ENV === 'development' && typeof $element[handler] !== 'function') {
-            this.error.error(`Method: ${handler}() not found in ${Sparrow.$._name} object.`);
+            this.error.error(`Method: ${handler}() not found in ${Ivia.$._name} object.`);
           }
 
           return () => $element[handler]();

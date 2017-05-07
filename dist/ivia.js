@@ -1,4 +1,4 @@
-var Sparrow =
+var Ivia =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -84,9 +84,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.nullFunction = nullFunction;
 
-var _sparrow = __webpack_require__(1);
+var _ivia = __webpack_require__(1);
 
-var _sparrow2 = _interopRequireDefault(_sparrow);
+var _ivia2 = _interopRequireDefault(_ivia);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -218,7 +218,7 @@ var Utilities = function () {
   }, {
     key: 'isPlainObject',
     value: function isPlainObject(data) {
-      return _sparrow2.default.$.isPlainObject(data);
+      return _ivia2.default.$.isPlainObject(data);
     }
   }, {
     key: 'isNative',
@@ -253,12 +253,12 @@ var Utilities = function () {
         return false;
       }
 
-      if (object instanceof _sparrow2.default.$ || 'jquery' in object) {
+      if (object instanceof _ivia2.default.$ || 'jquery' in object) {
         return true;
       }
 
-      if ('zepto' in _sparrow2.default.$) {
-        return _sparrow2.default.$.zepto.isZ(object);
+      if ('zepto' in _ivia2.default.$) {
+        return _ivia2.default.$.zepto.isZ(object);
       }
 
       return false;
@@ -314,22 +314,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var plugin = "sparrow";
+var plugin = "ivia";
 
-var Sparrow = function () {
-  function Sparrow() {
+var Ivia = function () {
+  function Ivia() {
     var _this = this;
 
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var $ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-    _classCallCheck(this, Sparrow);
+    _classCallCheck(this, Ivia);
 
     var el = null;
-    $ = $ || Sparrow.$;
+    $ = $ || Ivia.$;
 
     if (!$) {
-      throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+      throw new Error('Ivia.$ is NULL, please set jQuery or Zepto object into it.');
     }
 
     if (options.domready) {
@@ -346,20 +346,20 @@ var Sparrow = function () {
     this.app.init(this, options);
   }
 
-  _createClass(Sparrow, null, [{
+  _createClass(Ivia, null, [{
     key: 'plugin',
     value: function plugin(name) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var $ = Sparrow.$;
+      var $ = Ivia.$;
 
       if (!$) {
-        throw new Error('Sparrow.$ is NULL, please set jQuery or Zepto object into it.');
+        throw new Error('Ivia.$ is NULL, please set jQuery or Zepto object into it.');
       }
 
       if (typeof $.fn === 'undefined') {
         $('body');
-        throw new Error('Sparrow.$.fn not exists, are you sure you inject a jQuery / Zepto object?');
+        throw new Error('Ivia.$.fn not exists, are you sure you inject a jQuery / Zepto object?');
       }
 
       $.fn[name] = function (customOptions) {
@@ -369,7 +369,7 @@ var Sparrow = function () {
           options = $.extend(true, {}, options, customOptions);
           options.el = $this;
 
-          $this.data(name, new Sparrow(options));
+          $this.data(name, new Ivia(options));
         }
 
         return $this.data(name);
@@ -378,24 +378,24 @@ var Sparrow = function () {
   }, {
     key: '$',
     set: function set(value) {
-      Object.defineProperty(Sparrow, '$', {
+      Object.defineProperty(Ivia, '$', {
         value: value
       });
 
-      Sparrow.$._name = 'zepto' in Sparrow.$ ? 'Zepto' : 'jQuery';
+      Ivia.$._name = 'zepto' in Ivia.$ ? 'Zepto' : 'jQuery';
 
-      Sparrow.plugin(plugin);
+      Ivia.plugin(plugin);
     }
   }]);
 
-  return Sparrow;
+  return Ivia;
 }();
 
-exports.default = Sparrow;
+exports.default = Ivia;
 
 
-Sparrow.prototype.$createElement = Sparrow.createElement = _element2.default;
-Sparrow.Promise = _app2.default.Promise;
+Ivia.prototype.$createElement = Ivia.createElement = _element2.default;
+Ivia.Promise = _app2.default.Promise;
 module.exports = exports['default'];
 
 /***/ }),
@@ -406,7 +406,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-                        value: true
+   value: true
 });
 var inBrowser = exports.inBrowser = typeof window !== 'undefined';
 var UA = exports.UA = inBrowser && window.navigator.userAgent.toLowerCase();
@@ -707,7 +707,7 @@ var Application = function () {
         return function () {
           if (typeof handler === 'string') {
             if ("development" === 'development' && typeof $element[handler] !== 'function') {
-              _this.error.error("Method: " + handler + "() not found in " + Sparrow.$._name + " object.");
+              _this.error.error("Method: " + handler + "() not found in " + Ivia.$._name + " object.");
             }
 
             return function () {
@@ -1291,9 +1291,9 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _sparrow = __webpack_require__(1);
+var _ivia = __webpack_require__(1);
 
-var _sparrow2 = _interopRequireDefault(_sparrow);
+var _ivia2 = _interopRequireDefault(_ivia);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1320,7 +1320,7 @@ function addChildren(ele, children) {
       ele.append(children);
     } else if (children instanceof Element) {
       ele.appendChild(children);
-    } else if (children instanceof _sparrow2.default.$ || _utilities2.default.isJquery(children)) {
+    } else if (children instanceof _ivia2.default.$ || _utilities2.default.isJquery(children)) {
       children.each(function () {
         ele.appendChild(this);
       });
@@ -1454,7 +1454,7 @@ var ErrorHandler = function () {
   }, {
     key: "format",
     value: function format(message) {
-      return "[Sparrow]: " + message;
+      return "[Ivia]: " + message;
     }
   }]);
 
@@ -1596,7 +1596,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1616,49 +1616,49 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var uid = 0;
 
 var Dispatcher = function () {
-  function Dispatcher(app) {
-    var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+   function Dispatcher(app) {
+      var watchers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-    _classCallCheck(this, Dispatcher);
+      _classCallCheck(this, Dispatcher);
 
-    this.id = ++uid;
-    this.watchers = watchers;
-    this.app = app;
-  }
+      this.id = ++uid;
+      this.watchers = watchers;
+      this.app = app;
+   }
 
-  _createClass(Dispatcher, [{
-    key: "attach",
-    value: function attach(watcher) {
-      this.watchers.push(watcher);
-    }
-  }, {
-    key: "detach",
-    value: function detach(watcher) {
-      _utilities2.default.removeElement(this.watchers, watcher);
-
-      watcher.removeDispatcher();
-
-      return this;
-    }
-  }, {
-    key: "attachCurrent",
-    value: function attachCurrent() {
-      if (this.app.currentWatcher) {
-        this.app.currentWatcher.addDispatcher(this);
+   _createClass(Dispatcher, [{
+      key: "attach",
+      value: function attach(watcher) {
+         this.watchers.push(watcher);
       }
-    }
-  }, {
-    key: "notify",
-    value: function notify() {
-      var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+   }, {
+      key: "detach",
+      value: function detach(watcher) {
+         _utilities2.default.removeElement(this.watchers, watcher);
 
-      this.watchers.forEach(function (watcher) {
-        return watcher.update(ctrl);
-      });
-    }
-  }]);
+         watcher.removeDispatcher();
 
-  return Dispatcher;
+         return this;
+      }
+   }, {
+      key: "attachCurrent",
+      value: function attachCurrent() {
+         if (this.app.currentWatcher) {
+            this.app.currentWatcher.addDispatcher(this);
+         }
+      }
+   }, {
+      key: "notify",
+      value: function notify() {
+         var ctrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+         this.watchers.forEach(function (watcher) {
+            return watcher.update(ctrl);
+         });
+      }
+   }]);
+
+   return Dispatcher;
 }();
 
 exports.default = Dispatcher;
@@ -2055,9 +2055,9 @@ var _utilities = __webpack_require__(0);
 
 var _utilities2 = _interopRequireDefault(_utilities);
 
-var _sparrow = __webpack_require__(1);
+var _ivia = __webpack_require__(1);
 
-var _sparrow2 = _interopRequireDefault(_sparrow);
+var _ivia2 = _interopRequireDefault(_ivia);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2069,13 +2069,13 @@ var PromiseAdapter = function () {
   function PromiseAdapter(callback) {
     _classCallCheck(this, PromiseAdapter);
 
-    var deferred = _sparrow2.default.$.Deferred();
+    var deferred = _ivia2.default.$.Deferred();
     var resolve = deferred.resolve;
     var reject = deferred.reject;
 
     callback(resolve, reject);
 
-    this.defer = _sparrow2.default.$.when(deferred);
+    this.defer = _ivia2.default.$.when(deferred);
   }
 
   _createClass(PromiseAdapter, [{
@@ -2091,9 +2091,9 @@ var PromiseAdapter = function () {
   }], [{
     key: "all",
     value: function all(promises) {
-      var _Sparrow$$;
+      var _Ivia$$;
 
-      return (_Sparrow$$ = _sparrow2.default.$).when.apply(_Sparrow$$, _toConsumableArray(promises));
+      return (_Ivia$$ = _ivia2.default.$).when.apply(_Ivia$$, _toConsumableArray(promises));
     }
   }, {
     key: "race",
@@ -2214,9 +2214,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _sparrow = __webpack_require__(1);
+var _ivia = __webpack_require__(1);
 
-var _sparrow2 = _interopRequireDefault(_sparrow);
+var _ivia2 = _interopRequireDefault(_ivia);
 
 var _environment = __webpack_require__(2);
 
@@ -2226,13 +2226,13 @@ if (_environment.inBrowser) {
   var $ = window.jQuery || window.Zepto || window.$ || null;
 
   if ($) {
-    _sparrow2.default.$ = $;
+    _ivia2.default.$ = $;
   }
 }
 
-exports.default = _sparrow2.default;
+exports.default = _ivia2.default;
 module.exports = exports["default"];
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=sparrow.js.map
+//# sourceMappingURL=ivia.js.map

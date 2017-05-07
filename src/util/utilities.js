@@ -1,11 +1,11 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
  * @license    __LICENSE__
  */
 
-import Sparrow from "../sparrow";
+import Ivia from "../ivia";
 
 export default class Utilities {
   static get (data, path, def) {
@@ -117,7 +117,7 @@ export default class Utilities {
   }
 
   static isPlainObject (data) {
-    return Sparrow.$.isPlainObject(data);
+    return Ivia.$.isPlainObject(data);
   }
 
   static isNative (object) {
@@ -147,12 +147,12 @@ export default class Utilities {
       return false;
     }
 
-    if (object instanceof Sparrow.$ || 'jquery' in object) {
+    if (object instanceof Ivia.$ || 'jquery' in object) {
       return true;
     }
 
-    if ('zepto' in Sparrow.$) {
-      return Sparrow.$.zepto.isZ(object);
+    if ('zepto' in Ivia.$) {
+      return Ivia.$.zepto.isZ(object);
     }
 
     return false;

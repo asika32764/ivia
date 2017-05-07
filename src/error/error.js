@@ -1,5 +1,5 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 ${ORGANIZATION}.
  * @license    __LICENSE__
@@ -23,6 +23,6 @@ export default class ErrorHandler {
   }
 
   format (message) {
-    return `[Sparrow]: ${message}`;
+    return `[Ivia]: ${message}`;
   }
 }

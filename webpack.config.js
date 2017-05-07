@@ -1,5 +1,5 @@
 /**
- * Part of sparrow project.
+ * Part of ivia project.
  *
  * @copyright  Copyright (C) 2017 {ORGANIZATION}. All rights reserved.
  * @license    GNU General Public License version 2 or later.
@@ -8,19 +8,19 @@
 const webpack = require('webpack');
 
 const target = process.env.LIB_TARGET || 'var';
-let output = 'sparrow.js';
+let output = 'ivia.js';
 
 if (process.env.NODE_ENV === 'production') {
   if (target === 'var') {
-    output = 'sparrow.min.js';
+    output = 'ivia.min.js';
   } else {
-    output = 'sparrow.common.js';
+    output = 'ivia.common.js';
   }
 } else {
   if (target === 'var') {
-    output = 'sparrow.js';
+    output = 'ivia.js';
   } else {
-    output = 'sparrow.common.js';
+    output = 'ivia.common.js';
   }
 }
 
@@ -30,8 +30,8 @@ const config = {
     path: 'dist',
     filename: output,
     libraryTarget: target,
-    library: ['Sparrow'],
-    sourceMapFilename: "sparrow.js.map"
+    library: ['Ivia'],
+    sourceMapFilename: "ivia.js.map"
   },
   devtool: 'source-map',
   module: {
