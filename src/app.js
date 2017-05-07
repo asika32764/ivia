@@ -108,7 +108,7 @@ export default class Application {
       return;
     }
 
-    this.instance.$el = this.$el;
+    this.instance.$el = this.$el = $el;
 
     this._isMounted = true;
 
