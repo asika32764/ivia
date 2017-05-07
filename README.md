@@ -6,7 +6,7 @@ A reactivity MVVM framework for jQuery with Vue-like interface.
 
 - [Getting Started](#getting-started)
   - [Installation](#installation)
-  - [Create Sparrow Instance](#create-sparrow-instance)
+  - [Create Ivia Instance](#create-ivia-instance)
   - [Create Custom Plugin](#create-custom-plugin)
 - [Binding Data (One-way-binding)](#binding-data-one-way-binding)
   - [Simple Binding](#simple-binding)
@@ -35,9 +35,9 @@ A reactivity MVVM framework for jQuery with Vue-like interface.
 Install by npm or yarn.
 
 ``` bash
-npm install jquery.ivia --save
+npm install ivia --save
 
-yarn add jquery.ivia
+yarn add ivia
 ```
 
 Install by bower
@@ -63,7 +63,7 @@ If you are using ES6 syntax to import module, you must inject jQuery or Zepto fi
 
 ```js
 import jQuery from 'jquery';
-import Ivia from 'ivia.js';
+import Ivia from 'ivia';
 
 Ivia.$ = jQuery;
 
