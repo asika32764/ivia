@@ -53,10 +53,10 @@ Download single file for browser.
 <script src="js/ivia.min.js"></script>
 ```
 
-CDN (Replace `/0.1.1/` to latest version)
+CDN
 
 ```html
-<script src="//cdn.rawgit.com/asika32764/ivia/0.1.6/dist/ivia.min.js"></script>
+<script src="//unpkg.com/ivia/dist/ivia.min.js"></script>
 ```
 
 If you are using ES6 syntax to import module, you must inject jQuery or Zepto first.
